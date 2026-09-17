@@ -1,0 +1,32 @@
+# ============================================================
+# Ostaad — Apache security configuration
+# ============================================================
+
+# Disable directory listings
+Options -Indexes
+DirectoryIndex index.html
+
+# Block common default admin routes
+<IfModule mod_alias.c>
+  RedirectMatch 404 ^/(admin|administrator|wp-admin|phpmyadmin|cpanel|webmail)(/.*)?$
+  RedirectMatch 404 ^/(wp-login|xmlrpc)\.php$
+</IfModule>
+
+# Security response headers
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-ancestors 'none';"
+  # Remove server fingerprinting
+  Header unset Server
+  Header unset X-Powered-By
+</IfModule>
+
+# Prevent access to dotfiles
+<FilesMatch "^\.">
+  Order allow,deny
+  Deny from all
+</FilesMatch>

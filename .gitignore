@@ -1,0 +1,25 @@
+# Environment variables
+.env
+.env*.local
+.env.production
+.env.development
+
+# Logs and databases
+*.log
+*.sqlite
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE and Editor directories
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node / Build artifacts (if applicable)
+node_modules/
+dist/
+build/

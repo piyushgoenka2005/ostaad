@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="ostaad-logo.png">
+  <link rel="stylesheet" href="cookie-consent.css">
+  <title>Contact Ostaad — Start with your blueprint.</title>
+  <meta name="description" content="Start with your blueprint and get a clearer cost picture with Ostaad.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;450;500;600&family=Geist+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --canvas: #faf7f4;
+      --surface: #fdfbf9;
+      --slate: #23384f;
+      --sage: #7c8764;
+      --terracotta: #a87545;
+      --taupe: #b8a18b;
+      --text: #54524d;
+      --recessed: #eae4de;
+      --mono: 'Geist Mono', monospace;
+      --sans: 'Geist', sans-serif;
+      --ease: cubic-bezier(.22, .61, .36, 1)
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 15% 10%, #fff, transparent 35%), var(--canvas);
+      color: var(--text);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 28px 5% 70px
+    }
+
+    /* Full floating nav */
+    .nav-wrap {
+      position: fixed;
+      top: 16px;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      padding: 0 16px;
+    }
+
+    .site-nav {
+      width: min(980px, 100%);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 12px 10px 20px;
+      border: 1px solid var(--recessed);
+      border-radius: 16px;
+      background: rgba(253, 251, 249, .92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 24px rgba(35, 56, 79, .08);
+    }
+
+    .nav-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--slate);
+      font-size: 15px;
+      letter-spacing: .01em;
+      text-decoration: none;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    .nav-logo-mark {
+      width: 25px;
+      height: 25px;
+      overflow: hidden;
+      flex: 0 0 25px;
+      border-radius: 6px;
+    }
+
+    .nav-logo-mark img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.78);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      gap: clamp(16px, 2.5vw, 28px);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a[aria-current] {
+      color: var(--terracotta);
+    }
+
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-secondary {
+      font-size: 13px;
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color .2s;
+    }
+
+    .nav-secondary:hover {
+      color: var(--terracotta);
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--slate);
+      color: #fff;
+      text-decoration: none;
+      font: 11px var(--mono);
+      white-space: nowrap;
+      letter-spacing: .04em;
+      transition: background .2s;
+    }
+
+    .nav-btn:hover {
+      background: #31465f;
+    }
+
+    .menu-toggle {
+      display: none;
+      border: 0;
+      background: none;
+      color: var(--slate);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .layout {
+      max-width: 1200px;
+      margin: 132px auto 0;
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: clamp(40px, 8vw, 120px);
+      align-items: start
+    }
+
+    .eyebrow {
+      font: 10px var(--mono);
+      letter-spacing: .15em;
+      color: var(--taupe)
+    }
+
+    h1 {
+      color: var(--slate);
+      font-size: clamp(48px, 6vw, 84px);
+      line-height: .98;
+      letter-spacing: -.06em;
+      font-weight: 450;
+      margin: 24px 0
+    }
+
+    h1 em {
+      font-family: Georgia, serif;
+      font-weight: 400;
+      color: var(--terracotta)
+    }
+
+    .intro p {
+      max-width: 390px;
+      font-size: 17px;
+      line-height: 1.6
+    }
+
+    .banglish {
+      font-family: Georgia, serif;
+      font-style: italic;
+      color: var(--sage);
+      font-size: 18px;
+      margin-top: 30px
+    }
+
+    .form-card {
+      padding: 34px;
+      border-radius: 24px;
+      background: rgba(253, 251, 249, .8);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(234, 228, 222, .85);
+      box-shadow: 9px 9px 22px rgba(184, 161, 139, .14), -9px -9px 20px rgba(255, 255, 255, .85)
+    }
+
+    .form-card h2 {
+      margin: 0 0 26px;
+      color: var(--slate);
+      font-size: 25px;
+      font-weight: 500
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 16px
+    }
+
+    .field.full {
+      grid-column: 1/-1
+    }
+
+    .field label {
+      font: 10px var(--mono);
+      letter-spacing: .08em;
+      color: var(--taupe)
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      font: 14px var(--sans);
+      color: var(--slate);
+      background: rgba(234, 228, 222, .28);
+      border: 1px solid rgba(184, 161, 139, .42);
+      border-radius: 12px;
+      padding: 13px 14px;
+      outline: none;
+      transition: border .2s, box-shadow .2s
+    }
+
+    .field textarea {
+      min-height: 115px;
+      resize: vertical
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--slate);
+      box-shadow: 0 0 0 3px rgba(35, 56, 79, .08)
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      padding: 14px 18px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--slate);
+      color: #fff;
+      font: 13px var(--mono);
+      cursor: pointer;
+      transition: transform .2s, background .2s
+    }
+
+    .button:hover {
+      background: #31465f;
+      transform: translateY(-2px)
+    }
+
+    .button.is-loading {
+      color: transparent;
+      pointer-events: none;
+      position: relative
+    }
+
+    .button.is-loading:after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      margin: -7px;
+      border: 1.5px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin .7s linear infinite
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .status {
+      min-height: 22px;
+      font: 11px var(--mono);
+      color: var(--sage)
+    }
+
+    .foot {
+      max-width: 1200px;
+      margin: 80px auto 0;
+      border-top: 1px solid rgba(184, 161, 139, .35);
+      padding-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      font: 10px var(--mono);
+      color: var(--taupe)
+    }
+
+    @media(max-width:760px) {
+
+      .nav-links,
+      .nav-secondary {
+        display: none;
+      }
+
+      .nav-links.open {
+        position: absolute;
+        top: 62px;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 12px 16px;
+        border: 1px solid var(--recessed);
+        border-radius: 14px;
+        background: rgba(253, 251, 249, .96);
+        box-shadow: 0 8px 24px rgba(35, 56, 79, .1);
+      }
+
+      .nav-links.open li {
+        padding: 10px 0;
+        border-bottom: 1px solid var(--recessed);
+      }
+
+      .nav-links.open li:last-child {
+        border-bottom: 0;
+      }
+
+      .menu-toggle {
+        display: block;
+        margin-left: auto;
+      }
+
+      .site-nav {
+        position: relative;
+      }
+
+      .layout {
+        display: block;
+        margin-top: 90px
+      }
+
+      .intro {
+        margin-bottom: 48px
+      }
+
+      h1 {
+        font-size: 56px
+      }
+
+      .form-card {
+        padding: 24px
+      }
+
+      .foot {
+        margin-top: 55px;
+        display: block;
+        line-height: 2
+      }
+
+      .grid {
+        grid-template-columns: 1fr
+      }
+
+      .field.full {
+        grid-column: auto
+      }
+    }
+  </style>
+  <style>
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .brand-mark {
+      width: 25px;
+      height: 25px;
+      overflow: hidden;
+      flex: 0 0 25px;
+      border-radius: 6px
+    }
+
+    .brand-mark img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.78)
+    }
+  </style>
+  <style>
+    /* Mobile bottom nav — contact.html */
+    .mobile-nav {
+      display: none;
+    }
+
+    @media(max-width:768px) {
+      body {
+        padding-bottom: 84px;
+      }
+
+      .mobile-nav {
+        display: flex;
+        position: fixed;
+        bottom: 14px;
+        left: 14px;
+        right: 14px;
+        z-index: 100;
+        background: rgba(253, 251, 249, .94);
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+        border: 1px solid var(--recessed);
+        border-radius: 18px;
+        box-shadow: 0 14px 34px rgba(35, 56, 79, .15);
+        padding: 8px 4px;
+        justify-content: space-around;
+        align-items: stretch;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .mobile-nav::-webkit-scrollbar {
+        display: none;
+      }
+
+      .mobile-nav a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        font-size: 9.5px;
+        color: var(--taupe);
+        flex: 1 0 52px;
+        min-height: 48px;
+        padding: 4px 2px;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: color .2s, background .2s;
+        font-family: var(--mono);
+      }
+
+      .mobile-nav a svg {
+        width: 18px;
+        height: 18px;
+        stroke: var(--taupe);
+        fill: none;
+        stroke-width: 1.5;
+        transition: stroke .2s;
+      }
+
+      .mobile-nav a.active,
+      .mobile-nav a:hover {
+        color: var(--slate);
+        background: rgba(35, 56, 79, .06);
+      }
+
+      .mobile-nav a.active svg,
+      .mobile-nav a:hover svg {
+        stroke: var(--slate);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Desktop floating nav -->
+  <div class="nav-wrap">
+    <nav class="site-nav">
+      <a href="index.html" class="nav-logo"><span class="nav-logo-mark"><img src="ostaad-logo.png"
+            alt=""></span><b>OSTAAD</b></a>
+      <ul class="nav-links">
+        <li><a href="products.html">Product</a></li>
+        <li><a href="index.html#see">Experience</a></li>
+        <li><a href="index.html#faq">FAQ</a></li>
+        <li><a href="about.html">About us</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a class="nav-secondary" href="contact.html" aria-current="page">Contact Ostaad</a>
+        <a href="contact.html" class="nav-btn" aria-current="page">Start a Project <span>→</span></a>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Open navigation">☰</button>
+    </nav>
+  </div>
+  <main class="page">
+    <div class="layout">
+      <section class="intro">
+        <div class="eyebrow">START WITH YOUR BLUEPRINT</div>
+        <h1>Know your<br><em>cost.</em></h1>
+        <p>You already have the drawing. You don't need another complicated construction platform. You need to know:
+          “Eta korte gele koto lagbe?”</p>
+        <div class="banglish">Bari korar jhamela thakbei. Guesswork-ta na thaklei bhalo.</div>
+      </section>
+      <section class="form-card">
+        <h2>Tell us about your project.</h2>
+        <form id="contactForm"><input type="hidden" name="access_key"
+            value="6d71ee60-2f5a-436e-b445-ec657bf48f2a"><input type="hidden" name="subject"
+            value="New Project Enquiry from Ostaad Contact Form"><input type="hidden" name="from_name"
+            value="Ostaad Connect Desk">
+          <div class="grid">
+            <div class="field"><label for="name">YOUR NAME</label><input id="name" name="name" required
+                placeholder="Your name"></div>
+            <div class="field"><label for="email">EMAIL</label><input id="email" name="email" type="email" required
+                placeholder="you@example.com"></div>
+            <div class="field"><label for="project">WHAT ARE YOU BUILDING?</label><select id="project" name="project">
+                <option>New home</option>
+                <option>Renovation</option>
+                <option>Extension</option>
+                <option>Project at scale</option>
+              </select></div>
+            <div class="field"><label for="area">APPROX. AREA</label><input id="area" name="area"
+                placeholder="~1,800 SQ FT"></div>
+            <div class="field full"><label for="message">ANYTHING ELSE?</label><textarea id="message" name="message"
+                placeholder="Tell us a little about your blueprint or project."></textarea></div>
+          </div>
+          <div class="actions"><button class="button" id="submitButton" type="submit">Talk to Ostaad
+              <span>→</span></button>
+            <div class="status" id="formStatus" role="status" aria-live="polite"></div>
+          </div>
+        </form>
+      </section>
+    </div>
+    <footer class="foot"><span>Blueprint → Quantity → Cost → Confidence</span><span>© 2026 Ostaad</span></footer>
+  </main>
+  <script>
+    const form = document.getElementById('contactForm'), button = document.getElementById('submitButton'), status = document.getElementById('formStatus');
+
+    // Auto-populate from URL query if provided
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('message')) {
+      const msgField = document.getElementById('message');
+      if (msgField) msgField.value = urlParams.get('message');
+    }
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      button.classList.add('is-loading');
+      button.setAttribute('aria-busy', 'true');
+      button.disabled = true;
+      status.textContent = 'Sending to Ostaad desk...';
+      status.style.color = 'var(--taupe)';
+
+      const formData = new FormData(form);
+      const json = JSON.stringify(Object.fromEntries(formData));
+
+      try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: json
+        });
+        const data = await response.json();
+        if (data.success) {
+          window.location.assign('thank-you.html');
+        } else {
+          throw new Error(data.message || 'Submission failed');
+        }
+      } catch (err) {
+        button.classList.remove('is-loading');
+        button.removeAttribute('aria-busy');
+        button.disabled = false;
+        status.textContent = 'Submission error. Please retry or contact directly.';
+        status.style.color = '#dc2626';
+      }
+    });
+
+    // Mobile nav toggle
+    const menuToggle = document.getElementById('menuToggle');
+    if (menuToggle) { menuToggle.addEventListener('click', () => { const nl = document.querySelector('.nav-links'); nl.classList.toggle('open'); nl.style.display = nl.classList.contains('open') ? 'flex' : ''; }); }
+  </script>
+  <script type="module" src="firebase-init.js"></script>
+  <script type="module">
+    import { onAuthStateChange } from "./firebase-init.js";
+    onAuthStateChange(({ isAuthenticated, user, profile }) => {
+      if (isAuthenticated && user) {
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        if (nameInput && !nameInput.value) nameInput.value = user.displayName || (profile ? profile.displayName : '');
+        if (emailInput && !emailInput.value) emailInput.value = user.email || '';
+      }
+    });
+  </script>
+  <script type="module" src="navbar-auth.js"></script>
+  <script src="cookie-consent.js"></script>
+
+  <!-- Mobile bottom nav -->
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <a href="index.html#hero"><svg viewBox="0 0 24 24">
+        <path d="M4 20V10l8-6 8 6v10" />
+      </svg>Home</a>
+    <a href="products.html"><svg viewBox="0 0 24 24">
+        <path d="M12 3v18M7 8l5-5 5 5" />
+      </svg>Product</a>
+    <a href="index.html#see"><svg viewBox="0 0 24 24">
+        <rect x="4" y="4" width="16" height="16" rx="2" />
+      </svg>Experience</a>
+    <a href="index.html#faq"><svg viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 8v5M12 16h.01" />
+      </svg>FAQ</a>
+    <a href="about.html"><svg viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21c1.5-5 5-7 8-7s6.5 2 8 7" />
+      </svg>About</a>
+    <a href="contact.html" class="active"><svg viewBox="0 0 24 24">
+        <path d="M4 5h16v14H4z" />
+        <path d="m4 7 8 6 8-6" />
+      </svg>Contact</a>
+  </nav>
+</body>
+
+</html>

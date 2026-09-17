@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="ostaad-logo.png">
+<link rel="stylesheet" href="cookie-consent.css">
+<title>Paint (Low-VOC Architectural Emulsion) · Ostaad Verified Specification</title>
+<meta name="description" content="Technical audit, comprehensive specification sheet, paint coverage calculator, and mineral palette visualizer for Architectural Low-VOC Paint.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;450;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#FAF7F4;
+  --surface:#FDFBF9;
+  --slate:#23384F;
+  --slate-light:#31465F;
+  --sage:#7C8764;
+  --sage-light:#8E9976;
+  --terracotta:#A87545;
+  --terracotta-light:#BA8B5E;
+  --taupe:#B8A18B;
+  --text:#54524D;
+  --recessed:#EAE4DE;
+  --line:rgba(184,161,139,.42);
+  --white:#FFFFFF;
+  --font-sans:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'Geist Mono',ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --shadow-hybrid:9px 9px 24px rgba(184,161,139,.16), -9px -9px 20px rgba(255,255,255,.85), 0 1px 0 rgba(255,255,255,.7) inset;
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:radial-gradient(circle at 18% 8%,rgba(255,255,255,.75),transparent 35%),var(--canvas);
+  color:var(--text);
+  font-family:var(--font-sans);
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+img,svg{display:block;max-width:100%;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;background:none;border:none;}
+ul{margin:0;padding:0;list-style:none;}
+h1,h2,h3,h4,p{margin:0;}
+em{font-family:Georgia,serif;font-weight:400;color:var(--terracotta);font-style:italic;}
+.mono{font-family:var(--font-mono);}
+.container{max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,50px);}
+.section{padding:clamp(50px,6vw,80px) 0;position:relative;}
+
+/* NAV */
+.nav-wrap{position:fixed;top:20px;left:0;right:0;z-index:100;display:flex;justify-content:center;transition:transform .4s var(--ease);}
+.nav-wrap.nav-hide{transform:translateY(-140%);}
+.nav{
+  display:flex;align-items:center;gap:clamp(18px,2.4vw,32px);
+  padding:10px 12px 10px 20px;
+  border-radius:16px;
+  background:rgba(253,251,249,.88);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--recessed);
+  box-shadow:none!important;
+  width:min(920px,calc(100vw - 32px));
+}
+.nav-logo{display:inline-flex;align-items:center;gap:8px;font-weight:500;font-size:15px;letter-spacing:.01em;color:var(--slate);white-space:nowrap;}
+.nav-logo-mark{width:25px;height:25px;overflow:hidden;flex:0 0 25px;border-radius:6px;}.nav-logo-mark img{display:block;width:100%;height:100%;object-fit:cover;transform:scale(1.78);}
+.nav-logo b{font-weight:600;}
+.nav-links{display:flex;align-items:center;justify-content:center;flex:1;gap:clamp(22px,3vw,38px);margin:0;font-size:14px;color:var(--text);}
+.nav-links a{position:relative;padding:4px 0;}
+.nav-links a::after{content:'';position:absolute;left:0;right:0;bottom:-2px;height:1px;background:var(--slate);transform:scaleX(0);transform-origin:left;transition:transform 220ms var(--ease);}
+.nav-links a:hover::after{transform:scaleX(1);}
+.nav-cta{display:flex;align-items:center;gap:10px;}
+.nav-secondary{font-size:13px;color:var(--text);white-space:nowrap;display:none;}
+@media(min-width:1000px){.nav-secondary{display:inline;}}
+.nav-toggle{display:none;background:none;border:0;padding:8px;}
+.nav-toggle span{display:block;width:18px;height:1.5px;background:var(--slate);margin:4px 0;}
+@media(max-width:1024px){.nav{width:calc(100vw - 36px);}.nav-links{gap:22px;font-size:13px;}}
+@media(max-width:768px){
+  .nav-wrap{top:12px;}
+  .nav{padding:9px 12px 9px 16px;justify-content:space-between;}
+  .nav-links{display:none;}
+  .nav-secondary{display:none!important;}
+  .nav-toggle{display:block;}
+  .nav-cta .btn{padding:10px 12px;font-size:10px;}
+}
+@media(max-width:420px){
+  .nav-logo{font-size:13px;}
+  .nav-logo-mark{width:22px;height:22px;flex-basis:22px;}
+  .nav-cta .btn{padding:9px 10px;font-size:9px;}
+}
+
+/* BUTTONS */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 20px;border-radius:12px;border:1px solid transparent;
+  font-size:14px;font-weight:500;letter-spacing:.01em;
+  transition:background 220ms var(--ease),transform 220ms var(--ease),border-color 220ms var(--ease),box-shadow 220ms var(--ease);
+  white-space:nowrap;text-decoration:none;
+}
+.btn .arrow{display:inline-block;transition:transform 220ms var(--ease);}
+.btn:hover .arrow{transform:translateX(4px);}
+.btn-primary{background:var(--slate);color:#fff;box-shadow:0 10px 24px rgba(35,56,79,.22);}
+.btn-primary:hover{background:var(--slate-light);}
+.btn-secondary{background:rgba(253,251,249,.8);border:1px solid var(--line);color:var(--slate);}
+.btn-secondary:hover{background:var(--surface);border-color:var(--slate);}
+.btn-sm{padding:8px 14px;font-size:12.5px;border-radius:9px;}
+
+/* COMMON CARD */
+.card{
+  border-radius:18px;background:rgba(253,251,249,.88);backdrop-filter:blur(16px);
+  border:1px solid rgba(234,228,222,.9);box-shadow:var(--shadow-hybrid);padding:24px;
+}
+.eyebrow{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;color:var(--taupe);
+  display:inline-flex;align-items:center;gap:10px;margin-bottom:12px;text-transform:uppercase;
+}
+.eyebrow::before{content:'';width:20px;height:1px;background:currentColor;}
+
+.breadcrumb{
+  display:flex;align-items:center;gap:8px;font-family:var(--font-mono);
+  font-size:11.5px;color:var(--taupe);margin-bottom:18px;flex-wrap:wrap;
+}
+.breadcrumb a{color:var(--text);transition:color .2s;}
+.breadcrumb a:hover{color:var(--slate);}
+.breadcrumb span.sep{opacity:.4;}
+.breadcrumb span.current{color:var(--slate);font-weight:500;}
+
+/* TOP PRODUCT SHOWCASE SECTION */
+.product-showcase-section{
+  padding-top:125px;padding-bottom:50px;position:relative;border-bottom:1px solid var(--recessed);
+}
+.product-showcase-grid{
+  display:grid;
+  grid-template-columns:350px 1fr 340px;
+  gap:28px;
+  align-items:start;
+}
+
+/* 1. Gallery Column (Left) */
+.gallery-col{display:flex;flex-direction:column;gap:16px;}
+.main-pack-view{
+  background:#fff;border-radius:16px;border:1px solid var(--recessed);
+  padding:20px;display:flex;align-items:center;justify-content:center;
+  height:370px;position:relative;overflow:hidden;box-shadow:var(--shadow-hybrid);
+}
+.main-pack-view img{
+  max-width:100%;max-height:100%;object-fit:cover;border-radius:10px;
+  transition:transform .4s var(--ease);
+}
+.main-pack-view:hover img{transform:scale(1.05);}
+.pack-badge-grade{
+  position:absolute;top:14px;left:14px;
+  font-family:var(--font-mono);font-size:10px;font-weight:600;
+  padding:4px 10px;border-radius:6px;background:var(--sage);color:#fff;
+  letter-spacing:.08em;
+}
+.pack-badge-cert{
+  position:absolute;bottom:14px;left:14px;
+  font-family:var(--font-mono);font-size:9.5px;
+  padding:3px 8px;border-radius:5px;background:rgba(234,228,222,.85);color:var(--slate);font-weight:500;
+}
+
+.pack-thumbnails{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+}
+.thumb-btn{
+  background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:8px 10px;display:flex;align-items:center;gap:10px;
+  transition:all .2s var(--ease);text-align:left;cursor:pointer;
+}
+.thumb-btn:hover{border-color:var(--slate);background:rgba(250,247,244,.9);}
+.thumb-btn.active{border-color:var(--sage);background:rgba(124,135,100,.1);outline:2px solid var(--sage);}
+.thumb-img{width:36px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0;}
+.thumb-title{font-size:12px;font-weight:600;color:var(--slate);display:block;}
+.thumb-sub{font-family:var(--font-mono);font-size:10px;color:var(--taupe);display:block;}
+
+.need-help-box{
+  padding:16px 18px;border-radius:14px;background:rgba(250,247,244,.85);
+  border:1px solid var(--line);display:flex;flex-direction:column;gap:8px;
+}
+.need-help-box h4{font-size:13px;font-weight:600;color:var(--slate);}
+.need-help-box p{font-size:12px;color:var(--text);line-height:1.45;}
+.need-help-box .btn{padding:8px 14px;font-size:12px;align-self:flex-start;margin-top:4px;}
+
+/* 2. Detail & Specs Column (Center) */
+.detail-col{display:flex;flex-direction:column;gap:18px;}
+.product-main-title{
+  font-size:clamp(26px,3.2vw,36px);font-weight:500;color:var(--slate);
+  line-height:1.15;letter-spacing:-.035em;margin:0 0 6px;
+}
+.detail-meta-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.meta-verified-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-mono);font-size:11px;color:var(--sage);
+  background:rgba(124,135,100,.14);border:1px solid rgba(124,135,100,.3);
+  padding:4px 10px;border-radius:20px;font-weight:500;
+}
+.copy-link-btn{
+  font-family:var(--font-mono);font-size:11px;color:var(--taupe);
+  display:inline-flex;align-items:center;gap:5px;cursor:pointer;
+  padding:4px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;
+  transition:all .2s var(--ease);
+}
+.copy-link-btn:hover{color:var(--slate);border-color:var(--slate);}
+
+.offers-card{
+  background:rgba(253,251,249,.95);border:1px solid var(--line);
+  border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;
+}
+.offers-title{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:var(--taupe);text-transform:uppercase;}
+.offer-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text);line-height:1.45;}
+.offer-item .chk{color:var(--sage);font-weight:700;font-size:14px;line-height:1.2;}
+.offer-item strong{color:var(--slate);}
+
+.trust-badges-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+}
+.trust-pill{
+  background:rgba(255,255,255,.9);border:1px solid var(--recessed);
+  border-radius:12px;padding:12px 10px;display:flex;flex-direction:column;gap:4px;
+  text-align:center;
+}
+.trust-pill .ico{font-size:18px;}
+.trust-pill .t-label{font-size:11.5px;font-weight:600;color:var(--slate);line-height:1.3;}
+.trust-pill .t-sub{font-family:var(--font-mono);font-size:9.5px;color:var(--taupe);}
+
+.specs-sheet-card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;
+}
+.specs-sheet-card h3{
+  font-size:16px;font-weight:600;color:var(--slate);margin-bottom:14px;letter-spacing:-.01em;
+}
+.specs-sheet-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.specs-sheet-table tr{border-bottom:1px solid var(--recessed);}
+.specs-sheet-table tr:last-child{border-bottom:0;}
+.specs-sheet-table th{
+  text-align:left;padding:9px 6px;color:var(--taupe);
+  font-family:var(--font-mono);font-weight:450;width:40%;font-size:11px;
+}
+.specs-sheet-table td{
+  padding:9px 6px;color:var(--slate);font-weight:500;
+}
+
+/* 3. Procurement Sidebar Column (Right) */
+.procure-col{
+  display:flex;flex-direction:column;gap:18px;position:sticky;top:90px;
+}
+.procure-card{
+  background:#fff;border:1px solid var(--line);border-radius:16px;
+  padding:22px;box-shadow:var(--shadow-hybrid);display:flex;flex-direction:column;gap:14px;
+}
+.procure-shipper{
+  font-family:var(--font-mono);font-size:10.5px;color:var(--taupe);line-height:1.45;
+  border-bottom:1px dashed var(--recessed);padding-bottom:12px;
+}
+.procure-shipper strong{color:var(--slate);display:block;font-size:11.5px;}
+.procure-price-wrap{display:flex;flex-direction:column;gap:2px;}
+.procure-price-wrap .lbl{font-family:var(--font-mono);font-size:10px;color:var(--taupe);letter-spacing:.06em;}
+.procure-price-wrap .amt{font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--slate);line-height:1;}
+.procure-price-wrap .sub{font-family:var(--font-mono);font-size:11px;color:var(--sage);margin-top:2px;}
+
+.procure-how-it-works{
+  background:rgba(250,247,244,.75);border:1px solid var(--recessed);
+  border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;
+}
+.procure-how-it-works h4{font-size:12.5px;font-weight:600;color:var(--slate);}
+.procure-step{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:var(--text);line-height:1.4;}
+.step-dot{
+  width:18px;height:18px;border-radius:50%;background:var(--slate);color:#fff;
+  font-family:var(--font-mono);font-size:10px;font-weight:600;display:grid;place-items:center;flex-shrink:0;margin-top:1px;
+}
+
+/* PAINT CALCULATOR SECTION */
+.calc-field{margin-bottom:18px;}
+.calc-field label{display:block;font-family:var(--font-mono);font-size:11px;color:var(--taupe);margin-bottom:6px;letter-spacing:.06em;}
+.calc-select,.calc-input{
+  width:100%;height:44px;padding:0 14px;border-radius:10px;background:#fff;border:1px solid var(--line);
+  font-family:var(--font-sans);font-size:14px;color:var(--slate);outline:none;
+}
+.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;}
+.calc-res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px;padding-top:20px;border-top:1px solid var(--recessed);}
+.res-box{background:rgba(250,247,244,.8);padding:14px;border-radius:10px;border:1px solid var(--recessed);text-align:center;}
+.res-box .lbl{font-family:var(--font-mono);font-size:10px;color:var(--taupe);}
+.res-box .val{font-family:var(--font-mono);font-size:20px;font-weight:600;color:var(--slate);margin-top:4px;}
+
+/* PALETTE VISUALIZER */
+.palette-box{
+  height:240px;border-radius:14px;border:1px solid var(--line);
+  margin-top:18px;position:relative;display:flex;align-items:center;justify-content:center;
+  transition:background .35s var(--ease);
+}
+.swatch-group{display:flex;gap:12px;flex-wrap:wrap;}
+.swatch-btn{
+  width:42px;height:42px;border-radius:50%;border:2px solid #fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer;transition:transform .2s;
+}
+.swatch-btn:hover{transform:scale(1.12);}
+.swatch-btn.active{outline:2.5px solid var(--slate);transform:scale(1.14);}
+
+/* CHARTS SECTION */
+.curve-chart-box{background:#fff;border-radius:16px;border:1px solid var(--recessed);padding:24px;position:relative;}
+.chart-bars{display:flex;align-items:flex-end;justify-content:space-around;height:240px;padding-top:30px;border-bottom:2px solid var(--line);}
+.bar-group{display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;}
+.bar{width:48px;background:var(--slate);border-radius:6px 6px 0 0;transition:height .6s var(--ease),background .3s;position:relative;}
+.bar.accent{background:var(--sage);}
+.bar-val{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--slate);position:absolute;top:-22px;left:50%;transform:translateX(-50%);white-space:nowrap;}
+.bar-lbl{font-family:var(--font-mono);font-size:11px;color:var(--taupe);margin-top:8px;}
+
+/* BENCHMARK MATRIX SECTION */
+.spec-table{width:100%;border-collapse:collapse;margin-top:20px;}
+.spec-table th,.spec-table td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--recessed);font-size:13.5px;}
+.spec-table th{font-family:var(--font-mono);font-size:11px;color:var(--taupe);letter-spacing:.06em;background:rgba(250,247,244,.6);}
+
+/* FOOTER & MOBILE NAV */
+footer{background:#192c40;color:#fff;padding:60px 5% 24px;margin-top:80px;}
+.foot-top{max-width:1240px;margin:auto;display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.14);padding-bottom:40px;}
+.foot-bottom{max-width:1240px;margin:20px auto 0;display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,.45);}
+
+.mobile-nav{display:none;}
+@media(max-width:1024px){
+  .product-showcase-grid{grid-template-columns:320px 1fr;}
+  .procure-col{grid-column:1 / -1;position:static;}
+}
+@media(max-width:768px){
+  .product-showcase-grid{grid-template-columns:1fr;}
+  .sim-grid{grid-template-columns:1fr;}
+  .trust-badges-row{grid-template-columns:1fr;}
+  .mobile-nav{
+    display:flex;position:fixed;bottom:14px;left:14px;right:14px;z-index:100;
+    background:rgba(253,251,249,.94);backdrop-filter:blur(22px);border:1px solid var(--recessed);border-radius:18px;
+    padding:8px 4px;justify-content:space-around;
+  }
+  .mobile-nav a{display:flex;flex-direction:column;align-items:center;font-size:9.5px;color:var(--taupe);gap:4px;flex:1;}
+  .mobile-nav a svg{width:18px;height:18px;stroke:currentColor;fill:none;}
+  .mobile-nav a.active{color:var(--slate);}
+  body{padding-bottom:76px;}
+}
+/* ============================================================
+   QUOTE / BOQ MODAL STYLES IN PRODUCT-PAINT
+   ============================================================ */
+.boq-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(15, 23, 42, 0.68);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.boq-modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.boq-modal-dialog {
+  position: relative;
+  background: #FCFAF7;
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 92vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 24px 28px;
+  box-shadow: 0 30px 70px -15px rgba(15, 23, 42, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+  transform: scale(0.95) translateY(14px);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.boq-modal-dialog::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.boq-modal-backdrop.open .boq-modal-dialog {
+  transform: scale(1) translateY(0);
+}
+.boq-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--recessed);
+  border: 1px solid var(--border, rgba(0,0,0,0.1));
+  color: var(--slate);
+  font-size: 19px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+.boq-modal-close:hover {
+  background: var(--slate);
+  color: #fff;
+  border-color: var(--slate);
+  transform: rotate(90deg);
+}
+.boq-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--amber, #C86D3B);
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+.boq-modal-header h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--slate);
+  letter-spacing: -0.02em;
+  margin: 0 0 4px;
+}
+.boq-modal-header p {
+  font-size: 13px;
+  color: var(--taupe);
+  line-height: 1.4;
+  margin: 0 0 12px;
+}
+.boq-spec-badge {
+  background: rgba(217, 119, 6, 0.08);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 14px;
+}
+.boq-spec-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  color: var(--amber, #C86D3B);
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+.boq-spec-val {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--slate);
+}
+.boq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.boq-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.boq-field.full {
+  grid-column: 1 / -1;
+}
+.boq-field label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--taupe);
+  letter-spacing: 0.06em;
+}
+.boq-field input, .boq-field select, .boq-field textarea {
+  width: 100%;
+  background: #fff;
+  border: 1px solid rgba(184, 161, 139, 0.5);
+  border-radius: 9px;
+  padding: 8px 11px;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  color: var(--slate);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+.boq-field input:focus, .boq-field select:focus, .boq-field textarea:focus {
+  border-color: var(--amber, #C86D3B);
+  box-shadow: 0 0 0 3px rgba(200, 109, 59, 0.15);
+}
+.boq-field textarea {
+  resize: vertical;
+  min-height: 52px;
+}
+.boq-trust-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--taupe);
+  margin-top: 8px;
+  text-align: center;
+}
+.boq-error-msg {
+  color: #dc2626;
+  font-size: 12.5px;
+  text-align: center;
+  margin-top: 8px;
+  background: #fef2f2;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+}
+.boq-success {
+  text-align: center;
+  padding: 24px 12px 12px;
+}
+.boq-success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.boq-success h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--slate);
+  margin: 0 0 8px;
+}
+.boq-success p {
+  font-size: 14px;
+  color: var(--taupe);
+  line-height: 1.5;
+  margin: 0 auto 18px;
+  max-width: 460px;
+}
+.boq-sla-box {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 0 auto 18px;
+  max-width: 440px;
+  text-align: left;
+}
+.boq-sla-item .sla-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--taupe);
+  letter-spacing: 0.08em;
+  margin-bottom: 2px;
+}
+.boq-sla-item .sla-val {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--slate);
+}
+@media (max-width: 640px) {
+  .boq-modal-dialog { padding: 20px 16px; }
+  .boq-grid { grid-template-columns: 1fr; gap: 10px; }
+  .boq-sla-box { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav-wrap" id="navWrap">
+  <nav class="nav">
+    <a href="index.html#hero" class="nav-logo"><span class="nav-logo-mark"><img src="ostaad-logo.png" alt=""></span><b>OSTAAD</b></a>
+    <ul class="nav-links">
+      <li><a href="products.html">Product</a></li>
+      <li><a href="index.html#see">Experience</a></li>
+      <li><a href="index.html#faq">FAQ</a></li>
+      <li><a href="about.html">About us</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a class="nav-secondary" href="contact.html">Contact Ostaad</a>
+      <a href="contact.html" class="btn btn-primary btn-sm">Start a Project <span class="arrow">→</span></a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- ============================================================
+       1. TOP PRODUCT SHOWCASE & SPECS (L&T-SuFin Inspired)
+       ============================================================ -->
+  <section class="product-showcase-section">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a> <span class="sep">›</span>
+        <a href="products.html">Products</a> <span class="sep">›</span>
+        <span class="current" id="crumbTitle">Architectural Low-VOC Paint</span>
+      </div>
+
+      <div class="product-showcase-grid">
+
+        <!-- LEFT COLUMN: Product Pack & Consultation -->
+        <div class="gallery-col">
+          <div class="main-pack-view">
+            <span class="pack-badge-grade" id="badgeGrade">LOW-VOC EGGSHELL</span>
+            <img id="mainPackImg" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTjkrafCni3qdRD-VeAS-k9Rasafu0PHsmMHVsBnUj7qa1fjJixta9V88&s=10" alt="Architectural Low-VOC Paint">
+            <span class="pack-badge-cert">IS 15489 CLASS A</span>
+          </div>
+
+          <!-- Thumbnail selector to toggle between Matt Eggshell and Satin Silk -->
+          <div class="pack-thumbnails">
+            <button type="button" class="thumb-btn active" id="thumbEggshell" data-finish="eggshell">
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTjkrafCni3qdRD-VeAS-k9Rasafu0PHsmMHVsBnUj7qa1fjJixta9V88&s=10" alt="Matt Eggshell" class="thumb-img">
+              <div>
+                <span class="thumb-title">Matt Eggshell</span>
+                <span class="thumb-sub">₹34/sqft · Low Sheen</span>
+              </div>
+            </button>
+
+            <button type="button" class="thumb-btn" id="thumbSilk" data-finish="silk">
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTjkrafCni3qdRD-VeAS-k9Rasafu0PHsmMHVsBnUj7qa1fjJixta9V88&s=10" alt="Satin Silk" class="thumb-img">
+              <div>
+                <span class="thumb-title">Satin Silk</span>
+                <span class="thumb-sub">₹42/sqft · Washable</span>
+              </div>
+            </button>
+          </div>
+
+          <div class="need-help-box">
+            <h4>Need Shade Card Consultation?</h4>
+            <p>Our architectural finishes team provides physical swatch boxes and on-site wall moisture testing before primer application.</p>
+            <a href="contact.html" class="btn btn-secondary btn-sm">Submit Enquiry <span>→</span></a>
+          </div>
+        </div>
+
+        <!-- CENTER COLUMN: Specifications, Offers & Trust -->
+        <div class="detail-col">
+          <div>
+            <h1 class="product-main-title" id="productTitle">Architectural Low-VOC Micro-Porous Acrylic Emulsion</h1>
+            <div class="detail-meta-bar">
+              <div class="meta-verified-tag" id="verifiedMetaTag">⚡ 540+ Homes Painted · Verified Direct Mill Baseline</div>
+              <button type="button" class="copy-link-btn" id="copyLinkBtn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                <span id="copyLinkText">Copy Link</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Offers / Verification callouts -->
+          <div class="offers-card">
+            <div class="offers-title">Offers & Procurement Benchmarks</div>
+            <div class="offer-item">
+              <span class="chk">✓</span>
+              <div><strong>Live Verified Rate:</strong> <span id="rateLabel">₹34 / Sq Ft Applied (Eggshell)</span> & ₹42 / Sq Ft (Satin Silk) · Direct Factory Benchmark.</div>
+            </div>
+            <div class="offer-item">
+              <span class="chk">✓</span>
+              <div><strong>Zero-Chalking Guarantee:</strong> Formulated with 100% pure cross-linking acrylic copolymers preventing surface dust shedding.</div>
+            </div>
+            <div class="offer-item">
+              <span class="chk">✓</span>
+              <div><strong>Tamper-Proof Hermetic Pails:</strong> High-density poly pails with tear-strip tamper-proof seals preventing adulteration with excess water.</div>
+            </div>
+          </div>
+
+          <!-- Trust Badges Row -->
+          <div class="trust-badges-row">
+            <div class="trust-pill">
+              <span class="ico">🚚</span>
+              <span class="t-label">Assured Direct Delivery</span>
+              <span class="t-sub">Site dispatch in 24–48 hrs</span>
+            </div>
+            <div class="trust-pill">
+              <span class="ico">🌿</span>
+              <span class="t-label">Ultra Low-VOC (&lt;15 g/L)</span>
+              <span class="t-sub">Child-safe & immediate occupancy</span>
+            </div>
+            <div class="trust-pill">
+              <span class="ico">🛡️</span>
+              <span class="t-label">BIS Certified Quality</span>
+              <span class="t-sub">IS 15489 Class A Premium</span>
+            </div>
+          </div>
+
+          <!-- Technical Specifications Table -->
+          <div class="specs-sheet-card">
+            <h3>Technical Specifications</h3>
+            <table class="specs-sheet-table">
+              <tbody>
+                <tr>
+                  <th>Coating System</th>
+                  <td id="specType">Pure Acrylic Copolymer Micro-Porous Emulsion</td>
+                </tr>
+                <tr>
+                  <th>Standard Compliance</th>
+                  <td id="specStandard">IS 15489 : 2013 Class A Interior Specification</td>
+                </tr>
+                <tr>
+                  <th>VOC Emissions</th>
+                  <td>&lt; 15 g/L (Meets IGBC & GRIHA Green Building norms)</td>
+                </tr>
+                <tr>
+                  <th>Scrub Washability</th>
+                  <td id="specScrub">&gt; 2,000 Wet Cycles without sheen degradation</td>
+                </tr>
+                <tr>
+                  <th>Theoretical Coverage</th>
+                  <td>140–160 Sq Ft / Litre (2 coats on primed masonry)</td>
+                </tr>
+                <tr>
+                  <th>Drying Time (30°C)</th>
+                  <td>Surface Touch: 30–45 mins · Recoat: 4 hours</td>
+                </tr>
+                <tr>
+                  <th>Sheen Value (@60°)</th>
+                  <td id="specSheen">8–12% (Muted Warm Eggshell)</td>
+                </tr>
+                <tr>
+                  <th>Bio-Inhibitor</th>
+                  <td>Zinc-pyrithione anti-fungal & anti-mildew additive</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Procurement Box -->
+        <div class="procure-col">
+          <div class="procure-card">
+            <div class="procure-shipper">
+              DISPATCHED FROM BATCH CHEMICAL PLANTS
+              <strong>Fresh Batch Clinker Milling · Seal Inspected</strong>
+            </div>
+
+            <div class="procure-price-wrap">
+              <span class="lbl">VERIFIED APPLIED RATE</span>
+              <div class="amt" id="procurePrice">₹34</div>
+              <span class="sub" id="procureUnit">/ SQ FT (2 COATS) · TAX INCL.</span>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <button type="button" id="topRequestQuoteBtn" onclick="openQuoteModal()" class="btn btn-primary" style="justify-content:center;cursor:pointer;">Request Quote for Bulk <span class="arrow">→</span></button>
+              <a href="#paintCalc" class="btn btn-secondary" style="justify-content:center;">Calculate Paint Quota ↓</a>
+            </div>
+
+            <div class="procure-how-it-works">
+              <h4>How does Ostaad Bulk Buying work?</h4>
+              <div class="procure-step">
+                <span class="step-dot">1</span>
+                <div><strong>Input Carpet Area:</strong> Our multiplier calculates exact 2-coat wall volume.</div>
+              </div>
+              <div class="procure-step">
+                <span class="step-dot">2</span>
+                <div><strong>Transparent Rate:</strong> Transparent direct-mill pricing with zero paint dealer markups.</div>
+              </div>
+              <div class="procure-step">
+                <span class="step-dot">3</span>
+                <div><strong>Site Delivery:</strong> Factory sealed pails delivered directly to your project site.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       2. PAINT CALCULATOR SECTION
+       ============================================================ -->
+  <section class="section" id="paintCalc" style="background:var(--surface);border-bottom:1px solid var(--recessed);">
+    <div class="container">
+      <div class="eyebrow">PAINT CALCULATOR</div>
+      <h2 style="font-size:clamp(28px,3.8vw,42px);font-weight:500;color:var(--slate);letter-spacing:-.035em;margin-bottom:10px;">
+        Paint Calculator — Surface Coverage & Primer Estimator
+      </h2>
+      <p style="color:var(--text);max-width:680px;line-height:1.6;">
+        Input your home carpet area to estimate net paintable wall surface (using standard 2.8× multiplier for 10ft ceiling height), required primer litres, and total emulsion volume.
+      </p>
+
+      <div class="sim-grid">
+        <div class="card">
+          <h3 style="font-size:17px;color:var(--slate);margin-bottom:18px;">Space Dimensions & Finish</h3>
+          
+          <div class="calc-field">
+            <label>FLOOR CARPET AREA (SQ FT)</label>
+            <input type="number" id="carpetArea" class="calc-input" value="1200" min="100" max="25000">
+          </div>
+
+          <div class="calc-field">
+            <label>DESIRED SHEEN / FORMULATION</label>
+            <select id="finishSelect" class="calc-select">
+              <option value="eggshell">Low-VOC Matt Eggshell (₹34 / sq ft applied)</option>
+              <option value="silk">Satin Silk Luxury (₹42 / sq ft applied)</option>
+            </select>
+          </div>
+
+          <div class="calc-field">
+            <label>SURFACE CONDITION</label>
+            <select id="surfaceSelect" class="calc-select">
+              <option value="fresh">Fresh Plaster / Bare Wall (Needs Acrylic Primer)</option>
+              <option value="repaint">Repainting over Sound Old Surface</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card" style="background:var(--slate);color:#fff;">
+          <div class="eyebrow" style="color:rgba(255,255,255,.6);">CALCULATED PROCUREMENT QUOTA</div>
+          <div style="font-size:28px;font-weight:600;font-family:var(--font-mono);margin:10px 0;" id="calcWallArea">3,360 Sq Ft</div>
+          <p style="font-size:13.5px;color:rgba(255,255,255,.75);margin-bottom:20px;" id="calcAreaDesc">
+            Estimated wall & ceiling surface: 1,200 sq ft carpet × 2.8 standard residential height multiplier.
+          </p>
+
+          <div class="calc-res-grid">
+            <div class="res-box" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15);">
+              <div class="lbl" style="color:rgba(255,255,255,.6);">EMULSION REQD</div>
+              <div class="val" style="color:#fff;" id="calcEmulsion">23 Litres</div>
+            </div>
+            <div class="res-box" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15);">
+              <div class="lbl" style="color:rgba(255,255,255,.6);">PRIMER REQD</div>
+              <div class="val" style="color:#fff;" id="calcPrimer">17 Litres</div>
+            </div>
+            <div class="res-box" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15);">
+              <div class="lbl" style="color:rgba(255,255,255,.6);">TOTAL EST. COST</div>
+              <div class="val" style="color:#fff;" id="calcTotalCost">₹1,14,240</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       3. INTERACTIVE PALETTE & SHADE PREVIEW
+       ============================================================ -->
+  <section class="section" id="paletteSection">
+    <div class="container">
+      <div class="eyebrow">ARCHITECTURAL PALETTE</div>
+      <h2 style="font-size:clamp(28px,3.8vw,42px);font-weight:500;color:var(--slate);letter-spacing:-.035em;margin-bottom:10px;">
+        Curated Mineral Pigments
+      </h2>
+      <p style="color:var(--text);max-width:620px;margin-bottom:30px;">
+        Test curated architectural tones under simulated neutral daylight illumination. All shades are calibrated with non-fading lightfast inorganic oxides.
+      </p>
+
+      <div class="card" style="padding:32px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:24px;">
+          <div>
+            <div style="font-family:var(--font-mono);font-size:10.5px;color:var(--taupe);letter-spacing:.08em;">SELECTED PIGMENT TONE</div>
+            <h3 style="font-size:20px;color:var(--slate);margin-top:4px;" id="swatchTitle">Raw Calico (#EDE8DF)</h3>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;">
+            <button type="button" class="swatch-btn active" style="background:#EDE8DF;" data-color="#EDE8DF" data-name="Raw Calico" title="Raw Calico"></button>
+            <button type="button" class="swatch-btn" style="background:#E2DDD4;" data-color="#E2DDD4" data-name="Limestone Neutral" title="Limestone Neutral"></button>
+            <button type="button" class="swatch-btn" style="background:#D6CFBE;" data-color="#D6CFBE" data-name="Oatmeal Mineral" title="Oatmeal Mineral"></button>
+            <button type="button" class="swatch-btn" style="background:#C4BDAE;" data-color="#C4BDAE" data-name="Clay Taupe" title="Clay Taupe"></button>
+            <button type="button" class="swatch-btn" style="background:#7C8764;" data-color="#7C8764" data-name="Earthy Sage" title="Earthy Sage"></button>
+            <button type="button" class="swatch-btn" style="background:#23384F;" data-color="#23384F" data-name="Deep Midnight Slate" title="Deep Midnight Slate"></button>
+          </div>
+        </div>
+
+        <div id="paletteBox" style="height:180px;border-radius:14px;background:#EDE8DF;border:1px solid var(--recessed);display:flex;align-items:center;justify-content:center;transition:background .35s var(--ease);box-shadow:inset 0 2px 8px rgba(0,0,0,.04);">
+          <div style="background:rgba(255,255,255,.85);backdrop-filter:blur(8px);padding:10px 20px;border-radius:8px;font-family:var(--font-mono);font-size:12px;color:var(--slate);">
+            ⚡ 100% Lightfast Inorganic Pigmentation
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4. BENCHMARK MATRIX (BIS IS 15489 COMPLIANCE)
+       ============================================================ -->
+  <section class="section" id="matrixSection" style="background:var(--surface);border-top:1px solid var(--recessed);">
+    <div class="container">
+      <div class="card">
+        <div class="eyebrow">TECHNICAL COMPLIANCE AUDIT</div>
+        <h3 style="font-size:22px;color:var(--slate);margin-bottom:6px;letter-spacing:-.02em;">Bureau of Indian Standards (BIS) Paint Matrix</h3>
+        <p style="color:var(--taupe);font-family:var(--font-mono);font-size:12px;margin-bottom:16px;">IS 15489 PLASTIC EMULSION PHYSICAL AUDIT CRITERIA</p>
+
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th>TECHNICAL PARAMETER</th>
+              <th style="color:var(--slate);background:rgba(35,56,79,.08);">CLASS A (PREMIUM OSTAAD BENCHMARK)</th>
+              <th>CLASS B (STANDARD COMMERCIAL)</th>
+              <th>UNBRANDED DISTEMPER</th>
+              <th>TEST METHOD</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>VOC Content</strong></td>
+              <td style="color:var(--sage);font-weight:600;">&lt; 25 g/L (Green Seal Certified)</td>
+              <td>&lt; 85 g/L</td>
+              <td>&gt; 200 g/L</td>
+              <td>ASTM D3960 / IS 101</td>
+            </tr>
+            <tr>
+              <td><strong>Wet Scrub Resistance</strong></td>
+              <td style="color:var(--slate);font-weight:600;">&gt; 2,000 Cycles (Class 1 Washable)</td>
+              <td>&gt; 1,000 Cycles</td>
+              <td>&lt; 100 Cycles (Chalks & rubs off)</td>
+              <td>IS 101 (Part 5 / Sec 2)</td>
+            </tr>
+            <tr>
+              <td><strong>Recoat Time</strong></td>
+              <td>3 – 4 Hours</td>
+              <td>6 – 8 Hours</td>
+              <td>12 Hours</td>
+              <td>IS 101 (Part 3 / Sec 1)</td>
+            </tr>
+            <tr>
+              <td><strong>Theoretical Coverage</strong></td>
+              <td style="color:var(--slate);font-weight:600;">140 – 160 sq ft / litre (2 coats)</td>
+              <td>100 – 120 sq ft / litre</td>
+              <td>60 – 80 sq ft / litre</td>
+              <td>BIS Standard Spread Rate</td>
+            </tr>
+            <tr>
+              <td><strong>Anti-Fungal Efficacy</strong></td>
+              <td>Rating 1 (Zero Growth in 28 Days)</td>
+              <td>Rating 2 (Slight Growth)</td>
+              <td>Rating 3 (Fails in Humid Zones)</td>
+              <td>IS 101 (Part 7 / Sec 3)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       REQUEST QUOTE / BOQ INTEGRATION DIALOG MODAL
+       ============================================================ -->
+  <div class="boq-modal-backdrop" id="boqModal" role="dialog" aria-modal="true" aria-labelledby="boqModalTitle" style="display:none;">
+    <div class="boq-modal-dialog">
+      <button type="button" class="boq-modal-close" id="closeBoqModal" aria-label="Close dialog">×</button>
+
+      <!-- Authentication Required Gate -->
+      <div id="boqAuthGate" style="display:none; text-align:center; padding: 24px 12px 14px;">
+        <div style="width:58px; height:58px; border-radius:50%; background:rgba(200,109,59,.12); color:#C86D3B; display:flex; align-items:center; justify-content:center; margin: 0 auto 16px;">
+          <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h3 style="font-size:22px; font-weight:700; color:var(--slate); margin:0 0 8px;">Authentication Required</h3>
+        <p style="font-size:14px; color:var(--taupe); max-width:440px; margin:0 auto 20px; line-height:1.5;">
+          You must be logged in to request a verified factory quote and paint procurement schedule for your project.
+        </p>
+        
+        <div class="boq-spec-badge" style="max-width:440px; margin: 0 auto 24px; text-align:left;">
+          <span class="boq-spec-label">TARGET MATERIAL SPECIFICATION</span>
+          <span class="boq-spec-val" id="boqGateSpecVal">Architectural Low-VOC Luxury Interior Emulsion (IS 15489)</span>
+        </div>
+
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+          <a href="login.html?redirect=product-paint.html" class="btn btn-primary" style="padding:12px 24px; font-size:13.5px; border-radius:12px; text-decoration:none;">
+            <span>Sign In to Continue</span> <span class="arrow">→</span>
+          </a>
+          <a href="signup.html?redirect=product-paint.html" class="btn btn-secondary" style="padding:12px 24px; font-size:13.5px; border-radius:12px; text-decoration:none;">
+            Create New Account
+          </a>
+        </div>
+      </div>
+
+      <div id="boqFormContainer">
+        <div class="boq-modal-header">
+          <span class="boq-eyebrow">FACTORY-DIRECT PROCUREMENT & BOQ</span>
+          <h3 id="boqModalTitle">Request Verified Bulk Quote</h3>
+          <p>Connect direct chemical mill rates and coverage verification into your project's procurement schedule.</p>
+
+          <div class="boq-spec-badge" id="boqSpecBadge">
+            <span class="boq-spec-label">TARGET MATERIAL SPECIFICATION</span>
+            <span class="boq-spec-val" id="boqSpecVal">Architectural Low-VOC Interior Emulsion · Class A (₹34/sq ft)</span>
+          </div>
+        </div>
+
+        <form id="boqForm" class="boq-form">
+          <input type="hidden" name="access_key" value="6d71ee60-2f5a-436e-b445-ec657bf48f2a">
+          <input type="hidden" name="subject" id="boqSubject" value="New Bulk Paint Quote Request - Ostaad">
+          <input type="hidden" name="from_name" value="Ostaad Paint Procurement Desk">
+          <input type="hidden" name="specification" id="boqSpecInput" value="Architectural Low-VOC Interior Emulsion (IS 15489)">
+
+          <div class="boq-grid">
+            <div class="boq-field">
+              <label for="boqName">FULL NAME *</label>
+              <input type="text" id="boqName" name="name" required placeholder="e.g. Rahul Sen">
+            </div>
+
+            <div class="boq-field">
+              <label for="boqEmail">WORK / PERSONAL EMAIL *</label>
+              <input type="email" id="boqEmail" name="email" required placeholder="e.g. rahul@example.com">
+            </div>
+
+            <div class="boq-field">
+              <label for="boqPhone">PHONE / WHATSAPP *</label>
+              <input type="tel" id="boqPhone" name="phone" required placeholder="+91 98300 XXXXX">
+            </div>
+
+            <div class="boq-field">
+              <label for="boqPincode">PROJECT PIN CODE *</label>
+              <input type="text" id="boqPincode" name="pincode" required pattern="[0-9]{6}" maxlength="6" placeholder="e.g. 700091">
+            </div>
+
+            <div class="boq-field">
+              <label for="boqStage">CURRENT PROJECT STAGE</label>
+              <select id="boqStage" name="project_stage">
+                <option value="Final Finishing & Painting">Final Finishing & Painting</option>
+                <option value="Plastering & Putty Surface Prep">Plastering & Putty Surface Prep</option>
+                <option value="Planning & Architectural Drawings">Planning & Architectural Drawings</option>
+                <option value="Interior Fitouts & Woodwork">Interior Fitouts & Woodwork</option>
+              </select>
+            </div>
+
+            <div class="boq-field">
+              <label for="boqQty">ESTIMATED QUANTITY (LITRES / SQ FT)</label>
+              <input type="text" id="boqQty" name="quantity" placeholder="e.g. ~120 Litres / 2,400 sq ft wall area">
+            </div>
+
+            <div class="boq-field full">
+              <label for="boqNotes">PROJECT NOTES & SHADE PREFERENCES</label>
+              <textarea id="boqNotes" name="notes" rows="3" placeholder="Specify wall condition, target shade code (e.g. Raw Calico), or delivery timeline."></textarea>
+            </div>
+          </div>
+
+          <button type="submit" id="boqSubmitBtn" class="btn btn-primary" style="width:100%; justify-content:center; padding:14px; font-size:14px; border-radius:12px; cursor:pointer;">
+            <span>Submit Quote Request to Engineering Desk</span> <span class="arrow">→</span>
+          </button>
+
+          <div class="boq-trust-note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Batch Fresh Guarantee · Zero Thinning/Adulteration · Direct Mill Dispatch</span>
+          </div>
+
+          <div class="boq-error-msg" id="boqErrorMsg" style="display:none;"></div>
+        </form>
+      </div>
+
+      <!-- Success State -->
+      <div id="boqSuccessState" class="boq-success" style="display:none;">
+        <div class="boq-success-icon">
+          <svg viewBox="0 0 24 24" width="32" height="32" stroke="#059669" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h3>Quote Request Submitted!</h3>
+        <p>Your architectural paint procurement inquiry for <strong id="boqSuccessSpec">Low-VOC Interior Emulsion</strong> has been logged. An audited quote and test certificates will be sent to <strong id="boqSuccessEmail">your email</strong>.</p>
+        
+        <div class="boq-sla-box">
+          <div class="boq-sla-item">
+            <span class="sla-label">ESTIMATED RESPONSE TIME</span>
+            <span class="sla-val">&lt; 3 Business Hours</span>
+          </div>
+          <div class="boq-sla-item">
+            <span class="sla-label">LOGISTICS AUDIT</span>
+            <span class="sla-val">Direct Factory Dispatch</span>
+          </div>
+        </div>
+
+        <button type="button" id="boqSuccessCloseBtn" class="btn btn-secondary" style="padding:10px 24px; font-size:13.5px; border-radius:10px; cursor:pointer;">Close Window</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-top">
+    <div>
+      <h3 style="font-size:15px;letter-spacing:.14em;margin-bottom:8px;">OSTAAD</h3>
+      <p style="font-size:13px;color:rgba(255,255,255,.6);max-width:320px;">The costing and procurement intelligence layer for residential construction.</p>
+    </div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--taupe);margin-bottom:12px;">SPECIFICATIONS</div>
+      <div style="display:flex;gap:20px;font-size:13px;flex-wrap:wrap;">
+        <a href="products.html">All Products</a>
+        <a href="product-cement.html">Cement</a>
+        <a href="product-tiles.html">Tiles</a>
+        <a href="product-paint.html" style="color:#fff;font-weight:600;">Paint</a>
+        <a href="product-plywood.html">Plywood</a>
+        <a href="product-waterproofing.html">Waterproofing</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 Ostaad Technologies Pvt Ltd</span>
+    <span>SEE. KNOW. BUILD.</span>
+  </div>
+</footer>
+
+<!-- MOBILE NAV -->
+<nav class="mobile-nav">
+  <a href="index.html"><svg viewBox="0 0 24 24"><path d="M4 20V10l8-6 8 6v10"/></svg>Home</a>
+  <a href="products.html" class="active"><svg viewBox="0 0 24 24"><path d="M12 3v18M7 8l5-5 5 5"/></svg>Products</a>
+  <a href="index.html#see"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>Experience</a>
+  <a href="contact.html"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="m4 7 8 6 8-6"/></svg>Contact</a>
+</nav>
+
+<script src="cookie-consent.js"></script>
+<script>
+// Floating Nav hide/show
+const navWrap = document.getElementById('navWrap');
+let lastY = window.scrollY;
+window.addEventListener('scroll', ()=>{
+  const y = window.scrollY;
+  if(y > lastY && y > 140){ navWrap?.classList.add('nav-hide'); }
+  else{ navWrap?.classList.remove('nav-hide'); }
+  lastY = y;
+},{passive:true});
+
+// Paint Switcher Logic
+const thumbEggshell = document.getElementById('thumbEggshell');
+const thumbSilk = document.getElementById('thumbSilk');
+const badgeGrade = document.getElementById('badgeGrade');
+const rateLabel = document.getElementById('rateLabel');
+const procurePrice = document.getElementById('procurePrice');
+const specScrub = document.getElementById('specScrub');
+const specSheen = document.getElementById('specSheen');
+const finishSelect = document.getElementById('finishSelect');
+
+function selectFinish(type) {
+  if (type === 'eggshell') {
+    if (thumbEggshell) thumbEggshell.classList.add('active');
+    if (thumbSilk) thumbSilk.classList.remove('active');
+    if (badgeGrade) {
+      badgeGrade.textContent = 'LOW-VOC EGGSHELL';
+      badgeGrade.style.background = 'var(--sage)';
+    }
+    if (rateLabel) rateLabel.textContent = '₹34 / Sq Ft Applied (Eggshell)';
+    if (procurePrice) procurePrice.textContent = '₹34';
+    if (specScrub) specScrub.textContent = '> 2,000 Wet Cycles without sheen degradation';
+    if (specSheen) specSheen.textContent = '8–12% (Muted Warm Eggshell)';
+    if (finishSelect) finishSelect.value = 'eggshell';
+  } else {
+    if (thumbSilk) thumbSilk.classList.add('active');
+    if (thumbEggshell) thumbEggshell.classList.remove('active');
+    if (badgeGrade) {
+      badgeGrade.textContent = 'SATIN SILK ACTIVE';
+      badgeGrade.style.background = 'var(--slate)';
+    }
+    if (rateLabel) rateLabel.textContent = '₹42 / Sq Ft Applied (Satin Silk)';
+    if (procurePrice) procurePrice.textContent = '₹42';
+    if (specScrub) specScrub.textContent = '> 3,500 Wet Scrub Cycles (Ultra Scrub Resistance)';
+    if (specSheen) specSheen.textContent = '22–28% (Rich Satin Silk)';
+    if (finishSelect) finishSelect.value = 'silk';
+  }
+  if (typeof updateCalc === 'function') updateCalc();
+}
+
+if (thumbEggshell) thumbEggshell.addEventListener('click', () => selectFinish('eggshell'));
+if (thumbSilk) thumbSilk.addEventListener('click', () => selectFinish('silk'));
+
+// Copy link button
+const copyLinkBtn = document.getElementById('copyLinkBtn');
+const copyLinkText = document.getElementById('copyLinkText');
+if (copyLinkBtn) {
+  copyLinkBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      if (copyLinkText) copyLinkText.textContent = 'Copied!';
+      setTimeout(() => { if (copyLinkText) copyLinkText.textContent = 'Copy Link'; }, 2000);
+    }).catch(() => {
+      if (copyLinkText) copyLinkText.textContent = 'Copied!';
+      setTimeout(() => { if (copyLinkText) copyLinkText.textContent = 'Copy Link'; }, 2000);
+    });
+  });
+}
+
+// Paint Calculator Logic
+const carpetArea = document.getElementById('carpetArea');
+const surfaceSelect = document.getElementById('surfaceSelect');
+const calcWallArea = document.getElementById('calcWallArea');
+const calcAreaDesc = document.getElementById('calcAreaDesc');
+const calcEmulsion = document.getElementById('calcEmulsion');
+const calcPrimer = document.getElementById('calcPrimer');
+const calcTotalCost = document.getElementById('calcTotalCost');
+
+function updateCalc() {
+  if (!carpetArea || !finishSelect || !surfaceSelect) return;
+  const carpet = parseFloat(carpetArea.value) || 0;
+  const wallSurface = Math.round(carpet * 2.8);
+  const finish = finishSelect.value;
+  const surface = surfaceSelect.value;
+
+  const rateSqFt = finish === 'eggshell' ? 34 : 42;
+  const totalCost = wallSurface * rateSqFt;
+
+  const emulsionLiters = Math.ceil(wallSurface / 150);
+  const primerLiters = surface === 'fresh' ? Math.ceil(wallSurface / 200) : Math.ceil(wallSurface / 350);
+
+  if (calcWallArea) calcWallArea.textContent = `${wallSurface.toLocaleString()} Sq Ft`;
+  if (calcAreaDesc) calcAreaDesc.textContent = `Estimated wall & ceiling surface: ${carpet.toLocaleString()} sq ft carpet × 2.8 standard residential height multiplier.`;
+  if (calcEmulsion) calcEmulsion.textContent = `${emulsionLiters} Litres`;
+  if (calcPrimer) calcPrimer.textContent = `${primerLiters} Litres`;
+  if (calcTotalCost) calcTotalCost.textContent = `₹${totalCost.toLocaleString()}`;
+}
+
+[carpetArea, finishSelect, surfaceSelect].forEach(el => {
+  if (el) el.addEventListener('input', updateCalc);
+});
+updateCalc();
+
+// Swatch Picker Logic
+const paletteBox = document.getElementById('paletteBox');
+const swatchTitle = document.getElementById('swatchTitle');
+document.querySelectorAll('.swatch-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.swatch-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const col = btn.dataset.color;
+    const name = btn.dataset.name;
+    if (paletteBox) paletteBox.style.background = col;
+    if (swatchTitle) swatchTitle.textContent = `${name} (${col})`;
+  });
+});
+
+// Quote Request Modal Logic
+function openQuoteModal() {
+  const boqModal = document.getElementById('boqModal');
+  if (!boqModal) return;
+
+  const isAuth = !!window.ostaadCurrentUser;
+  const authGate = document.getElementById('boqAuthGate');
+  const boqFormContainer = document.getElementById('boqFormContainer');
+  const boqSuccessState = document.getElementById('boqSuccessState');
+  const boqErrorMsg = document.getElementById('boqErrorMsg');
+  const boqSubmitBtn = document.getElementById('boqSubmitBtn');
+  const boqSpecVal = document.getElementById('boqSpecVal');
+  const boqGateSpecVal = document.getElementById('boqGateSpecVal');
+  const boqSpecInput = document.getElementById('boqSpecInput');
+  const boqSubject = document.getElementById('boqSubject');
+  
+  const currentFinish = finishSelect ? finishSelect.value : 'eggshell';
+  const specText = currentFinish === 'silk' 
+    ? 'Architectural Satin Silk Interior Luxury Emulsion · IS 15489 (₹42/sq ft)' 
+    : 'Architectural Low-VOC Interior Emulsion · Class A IS 15489 (₹34/sq ft)';
+
+  if (boqSpecVal) boqSpecVal.textContent = specText;
+  if (boqGateSpecVal) boqGateSpecVal.textContent = specText;
+  if (boqSpecInput) boqSpecInput.value = specText;
+  if (boqSubject) boqSubject.value = `Bulk Paint Quote Request - ${specText} - Ostaad`;
+
+  if (!isAuth) {
+    if (authGate) authGate.style.display = 'block';
+    if (boqFormContainer) boqFormContainer.style.display = 'none';
+    if (boqSuccessState) boqSuccessState.style.display = 'none';
+  } else {
+    if (authGate) authGate.style.display = 'none';
+    if (boqFormContainer) boqFormContainer.style.display = 'block';
+    if (boqSuccessState) boqSuccessState.style.display = 'none';
+    if (boqErrorMsg) {
+      boqErrorMsg.style.display = 'none';
+      boqErrorMsg.textContent = '';
+    }
+    if (boqSubmitBtn) {
+      boqSubmitBtn.disabled = false;
+      boqSubmitBtn.innerHTML = '<span>Submit Quote Request to Engineering Desk</span> <span class="arrow">→</span>';
+    }
+
+    // Auto pre-fill
+    const nameEl = document.getElementById('boqName');
+    const emailEl = document.getElementById('boqEmail');
+    const phoneEl = document.getElementById('boqPhone');
+    const pincodeEl = document.getElementById('boqPincode');
+    if (nameEl && window.ostaadCurrentUser) {
+      nameEl.value = window.ostaadCurrentUser.displayName || (window.ostaadUserProfile ? window.ostaadUserProfile.displayName : '');
+    }
+    if (emailEl && window.ostaadCurrentUser) {
+      emailEl.value = window.ostaadCurrentUser.email || '';
+    }
+    if (phoneEl && window.ostaadUserProfile && window.ostaadUserProfile.phone && !phoneEl.value) {
+      phoneEl.value = window.ostaadUserProfile.phone;
+    }
+    if (pincodeEl && window.ostaadUserProfile && window.ostaadUserProfile.pincode && !pincodeEl.value) {
+      pincodeEl.value = window.ostaadUserProfile.pincode;
+    }
+  }
+
+  boqModal.style.display = 'flex';
+  requestAnimationFrame(() => {
+    boqModal.classList.add('open');
+  });
+  document.body.style.overflow = 'hidden';
+}
+window.openQuoteModal = openQuoteModal;
+
+function closeQuoteModal() {
+  const boqModal = document.getElementById('boqModal');
+  if (!boqModal) {
+    document.body.style.overflow = '';
+    return;
+  }
+  boqModal.classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => {
+    boqModal.style.display = 'none';
+  }, 300);
+}
+window.closeQuoteModal = closeQuoteModal;
+
+// Wire buttons & modal events
+const topRequestQuoteBtn = document.getElementById('topRequestQuoteBtn');
+const closeBoqModal = document.getElementById('closeBoqModal');
+const boqSuccessCloseBtn = document.getElementById('boqSuccessCloseBtn');
+const boqModalEl = document.getElementById('boqModal');
+const boqForm = document.getElementById('boqForm');
+
+if (topRequestQuoteBtn) topRequestQuoteBtn.addEventListener('click', openQuoteModal);
+if (closeBoqModal) closeBoqModal.addEventListener('click', closeQuoteModal);
+if (boqSuccessCloseBtn) boqSuccessCloseBtn.addEventListener('click', closeQuoteModal);
+if (boqModalEl) {
+  boqModalEl.addEventListener('click', (e) => {
+    if (e.target === boqModalEl) closeQuoteModal();
+  });
+}
+document.addEventListener('keydown', (e) => {
+  const modal = document.getElementById('boqModal');
+  if (e.key === 'Escape' && modal && modal.classList.contains('open')) closeQuoteModal();
+});
+
+if (boqForm) {
+  boqForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!window.ostaadCurrentUser) {
+      window.location.href = 'login.html?redirect=product-paint.html';
+      return;
+    }
+
+    const submitBtn = document.getElementById('boqSubmitBtn');
+    const errEl = document.getElementById('boqErrorMsg');
+    const formBox = document.getElementById('boqFormContainer');
+    const successBox = document.getElementById('boqSuccessState');
+    const emailTarget = document.getElementById('boqSuccessEmail');
+    const specTarget = document.getElementById('boqSuccessSpec');
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>⏳ Sending to Engineering Desk...</span>';
+    }
+    if (errEl) errEl.style.display = 'none';
+
+    const formData = new FormData(boqForm);
+    const json = JSON.stringify(Object.fromEntries(formData));
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: json
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        if (window.OstaadAuth && window.OstaadAuth.saveUserBOQ) {
+          window.OstaadAuth.saveUserBOQ(Object.fromEntries(formData)).catch(err => console.warn('Firestore BOQ:', err));
+        }
+        const emailVal = document.getElementById('boqEmail') ? document.getElementById('boqEmail').value : '';
+        if (emailTarget) emailTarget.textContent = emailVal || 'your email';
+        if (specTarget) specTarget.textContent = 'Architectural Low-VOC Interior Emulsion';
+        if (formBox) formBox.style.display = 'none';
+        if (successBox) successBox.style.display = 'block';
+        boqForm.reset();
+      } else {
+        throw new Error(data.message || 'Submission failed');
+      }
+    } catch (err) {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Submit Quote Request to Engineering Desk</span> <span class="arrow">→</span>';
+      }
+      if (errEl) {
+        errEl.textContent = 'Submission error. Please check your connection or contact us at contact@ostaad.in';
+        errEl.style.display = 'block';
+      }
+    }
+  });
+}
+
+// Pre-fill on auth change
+window.addEventListener('load', () => {
+  if (window.OstaadAuth && window.OstaadAuth.onAuthStateChange) {
+    window.OstaadAuth.onAuthStateChange(({ isAuthenticated, user, profile }) => {
+      if (isAuthenticated && user) {
+        const nameEl = document.getElementById('boqName');
+        const emailEl = document.getElementById('boqEmail');
+        const phoneEl = document.getElementById('boqPhone');
+        const pincodeEl = document.getElementById('boqPincode');
+        if (nameEl && !nameEl.value) nameEl.value = user.displayName || (profile ? profile.displayName : '');
+        if (emailEl && !emailEl.value) emailEl.value = user.email || '';
+        if (phoneEl && profile && profile.phone && !phoneEl.value) phoneEl.value = profile.phone;
+        if (pincodeEl && profile && profile.pincode && !pincodeEl.value) pincodeEl.value = profile.pincode;
+      }
+    });
+  }
+});
+</script>
+<script type="module" src="navbar-auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+/* ============================================================
+   OSTAAD — Cookie Consent Banner
+   ============================================================ */
+.cookie-banner{
+  position:fixed;z-index:1000;right:18px;bottom:18px;
+  width:min(470px,calc(100vw - 36px));
+  display:grid;gap:18px;padding:20px;
+  border:1px solid rgba(184,161,139,.5);border-radius:18px;
+  background:rgba(253,251,249,.96);color:#23384f;
+  box-shadow:0 18px 48px rgba(35,56,79,.2);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  font-family:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+.cookie-copy strong{font-size:16px;font-weight:600;}
+.cookie-copy p{margin:7px 0;color:#625f59;font-size:13px;line-height:1.5;}
+.cookie-copy a{color:#a87545;font-size:12px;text-decoration:underline;}
+.cookie-actions{display:flex;flex-wrap:wrap;gap:8px;}
+.cookie-actions button{
+  padding:10px 14px;border:1px solid #b8a18b;border-radius:9px;
+  background:transparent;color:#23384f;
+  font:11px 'Geist Mono',ui-monospace,'Courier New',monospace;
+  cursor:pointer;letter-spacing:.04em;transition:background .2s,color .2s;
+}
+.cookie-actions button:hover{background:rgba(184,161,139,.18);}
+.cookie-actions .cookie-accept{border-color:#23384f;background:#23384f;color:#fff;}
+.cookie-actions .cookie-accept:hover{background:#31465f;}
+
+/* Mobile — sit above the bottom nav bar (≈78px) */
+@media(max-width:768px){
+  .cookie-banner{right:12px;bottom:90px;width:calc(100vw - 24px);padding:17px;}
+  .cookie-actions button{flex:1;min-width:calc(50% - 4px);}
+}
+@media(max-width:420px){
+  .cookie-banner{bottom:82px;}
+  .cookie-copy strong{font-size:15px;}
+}
+
+/* Dark-mode variant */
+@media(prefers-color-scheme:dark){
+  .cookie-banner{
+    background:rgba(30,38,50,.96);border-color:rgba(255,255,255,.12);
+    color:#e8e4de;box-shadow:0 18px 48px rgba(0,0,0,.45);
+  }
+  .cookie-copy p{color:#a8a49e;}
+  .cookie-copy a{color:#c8a06c;}
+  .cookie-actions button{border-color:rgba(255,255,255,.2);color:#e8e4de;}
+  .cookie-actions button:hover{background:rgba(255,255,255,.08);}
+  .cookie-actions .cookie-accept{border-color:#7c8764;background:#7c8764;color:#fff;}
+  .cookie-actions .cookie-accept:hover{background:#8e9976;}
+}

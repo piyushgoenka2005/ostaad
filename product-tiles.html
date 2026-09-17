@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="ostaad-logo.png">
+<link rel="stylesheet" href="cookie-consent.css">
+<title>Tiles (Clay Terracotta & Organic Mineral) · Ostaad Verified Specification</title>
+<meta name="description" content="Technical audit, comprehensive specification sheet, tile wastage calculator, and thermal pattern simulator for Clay Made Terracotta and Organic Mineral Vitrified Tiles.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;450;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#FAF7F4;
+  --surface:#FDFBF9;
+  --slate:#23384F;
+  --slate-light:#31465F;
+  --sage:#7C8764;
+  --sage-light:#8E9976;
+  --terracotta:#A87545;
+  --terracotta-light:#BA8B5E;
+  --taupe:#B8A18B;
+  --text:#54524D;
+  --recessed:#EAE4DE;
+  --line:rgba(184,161,139,.42);
+  --white:#FFFFFF;
+  --font-sans:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'Geist Mono',ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --shadow-hybrid:9px 9px 24px rgba(184,161,139,.16), -9px -9px 20px rgba(255,255,255,.85), 0 1px 0 rgba(255,255,255,.7) inset;
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:radial-gradient(circle at 18% 8%,rgba(255,255,255,.75),transparent 35%),var(--canvas);
+  color:var(--text);
+  font-family:var(--font-sans);
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+img,svg{display:block;max-width:100%;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;background:none;border:none;}
+ul{margin:0;padding:0;list-style:none;}
+h1,h2,h3,h4,p{margin:0;}
+em{font-family:Georgia,serif;font-weight:400;color:var(--terracotta);font-style:italic;}
+.mono{font-family:var(--font-mono);}
+.container{max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,50px);}
+.section{padding:clamp(50px,6vw,80px) 0;position:relative;}
+
+/* NAV */
+.nav-wrap{position:fixed;top:20px;left:0;right:0;z-index:100;display:flex;justify-content:center;transition:transform .4s var(--ease);}
+.nav-wrap.nav-hide{transform:translateY(-140%);}
+.nav{
+  display:flex;align-items:center;gap:clamp(18px,2.4vw,32px);
+  padding:10px 12px 10px 20px;
+  border-radius:16px;
+  background:rgba(253,251,249,.88);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--recessed);
+  box-shadow:none!important;
+  width:min(920px,calc(100vw - 32px));
+}
+.nav-logo{display:inline-flex;align-items:center;gap:8px;font-weight:500;font-size:15px;letter-spacing:.01em;color:var(--slate);white-space:nowrap;}
+.nav-logo-mark{width:25px;height:25px;overflow:hidden;flex:0 0 25px;border-radius:6px;}.nav-logo-mark img{display:block;width:100%;height:100%;object-fit:cover;transform:scale(1.78);}
+.nav-logo b{font-weight:600;}
+.nav-links{display:flex;align-items:center;justify-content:center;flex:1;gap:clamp(22px,3vw,38px);margin:0;font-size:14px;color:var(--text);}
+.nav-links a{position:relative;padding:4px 0;}
+.nav-links a::after{content:'';position:absolute;left:0;right:0;bottom:-2px;height:1px;background:var(--slate);transform:scaleX(0);transform-origin:left;transition:transform 220ms var(--ease);}
+.nav-links a:hover::after{transform:scaleX(1);}
+.nav-cta{display:flex;align-items:center;gap:10px;}
+.nav-secondary{font-size:13px;color:var(--text);white-space:nowrap;display:none;}
+@media(min-width:1000px){.nav-secondary{display:inline;}}
+.nav-toggle{display:none;background:none;border:0;padding:8px;}
+.nav-toggle span{display:block;width:18px;height:1.5px;background:var(--slate);margin:4px 0;}
+@media(max-width:1024px){.nav{width:calc(100vw - 36px);}.nav-links{gap:22px;font-size:13px;}}
+@media(max-width:768px){
+  .nav-wrap{top:12px;}
+  .nav{padding:9px 12px 9px 16px;justify-content:space-between;}
+  .nav-links{display:none;}
+  .nav-secondary{display:none!important;}
+  .nav-toggle{display:block;}
+  .nav-cta .btn{padding:10px 12px;font-size:10px;}
+}
+@media(max-width:420px){
+  .nav-logo{font-size:13px;}
+  .nav-logo-mark{width:22px;height:22px;flex-basis:22px;}
+  .nav-cta .btn{padding:9px 10px;font-size:9px;}
+}
+
+/* BUTTONS */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 20px;border-radius:12px;border:1px solid transparent;
+  font-size:14px;font-weight:500;letter-spacing:.01em;
+  transition:background 220ms var(--ease),transform 220ms var(--ease),border-color 220ms var(--ease),box-shadow 220ms var(--ease);
+  white-space:nowrap;text-decoration:none;
+}
+.btn .arrow{display:inline-block;transition:transform 220ms var(--ease);}
+.btn:hover .arrow{transform:translateX(4px);}
+.btn-primary{background:var(--slate);color:#fff;box-shadow:0 10px 24px rgba(35,56,79,.22);}
+.btn-primary:hover{background:var(--slate-light);}
+.btn-secondary{background:rgba(253,251,249,.8);border:1px solid var(--line);color:var(--slate);}
+.btn-secondary:hover{background:var(--surface);border-color:var(--slate);}
+.btn-sm{padding:8px 14px;font-size:12.5px;border-radius:9px;}
+
+/* COMMON CARD */
+.card{
+  border-radius:18px;background:rgba(253,251,249,.88);backdrop-filter:blur(16px);
+  border:1px solid rgba(234,228,222,.9);box-shadow:var(--shadow-hybrid);padding:24px;
+}
+.eyebrow{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;color:var(--taupe);
+  display:inline-flex;align-items:center;gap:10px;margin-bottom:12px;text-transform:uppercase;
+}
+.eyebrow::before{content:'';width:20px;height:1px;background:currentColor;}
+
+.breadcrumb{
+  display:flex;align-items:center;gap:8px;font-family:var(--font-mono);
+  font-size:11.5px;color:var(--taupe);margin-bottom:18px;flex-wrap:wrap;
+}
+.breadcrumb a{color:var(--text);transition:color .2s;}
+.breadcrumb a:hover{color:var(--slate);}
+.breadcrumb span.sep{opacity:.4;}
+.breadcrumb span.current{color:var(--slate);font-weight:500;}
+
+/* TOP PRODUCT SHOWCASE SECTION */
+.product-showcase-section{
+  padding-top:125px;padding-bottom:50px;position:relative;border-bottom:1px solid var(--recessed);
+}
+.product-showcase-grid{
+  display:grid;
+  grid-template-columns:350px 1fr 340px;
+  gap:28px;
+  align-items:start;
+}
+
+/* 1. Gallery Column (Left) */
+.gallery-col{display:flex;flex-direction:column;gap:16px;}
+.main-pack-view{
+  background:#fff;border-radius:16px;border:1px solid var(--recessed);
+  padding:20px;display:flex;align-items:center;justify-content:center;
+  height:370px;position:relative;overflow:hidden;box-shadow:var(--shadow-hybrid);
+}
+.main-pack-view img{
+  max-width:100%;max-height:100%;object-fit:cover;border-radius:10px;
+  transition:transform .4s var(--ease);
+}
+.main-pack-view:hover img{transform:scale(1.05);}
+.pack-badge-grade{
+  position:absolute;top:14px;left:14px;
+  font-family:var(--font-mono);font-size:10px;font-weight:600;
+  padding:4px 10px;border-radius:6px;background:var(--terracotta);color:#fff;
+  letter-spacing:.08em;
+}
+.pack-badge-cert{
+  position:absolute;bottom:14px;left:14px;
+  font-family:var(--font-mono);font-size:9.5px;
+  padding:3px 8px;border-radius:5px;background:rgba(234,228,222,.85);color:var(--slate);font-weight:500;
+}
+
+.pack-thumbnails{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+}
+.thumb-btn{
+  background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:8px 10px;display:flex;align-items:center;gap:10px;
+  transition:all .2s var(--ease);text-align:left;cursor:pointer;
+}
+.thumb-btn:hover{border-color:var(--slate);background:rgba(250,247,244,.9);}
+.thumb-btn.active{border-color:var(--terracotta);background:rgba(168,117,69,.06);outline:2px solid var(--terracotta);}
+.thumb-img{width:36px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0;}
+.thumb-title{font-size:12px;font-weight:600;color:var(--slate);display:block;}
+.thumb-sub{font-family:var(--font-mono);font-size:10px;color:var(--taupe);display:block;}
+
+.need-help-box{
+  padding:16px 18px;border-radius:14px;background:rgba(250,247,244,.85);
+  border:1px solid var(--line);display:flex;flex-direction:column;gap:8px;
+}
+.need-help-box h4{font-size:13px;font-weight:600;color:var(--slate);}
+.need-help-box p{font-size:12px;color:var(--text);line-height:1.45;}
+.need-help-box .btn{padding:8px 14px;font-size:12px;align-self:flex-start;margin-top:4px;}
+
+/* 2. Detail & Specs Column (Center) */
+.detail-col{display:flex;flex-direction:column;gap:18px;}
+.product-main-title{
+  font-size:clamp(26px,3.2vw,36px);font-weight:500;color:var(--slate);
+  line-height:1.15;letter-spacing:-.035em;margin:0 0 6px;
+}
+.detail-meta-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.meta-verified-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-mono);font-size:11px;color:var(--terracotta);
+  background:rgba(168,117,69,.12);border:1px solid rgba(168,117,69,.3);
+  padding:4px 10px;border-radius:20px;font-weight:500;
+}
+.copy-link-btn{
+  font-family:var(--font-mono);font-size:11px;color:var(--taupe);
+  display:inline-flex;align-items:center;gap:5px;cursor:pointer;
+  padding:4px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;
+  transition:all .2s var(--ease);
+}
+.copy-link-btn:hover{color:var(--slate);border-color:var(--slate);}
+
+.offers-card{
+  background:rgba(253,251,249,.95);border:1px solid var(--line);
+  border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;
+}
+.offers-title{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:var(--taupe);text-transform:uppercase;}
+.offer-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text);line-height:1.45;}
+.offer-item .chk{color:var(--sage);font-weight:700;font-size:14px;line-height:1.2;}
+.offer-item strong{color:var(--slate);}
+
+.trust-badges-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+}
+.trust-pill{
+  background:rgba(255,255,255,.9);border:1px solid var(--recessed);
+  border-radius:12px;padding:12px 10px;display:flex;flex-direction:column;gap:4px;
+  text-align:center;
+}
+.trust-pill .ico{font-size:18px;}
+.trust-pill .t-label{font-size:11.5px;font-weight:600;color:var(--slate);line-height:1.3;}
+.trust-pill .t-sub{font-family:var(--font-mono);font-size:9.5px;color:var(--taupe);}
+
+.specs-sheet-card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;
+}
+.specs-sheet-card h3{
+  font-size:16px;font-weight:600;color:var(--slate);margin-bottom:14px;letter-spacing:-.01em;
+}
+.specs-sheet-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.specs-sheet-table tr{border-bottom:1px solid var(--recessed);}
+.specs-sheet-table tr:last-child{border-bottom:0;}
+.specs-sheet-table th{
+  text-align:left;padding:9px 6px;color:var(--taupe);
+  font-family:var(--font-mono);font-weight:450;width:40%;font-size:11px;
+}
+.specs-sheet-table td{
+  padding:9px 6px;color:var(--slate);font-weight:500;
+}
+
+/* 3. Procurement Sidebar Column (Right) */
+.procure-col{
+  display:flex;flex-direction:column;gap:18px;position:sticky;top:90px;
+}
+.procure-card{
+  background:#fff;border:1px solid var(--line);border-radius:16px;
+  padding:22px;box-shadow:var(--shadow-hybrid);display:flex;flex-direction:column;gap:14px;
+}
+.procure-shipper{
+  font-family:var(--font-mono);font-size:10.5px;color:var(--taupe);line-height:1.45;
+  border-bottom:1px dashed var(--recessed);padding-bottom:12px;
+}
+.procure-shipper strong{color:var(--slate);display:block;font-size:11.5px;}
+.procure-price-wrap{display:flex;flex-direction:column;gap:2px;}
+.procure-price-wrap .lbl{font-family:var(--font-mono);font-size:10px;color:var(--taupe);letter-spacing:.06em;}
+.procure-price-wrap .amt{font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--slate);line-height:1;}
+.procure-price-wrap .sub{font-family:var(--font-mono);font-size:11px;color:var(--sage);margin-top:2px;}
+
+.procure-how-it-works{
+  background:rgba(250,247,244,.75);border:1px solid var(--recessed);
+  border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;
+}
+.procure-how-it-works h4{font-size:12.5px;font-weight:600;color:var(--slate);}
+.procure-step{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:var(--text);line-height:1.4;}
+.step-dot{
+  width:18px;height:18px;border-radius:50%;background:var(--slate);color:#fff;
+  font-family:var(--font-mono);font-size:10px;font-weight:600;display:grid;place-items:center;flex-shrink:0;margin-top:1px;
+}
+
+/* TILES CALCULATOR SECTION */
+.calc-field{margin-bottom:18px;}
+.calc-field label{display:block;font-family:var(--font-mono);font-size:11px;color:var(--taupe);margin-bottom:6px;letter-spacing:.06em;}
+.calc-select,.calc-input{
+  width:100%;height:44px;padding:0 14px;border-radius:10px;background:#fff;border:1px solid var(--line);
+  font-family:var(--font-sans);font-size:14px;color:var(--slate);outline:none;
+}
+.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;}
+.calc-res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px;padding-top:20px;border-top:1px solid var(--recessed);}
+.res-box{background:rgba(250,247,244,.8);padding:14px;border-radius:10px;border:1px solid var(--recessed);text-align:center;}
+.res-box .lbl{font-family:var(--font-mono);font-size:10px;color:var(--taupe);}
+.res-box .val{font-family:var(--font-mono);font-size:20px;font-weight:600;color:var(--slate);margin-top:4px;}
+
+/* PATTERN SIMULATOR */
+.pattern-canvas{
+  height:260px;border-radius:14px;border:1px solid var(--line);margin-top:16px;
+  position:relative;overflow:hidden;background:#FDFBF9;
+}
+.tile-grid-view{
+  width:100%;height:100%;display:grid;
+}
+.pattern-grid{grid-template-columns:repeat(8,1fr);grid-auto-rows:36px;}
+.pattern-brick{grid-template-columns:repeat(8,1fr);grid-auto-rows:36px;}
+.pattern-brick .tile-cell:nth-child(even){transform:translateX(18px);}
+.tile-cell{border:1px solid rgba(255,255,255,.6);transition:background .3s;}
+.type-clay .tile-cell{background:#C0764D;box-shadow:inset 0 0 6px rgba(120,60,30,.2);}
+.type-organic .tile-cell{background:#E0D7CB;box-shadow:inset 0 0 6px rgba(180,165,145,.25);}
+
+/* CHARTS SECTION */
+.curve-chart-box{background:#fff;border-radius:16px;border:1px solid var(--recessed);padding:24px;position:relative;}
+.chart-bars{display:flex;align-items:flex-end;justify-content:space-around;height:240px;padding-top:30px;border-bottom:2px solid var(--line);}
+.bar-group{display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;}
+.bar{width:48px;background:var(--terracotta);border-radius:6px 6px 0 0;transition:height .6s var(--ease),background .3s;position:relative;}
+.bar.secondary{background:var(--slate);}
+.bar-val{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--slate);position:absolute;top:-22px;left:50%;transform:translateX(-50%);white-space:nowrap;}
+.bar-lbl{font-family:var(--font-mono);font-size:11px;color:var(--taupe);margin-top:8px;}
+
+/* BENCHMARK MATRIX SECTION */
+.spec-table{width:100%;border-collapse:collapse;margin-top:20px;}
+.spec-table th,.spec-table td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--recessed);font-size:13.5px;}
+.spec-table th{font-family:var(--font-mono);font-size:11px;color:var(--taupe);letter-spacing:.06em;background:rgba(250,247,244,.6);}
+
+/* FOOTER & MOBILE NAV */
+footer{background:#192c40;color:#fff;padding:60px 5% 24px;margin-top:80px;}
+.foot-top{max-width:1240px;margin:auto;display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.14);padding-bottom:40px;}
+.foot-bottom{max-width:1240px;margin:20px auto 0;display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,.45);}
+
+.mobile-nav{display:none;}
+@media(max-width:1024px){
+  .product-showcase-grid{grid-template-columns:320px 1fr;}
+  .procure-col{grid-column:1 / -1;position:static;}
+}
+@media(max-width:768px){
+  .product-showcase-grid{grid-template-columns:1fr;}
+  .sim-grid{grid-template-columns:1fr;}
+  .trust-badges-row{grid-template-columns:1fr;}
+  .mobile-nav{
+    display:flex;position:fixed;bottom:14px;left:14px;right:14px;z-index:100;
+    background:rgba(253,251,249,.94);backdrop-filter:blur(22px);border:1px solid var(--recessed);border-radius:18px;
+    padding:8px 4px;justify-content:space-around;
+  }
+  .mobile-nav a{display:flex;flex-direction:column;align-items:center;font-size:9.5px;color:var(--taupe);gap:4px;flex:1;}
+  .mobile-nav a svg{width:18px;height:18px;stroke:currentColor;fill:none;}
+  .mobile-nav a.active{color:var(--slate);}
+  body{padding-bottom:76px;}
+}
+/* ============================================================
+   QUOTE / BOQ MODAL STYLES IN PRODUCT-TILES
+   ============================================================ */
+.boq-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(15, 23, 42, 0.68);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.boq-modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.boq-modal-dialog {
+  position: relative;
+  background: #FCFAF7;
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 92vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 24px 28px;
+  box-shadow: 0 30px 70px -15px rgba(15, 23, 42, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+  transform: scale(0.95) translateY(14px);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.boq-modal-dialog::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.boq-modal-backdrop.open .boq-modal-dialog {
+  transform: scale(1) translateY(0);
+}
+.boq-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--recessed);
+  border: 1px solid var(--border, rgba(0,0,0,0.1));
+  color: var(--slate);
+  font-size: 19px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+.boq-modal-close:hover {
+  background: var(--slate);
+  color: #fff;
+  border-color: var(--slate);
+  transform: rotate(90deg);
+}
+.boq-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--amber, #C86D3B);
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+.boq-modal-header h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--slate);
+  letter-spacing: -0.02em;
+  margin: 0 0 4px;
+}
+.boq-modal-header p {
+  font-size: 13px;
+  color: var(--taupe);
+  line-height: 1.4;
+  margin: 0 0 12px;
+}
+.boq-spec-badge {
+  background: rgba(217, 119, 6, 0.08);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 14px;
+}
+.boq-spec-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  color: var(--amber, #C86D3B);
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+.boq-spec-val {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--slate);
+}
+.boq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.boq-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.boq-field.full {
+  grid-column: 1 / -1;
+}
+.boq-field label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--taupe);
+  letter-spacing: 0.06em;
+}
+.boq-field input, .boq-field select, .boq-field textarea {
+  width: 100%;
+  background: #fff;
+  border: 1px solid rgba(184, 161, 139, 0.5);
+  border-radius: 9px;
+  padding: 8px 11px;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  color: var(--slate);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+.boq-field input:focus, .boq-field select:focus, .boq-field textarea:focus {
+  border-color: var(--amber, #C86D3B);
+  box-shadow: 0 0 0 3px rgba(200, 109, 59, 0.15);
+}
+.boq-field textarea {
+  resize: vertical;
+  min-height: 52px;
+}
+.boq-trust-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--taupe);
+  margin-top: 8px;
+  text-align: center;
+}
+.boq-error-msg {
+  color: #dc2626;
+  font-size: 12.5px;
+  text-align: center;
+  margin-top: 8px;
+  background: #fef2f2;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+}
+.boq-success {
+  text-align: center;
+  padding: 24px 12px 12px;
+}
+.boq-success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.boq-success h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--slate);
+  margin: 0 0 8px;
+}
+.boq-success p {
+  font-size: 14px;
+  color: var(--taupe);
+  line-height: 1.5;
+  margin: 0 auto 18px;
+  max-width: 460px;
+}
+.boq-sla-box {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 0 auto 18px;
+  max-width: 440px;
+  text-align: left;
+}
+.boq-sla-item .sla-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--taupe);
+  letter-spacing: 0.08em;
+  margin-bottom: 2px;
+}
+.boq-sla-item .sla-val {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--slate);
+}
+@media (max-width: 640px) {
+  .boq-modal-dialog { padding: 20px 16px; }
+  .boq-grid { grid-template-columns: 1fr; gap: 10px; }
+  .boq-sla-box { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav-wrap" id="navWrap">
+  <nav class="nav">
+    <a href="index.html#hero" class="nav-logo"><span class="nav-logo-mark"><img src="ostaad-logo.png" alt=""></span><b>OSTAAD</b></a>
+    <ul class="nav-links">
+      <li><a href="products.html">Product</a></li>
+      <li><a href="index.html#see">Experience</a></li>
+      <li><a href="index.html#faq">FAQ</a></li>
+      <li><a href="about.html">About us</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a class="nav-secondary" href="contact.html">Contact Ostaad</a>
+      <a href="contact.html" class="btn btn-primary btn-sm">Start a Project <span class="arrow">→</span></a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- ============================================================
+       1. TOP PRODUCT SHOWCASE & SPECS (L&T-SuFin Inspired)
+       ============================================================ -->
+  <section class="product-showcase-section">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a> <span class="sep">›</span>
+        <a href="products.html">Products</a> <span class="sep">›</span>
+        <span class="current" id="crumbTitle">Clay Made Terracotta Tiles</span>
+      </div>
+
+      <div class="product-showcase-grid">
+
+        <!-- LEFT COLUMN: Product Pack & Consultation -->
+        <div class="gallery-col">
+          <div class="main-pack-view">
+            <span class="pack-badge-grade" id="badgeGrade">TERRACOTTA ACTIVE</span>
+            <img id="mainPackImg" src="https://5.imimg.com/data5/SELLER/Default/2025/11/563527066/EB/DC/JR/211062845/terracotta-tiles-for-flooring-500x500.jpeg" alt="Clay Made Terracotta Tiles">
+            <span class="pack-badge-cert">IS 15622 CERTIFIED</span>
+          </div>
+
+          <!-- Thumbnail selector to toggle between Clay and Organic Vitrified -->
+          <div class="pack-thumbnails">
+            <button type="button" class="thumb-btn active" id="thumbClay" data-type="clay">
+              <img src="https://5.imimg.com/data5/SELLER/Default/2025/11/563527066/EB/DC/JR/211062845/terracotta-tiles-for-flooring-500x500.jpeg" alt="Clay Terracotta" class="thumb-img">
+              <div>
+                <span class="thumb-title">Clay Terracotta</span>
+                <span class="thumb-sub">₹88 · Courtyard/Terrace</span>
+              </div>
+            </button>
+
+            <button type="button" class="thumb-btn" id="thumbOrganic" data-type="organic">
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTT-dH97F_U_GULv002a0-feDSXoYAR6l_AkKq4BQ7TQ&s=10" alt="Organic Vitrified" class="thumb-img">
+              <div>
+                <span class="thumb-title">Organic Vitrified</span>
+                <span class="thumb-sub">₹148 · Living/Bedrooms</span>
+              </div>
+            </button>
+          </div>
+
+          <div class="need-help-box">
+            <h4>Need Architectural Guidance?</h4>
+            <p>Unsure whether to specify breathable terracotta or zero-porosity mineral stone for your verandah or wet areas? Our team can audit your floor schedule.</p>
+            <a href="contact.html" class="btn btn-secondary btn-sm">Submit Enquiry <span>→</span></a>
+          </div>
+        </div>
+
+        <!-- CENTER COLUMN: Specifications, Offers & Trust -->
+        <div class="detail-col">
+          <div>
+            <h1 class="product-main-title" id="productTitle">Kiln-Fired Natural Clay Terracotta Flooring Tiles</h1>
+            <div class="detail-meta-bar">
+              <div class="meta-verified-tag" id="verifiedMetaTag">⚡ 320+ Courtyards & Terraces · Verified Kiln Baseline</div>
+              <button type="button" class="copy-link-btn" id="copyLinkBtn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                <span id="copyLinkText">Copy Link</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Offers / Verification callouts -->
+          <div class="offers-card">
+            <div class="offers-title">Offers & Procurement Benchmarks</div>
+            <div class="offer-item">
+              <span class="chk">✓</span>
+              <div><strong>Live Verified Rate:</strong> <span id="rateLabel">₹88 / Sq Ft (Terracotta)</span> & ₹148 / Sq Ft (Organic Vitrified) · Direct Kiln Benchmark.</div>
+            </div>
+            <div class="offer-item">
+              <span class="chk">✓</span>
+              <div><strong>Palletized Wooden Crate Packaging:</strong> Strapped hardwood pallets with corner foam buffers preventing transport edge breakage.</div>
+            </div>
+            <div class="offer-item">
+              <span class="chk">✓</span>
+              <div><strong>Batch Shade Calibration:</strong> Fired in continuous tunnel kilns to maintain unified thermal tone across your entire project delivery.</div>
+            </div>
+          </div>
+
+          <!-- Trust Badges Row -->
+          <div class="trust-badges-row">
+            <div class="trust-pill">
+              <span class="ico">🚚</span>
+              <span class="t-label">Assured Direct Delivery</span>
+              <span class="t-sub">Site dispatch in 48–72 hrs</span>
+            </div>
+            <div class="trust-pill">
+              <span class="ico">❄️</span>
+              <span class="t-label">Natural Thermal Barrier</span>
+              <span class="t-sub">7–9°C cooler underfoot</span>
+            </div>
+            <div class="trust-pill">
+              <span class="ico">🛡️</span>
+              <span class="t-label">BIS Certified Quality</span>
+              <span class="t-sub">IS 15622 Group BIIa / BIa</span>
+            </div>
+          </div>
+
+          <!-- Technical Specifications Table -->
+          <div class="specs-sheet-card">
+            <h3>Technical Specifications</h3>
+            <table class="specs-sheet-table">
+              <tbody>
+                <tr>
+                  <th>Material Composition</th>
+                  <td id="specMaterial">Natural Refractory Clay (Kiln Fired at 1,050°C)</td>
+                </tr>
+                <tr>
+                  <th>Standard Compliance</th>
+                  <td id="specStandard">IS 15622 : 2017 (Group BIIa Pressed Ceramic Tile)</td>
+                </tr>
+                <tr>
+                  <th>Nominal Dimensions</th>
+                  <td id="specDim">300 × 300 × 16 MM (12" × 12")</td>
+                </tr>
+                <tr>
+                  <th>Water Absorption</th>
+                  <td id="specAbsorption">&lt; 6.0% (Natural breathability, zero frost-heaving)</td>
+                </tr>
+                <tr>
+                  <th>Wet Slip Resistance</th>
+                  <td id="specSlip">R11 Rating (Micro-frictional natural tooth)</td>
+                </tr>
+                <tr>
+                  <th>Breaking Strength</th>
+                  <td id="specBreaking">≥ 1,000 N (High point load endurance)</td>
+                </tr>
+                <tr>
+                  <th>Surface Seal</th>
+                  <td id="specSeal">Unfinished breathable natural terracotta</td>
+                </tr>
+                <tr>
+                  <th>Standard Packing</th>
+                  <td id="specPack">10 Pieces / Corrugated Box (approx. 9.7 Sq Ft coverage)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Procurement Box -->
+        <div class="procure-col">
+          <div class="procure-card">
+            <div class="procure-shipper">
+              DISPATCHED FROM CERTIFIED KILN MILLS
+              <strong>Direct Regional Freight · Insured Transit</strong>
+            </div>
+
+            <div class="procure-price-wrap">
+              <span class="lbl">VERIFIED UNIT RATE</span>
+              <div class="amt" id="procurePrice">₹88</div>
+              <span class="sub" id="procureUnit">/ SQ FT · TAX INCLUSIVE</span>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <button type="button" id="topRequestQuoteBtn" onclick="openQuoteModal()" class="btn btn-primary" style="justify-content:center;cursor:pointer;">Request Quote for Bulk <span class="arrow">→</span></button>
+              <a href="#tilesCalc" class="btn btn-secondary" style="justify-content:center;">Calculate Tile Quota ↓</a>
+            </div>
+
+            <div class="procure-how-it-works">
+              <h4>How does Ostaad Bulk Buying work?</h4>
+              <div class="procure-step">
+                <span class="step-dot">1</span>
+                <div><strong>Input Area:</strong> Calculate net square footage with 10% cutting margin.</div>
+              </div>
+              <div class="procure-step">
+                <span class="step-dot">2</span>
+                <div><strong>Transparent Rate:</strong> Receive verified direct-mill quote with zero middleman markups.</div>
+              </div>
+              <div class="procure-step">
+                <span class="step-dot">3</span>
+                <div><strong>Site Delivery:</strong> Dispatched in strapped crates with break-free guarantee.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       2. TILES CALCULATOR SECTION
+       ============================================================ -->
+  <section class="section" id="tilesCalc" style="background:var(--surface);border-bottom:1px solid var(--recessed);">
+    <div class="container">
+      <div class="eyebrow">TILES CALCULATOR</div>
+      <h2 style="font-size:clamp(28px,3.8vw,42px);font-weight:500;color:var(--slate);letter-spacing:-.035em;margin-bottom:10px;">
+        Tiles Calculator — Room Coverage & Wastage Estimator
+      </h2>
+      <p style="color:var(--text);max-width:680px;line-height:1.6;">
+        Specify your room dimensions to compute net tile square footage, required carton quantities, safe cutting allowances, and epoxy joint grout bags.
+      </p>
+
+      <div class="sim-grid">
+        <div class="card">
+          <h3 style="font-size:17px;color:var(--slate);margin-bottom:18px;">Floor Room Parameters</h3>
+          
+          <div class="calc-field">
+            <label>ROOM LENGTH (FEET)</label>
+            <input type="number" id="roomLength" class="calc-input" value="16" min="4" max="80">
+          </div>
+
+          <div class="calc-field">
+            <label>ROOM WIDTH (FEET)</label>
+            <input type="number" id="roomWidth" class="calc-input" value="12" min="4" max="80">
+          </div>
+
+          <div class="calc-field">
+            <label>TILE SPECIFICATION SELECTION</label>
+            <select id="tileSpecSelect" class="calc-select">
+              <option value="clay" selected>Clay Terracotta (300×300mm · ₹88 / Sq Ft)</option>
+              <option value="organic">Organic Mineral Vitrified (600×1200mm · ₹148 / Sq Ft)</option>
+            </select>
+          </div>
+
+          <div class="calc-field" style="margin-bottom:0;">
+            <label>CORNER & SKIRTING WASTAGE</label>
+            <select id="wastageSelect" class="calc-select">
+              <option value="0.10" selected>10% Standard Rectangular Wastage</option>
+              <option value="0.15">15% Diagonal / Complex Corner Wastage</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card" style="background:var(--slate);color:#fff;border-color:var(--slate);">
+          <div class="eyebrow" style="color:rgba(255,255,255,.6);">CALCULATED PROCUREMENT QUOTA</div>
+          <div style="font-family:var(--font-mono);font-size:36px;font-weight:700;line-height:1;margin:12px 0;" id="calcTotalArea">211 Sq Ft</div>
+          <p style="font-size:13px;color:rgba(255,255,255,.75);margin-bottom:20px;" id="calcAreaBreakdown">
+            Base area: 192 sq ft + 10% wastage (19 sq ft) for perimeter skirting and corner cuts.
+          </p>
+
+          <div class="calc-res-grid" style="border-top-color:rgba(255,255,255,.15);">
+            <div class="res-box" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);">
+              <div class="lbl" style="color:rgba(255,255,255,.6);">MATERIAL COST</div>
+              <div class="val" style="color:#fff;" id="calcCost">₹18,568</div>
+            </div>
+            <div class="res-box" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);">
+              <div class="lbl" style="color:rgba(255,255,255,.6);">BOXES REQUIRED</div>
+              <div class="val" style="color:#fff;" id="calcBoxes">22 Boxes</div>
+            </div>
+            <div class="res-box" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);">
+              <div class="lbl" style="color:rgba(255,255,255,.6);">EPOXY GROUT</div>
+              <div class="val" style="color:#fff;" id="calcGrout">2 Bags (10 KG)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       3. CHARTS SECTION — THERMAL PERFORMANCE & WATER ABSORPTION
+       ============================================================ -->
+  <section class="section" id="chartsSection" style="border-bottom:1px solid var(--recessed);">
+    <div class="container">
+      <div class="eyebrow">SURFACE BEHAVIOR BENCHMARK</div>
+      <h2 style="font-size:clamp(28px,3.8vw,42px);font-weight:500;color:var(--slate);letter-spacing:-.035em;margin-bottom:10px;">
+        Water Absorption & Thermal Retention Simulator
+      </h2>
+      <p style="color:var(--text);max-width:680px;line-height:1.6;margin-bottom:28px;">
+        Compare water porosity percentage and ambient underfoot heat buildup across ceramic, terracotta clay, and organic vitrified stone.
+      </p>
+
+      <div class="curve-chart-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <div>
+            <strong style="color:var(--slate);font-size:15px;">Water Absorption Rate (% Porosity by Mass)</strong>
+            <p style="font-size:12.5px;color:var(--taupe);margin-top:2px;">Tested per IS 13630 Part 2 Vacuum Water Boil Method</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button type="button" class="btn btn-sm btn-primary chart-toggle" data-mode="absorption">Water Porosity</button>
+            <button type="button" class="btn btn-sm btn-secondary chart-toggle" data-mode="heat">Summer Underfoot Temp (°C)</button>
+          </div>
+        </div>
+
+        <div class="chart-bars">
+          <div class="bar-group">
+            <div class="bar" id="bar1" style="height:175px;">
+              <span class="bar-val" id="val1">5.5%</span>
+            </div>
+            <span class="bar-lbl">Clay Terracotta</span>
+          </div>
+          <div class="bar-group">
+            <div class="bar secondary" id="bar2" style="height:120px;">
+              <span class="bar-val" id="val2">3.8%</span>
+            </div>
+            <span class="bar-lbl">Ceramic Floor</span>
+          </div>
+          <div class="bar-group">
+            <div class="bar secondary" id="bar3" style="height:55px;">
+              <span class="bar-val" id="val3">0.08%</span>
+            </div>
+            <span class="bar-lbl">Standard Vitrified</span>
+          </div>
+          <div class="bar-group">
+            <div class="bar" id="bar4" style="height:35px;background:var(--sage);">
+              <span class="bar-val" id="val4">0.04%</span>
+            </div>
+            <span class="bar-lbl">Organic Vitrified</span>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;padding-top:14px;border-top:1px solid var(--recessed);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <span style="font-size:12.5px;color:var(--text);" id="chartNote">
+            Terracotta clay's natural porosity facilitates breathability and radiant cooling, maintaining an average floor temperature 7–9°C below glazed porcelain.
+          </span>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--taupe);">TEST BENCHMARK: IS 15622 COMPLIANT</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4. INTERACTIVE PATTERN SIMULATOR
+       ============================================================ -->
+  <section class="section" id="patternSection" style="background:var(--surface);border-bottom:1px solid var(--recessed);">
+    <div class="container">
+      <div class="eyebrow">INTERACTIVE SURFACE SIMULATOR</div>
+      <h2 style="font-size:clamp(28px,3.8vw,42px);font-weight:500;color:var(--slate);letter-spacing:-.035em;margin-bottom:10px;">
+        Tile Material & Laying Pattern Visualizer
+      </h2>
+      <p style="color:var(--text);max-width:680px;line-height:1.6;margin-bottom:24px;">
+        Test how natural clay terracotta and organic mineral stone look under standard stack grid vs staggered brick-bond patterns.
+      </p>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn btn-sm btn-primary type-toggle" data-type="clay">Clay Terracotta</button>
+          <button type="button" class="btn btn-sm btn-secondary type-toggle" data-type="organic">Organic Mineral Stone</button>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn btn-sm btn-primary pat-toggle" data-pat="grid">Stack Grid</button>
+          <button type="button" class="btn btn-sm btn-secondary pat-toggle" data-pat="brick">Staggered Brick-Bond</button>
+        </div>
+      </div>
+
+      <div class="card" style="padding:16px;">
+        <div class="pattern-canvas" id="patternCanvas">
+          <div class="tile-grid-view pattern-grid type-clay" id="tileGrid">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:14px;font-family:var(--font-mono);font-size:11px;color:var(--taupe);">
+          <span id="patternDesc">NATURAL CLAY TERRACOTTA · STACK GRID ALIGNMENT (300 × 300 MM)</span>
+          <span id="ratePreview">₹88 / SQ FT</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       5. BENCHMARK MATRIX SECTION
+       ============================================================ -->
+  <section class="section" id="matrixSection">
+    <div class="container">
+      <div class="eyebrow">BIS BENCHMARK MATRIX</div>
+      <h2 style="font-size:clamp(28px,3.8vw,42px);font-weight:500;color:var(--slate);letter-spacing:-.035em;margin-bottom:10px;">
+        Flooring Specifications Benchmark (IS 15622 : 2017)
+      </h2>
+      <p style="color:var(--text);max-width:680px;line-height:1.6;">
+        Bureau of Indian Standards tolerances for dry pressed ceramic, terracotta clay, and vitrified tiles across breaking load, porosity, and thermal coefficients.
+      </p>
+
+      <div style="overflow-x:auto;">
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th>CHARACTERISTIC</th>
+              <th>CLAY TERRACOTTA</th>
+              <th>ORGANIC VITRIFIED</th>
+              <th>GLAZED CERAMIC</th>
+              <th>BIS COMPLIANCE STANDARD</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Water Absorption (E)</strong></td>
+              <td><span style="font-family:var(--font-mono);color:var(--terracotta);font-weight:600;">3% &lt; E ≤ 6%</span></td>
+              <td><span style="font-family:var(--font-mono);color:var(--sage);font-weight:600;">E ≤ 0.05%</span></td>
+              <td>3% &lt; E ≤ 10%</td>
+              <td>IS 13630 (Part 2)</td>
+            </tr>
+            <tr>
+              <td><strong>Modulus of Rupture (MOR)</strong></td>
+              <td>≥ 22 N/mm²</td>
+              <td>≥ 38 N/mm²</td>
+              <td>≥ 20 N/mm²</td>
+              <td>IS 13630 (Part 6)</td>
+            </tr>
+            <tr>
+              <td><strong>Breaking Strength</strong></td>
+              <td>≥ 1,000 N</td>
+              <td>≥ 1,300 N</td>
+              <td>≥ 600 N</td>
+              <td>IS 13630 (Part 6)</td>
+            </tr>
+            <tr>
+              <td><strong>Surface Hardness (Mohs)</strong></td>
+              <td>Mohs 5 (Matte Tooth)</td>
+              <td>Mohs 7 (Scratch Proof)</td>
+              <td>Mohs 4</td>
+              <td>EN 101 / IS 13630</td>
+            </tr>
+            <tr>
+              <td><strong>Thermal Expansion (Max)</strong></td>
+              <td>6.0 × 10⁻⁶ K⁻¹</td>
+              <td>5.5 × 10⁻⁶ K⁻¹</td>
+              <td>7.5 × 10⁻⁶ K⁻¹</td>
+              <td>IS 13630 (Part 4)</td>
+            </tr>
+            <tr>
+              <td><strong>Best Structural Zone</strong></td>
+              <td>Courtyards, Roof Terraces, Verandahs</td>
+              <td>Living Rooms, Kitchens, Master Bed</td>
+              <td>Bathroom Walls & Dadoes</td>
+              <td>Specification Guidance</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-top">
+    <div>
+      <h3 style="font-size:15px;letter-spacing:.14em;margin-bottom:8px;">OSTAAD</h3>
+      <p style="font-size:13px;color:rgba(255,255,255,.6);max-width:320px;">The costing and procurement intelligence layer for residential construction.</p>
+    </div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--taupe);margin-bottom:12px;">SPECIFICATIONS</div>
+      <div style="display:flex;gap:20px;font-size:13px;flex-wrap:wrap;">
+        <a href="products.html">All Products</a>
+        <a href="product-cement.html">Cement</a>
+        <a href="product-tiles.html" style="color:#fff;font-weight:600;">Tiles</a>
+        <a href="product-paint.html">Paint</a>
+        <a href="product-plywood.html">Plywood</a>
+        <a href="product-waterproofing.html">Waterproofing</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 Ostaad Technologies Pvt Ltd</span>
+    <span>SEE. KNOW. BUILD.</span>
+  </div>
+</footer>
+
+<!-- MOBILE NAV -->
+<nav class="mobile-nav">
+  <a href="index.html"><svg viewBox="0 0 24 24"><path d="M4 20V10l8-6 8 6v10"/></svg>Home</a>
+  <a href="products.html" class="active"><svg viewBox="0 0 24 24"><path d="M12 3v18M7 8l5-5 5 5"/></svg>Products</a>
+  <a href="index.html#see"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>Experience</a>
+  <a href="contact.html"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="m4 7 8 6 8-6"/></svg>Contact</a>
+</nav>
+
+<!-- BOQ MODAL DIALOG -->
+<div class="boq-modal-backdrop" id="boqModal" role="dialog" aria-modal="true" aria-labelledby="boqModalTitle" style="display:none;">
+  <div class="boq-modal-dialog">
+    <button type="button" class="boq-modal-close" onclick="closeQuoteModal()" aria-label="Close dialog">×</button>
+
+    <div class="boq-modal-header">
+      <span class="boq-eyebrow">MILL-DIRECT PROCUREMENT & BOQ</span>
+      <h3 id="boqModalTitle">Request Verified Bulk Quote</h3>
+      <p>Connect verified factory rates and ceramic laboratory batch testing baseline directly into your project schedule.</p>
+
+      <div class="boq-spec-badge" id="boqSpecBadge">
+        <span class="boq-spec-label">TARGET MATERIAL SPECIFICATION</span>
+        <span class="boq-spec-val" id="modalSpecDisplay">Natural Clay Terracotta Tiles · 300 × 300 MM (₹88 / Sq Ft)</span>
+      </div>
+    </div>
+
+    <form id="boqModalForm" onsubmit="handleBoqSubmit(event)">
+      <div class="boq-grid">
+        <div class="boq-field">
+          <label for="bmName">FULL NAME *</label>
+          <input type="text" id="bmName" name="name" required placeholder="Piyush Goenka">
+        </div>
+        <div class="boq-field">
+          <label for="bmEmail">WORK / PERSONAL EMAIL *</label>
+          <input type="email" id="bmEmail" name="email" required placeholder="contact@domain.com">
+        </div>
+        <div class="boq-field">
+          <label for="bmPhone">PHONE / WHATSAPP *</label>
+          <input type="tel" id="bmPhone" name="phone" required placeholder="+91 98300 XXXXX">
+        </div>
+        <div class="boq-field">
+          <label for="bmPincode">PROJECT PIN CODE *</label>
+          <input type="text" id="bmPincode" name="pincode" required placeholder="e.g. 700091" maxlength="6" pattern="[0-9]{6}">
+        </div>
+        <div class="boq-field">
+          <label for="bmStage">CURRENT PROJECT STAGE</label>
+          <select id="bmStage" name="stage">
+            <option value="Flooring & Tiling">Flooring & Tiling</option>
+            <option value="Plastering & Floor Screed">Plastering & Floor Screed</option>
+            <option value="Planning & Architectural Drawings">Planning & Architectural Drawings</option>
+            <option value="Interior Fitouts & Woodwork">Interior Fitouts & Woodwork</option>
+          </select>
+        </div>
+        <div class="boq-field">
+          <label for="bmQuantity">ESTIMATED QUANTITY (SQ FT / BOXES)</label>
+          <input type="text" id="bmQuantity" name="quantity" placeholder="e.g. ~1,200 Sq Ft / 80 Boxes">
+        </div>
+        <div class="boq-field full">
+          <label for="bmNotes">PROJECT NOTES & BLUEPRINT REQUIREMENTS</label>
+          <textarea id="bmNotes" name="notes" rows="2" placeholder="Specify project site, laying pattern, border preferences, or target delivery timeline..."></textarea>
+        </div>
+      </div>
+
+      <button type="submit" id="bmSubmitBtn" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px 20px;font-size:13.5px;cursor:pointer;border-radius:12px;margin-top:10px;">
+        Submit Quote Request to Engineering Desk →
+      </button>
+      <div id="bmStatus" style="display:none;margin-top:8px;font-size:12px;text-align:center;"></div>
+      <div style="text-align:center;font-family:var(--font-mono);font-size:10px;color:var(--taupe);margin-top:10px;">
+        🛡️ Verified MTC Guaranteed · Zero Price Tampering · Direct Ceramic Kiln Logistics
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="cookie-consent.js"></script>
+<script>
+// Floating Nav hide/show
+const navWrap = document.getElementById('navWrap');
+let lastY = window.scrollY;
+window.addEventListener('scroll', ()=>{
+  const y = window.scrollY;
+  if(y > lastY && y > 140){ navWrap.classList.add('nav-hide'); }
+  else{ navWrap.classList.remove('nav-hide'); }
+  lastY = y;
+},{passive:true});
+
+// Tile Data and Switcher Logic
+const imgClay = 'https://5.imimg.com/data5/SELLER/Default/2025/11/563527066/EB/DC/JR/211062845/terracotta-tiles-for-flooring-500x500.jpeg';
+const imgOrganic = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTT-dH97F_U_GULv002a0-feDSXoYAR6l_AkKq4BQ7TQ&s=10';
+
+const thumbClay = document.getElementById('thumbClay');
+const thumbOrganic = document.getElementById('thumbOrganic');
+const mainPackImg = document.getElementById('mainPackImg');
+const badgeGrade = document.getElementById('badgeGrade');
+const crumbTitle = document.getElementById('crumbTitle');
+const productTitle = document.getElementById('productTitle');
+const rateLabel = document.getElementById('rateLabel');
+const procurePrice = document.getElementById('procurePrice');
+const specMaterial = document.getElementById('specMaterial');
+const specStandard = document.getElementById('specStandard');
+const specDim = document.getElementById('specDim');
+const specAbsorption = document.getElementById('specAbsorption');
+const specSlip = document.getElementById('specSlip');
+const specBreaking = document.getElementById('specBreaking');
+const specSeal = document.getElementById('specSeal');
+const specPack = document.getElementById('specPack');
+const verifiedMetaTag = document.getElementById('verifiedMetaTag');
+
+function selectTileType(type) {
+  if (type === 'clay') {
+    thumbClay.classList.add('active');
+    thumbOrganic.classList.remove('active');
+    mainPackImg.src = imgClay;
+    mainPackImg.alt = 'Clay Made Terracotta Tiles';
+    badgeGrade.textContent = 'TERRACOTTA ACTIVE';
+    badgeGrade.style.background = 'var(--terracotta)';
+    crumbTitle.textContent = 'Clay Made Terracotta Tiles';
+    productTitle.textContent = 'Kiln-Fired Natural Clay Terracotta Flooring Tiles';
+    rateLabel.textContent = '₹88 / Sq Ft (Terracotta)';
+    procurePrice.textContent = '₹88';
+    verifiedMetaTag.textContent = '⚡ 320+ Courtyards & Terraces · Verified Kiln Baseline';
+    specMaterial.textContent = 'Natural Refractory Clay (Kiln Fired at 1,050°C)';
+    specStandard.textContent = 'IS 15622 : 2017 (Group BIIa Pressed Ceramic Tile)';
+    specDim.textContent = '300 × 300 × 16 MM (12" × 12")';
+    specAbsorption.textContent = '< 6.0% (Natural breathability, zero frost-heaving)';
+    specSlip.textContent = 'R11 Rating (Micro-frictional natural tooth)';
+    specBreaking.textContent = '≥ 1,000 N (High point load endurance)';
+    specSeal.textContent = 'Unfinished breathable natural terracotta';
+    specPack.textContent = '10 Pieces / Corrugated Box (approx. 9.7 Sq Ft coverage)';
+    if (tileSpecSelect) tileSpecSelect.value = 'clay';
+  } else {
+    thumbOrganic.classList.add('active');
+    thumbClay.classList.remove('active');
+    mainPackImg.src = imgOrganic;
+    mainPackImg.alt = 'Organic Mineral Vitrified Tiles';
+    badgeGrade.textContent = 'ORGANIC VITRIFIED';
+    badgeGrade.style.background = 'var(--sage)';
+    crumbTitle.textContent = 'Organic Mineral Vitrified Tiles';
+    productTitle.textContent = 'Organic Mineral Stone Vitrified Flooring Tiles';
+    rateLabel.textContent = '₹148 / Sq Ft (Organic Vitrified)';
+    procurePrice.textContent = '₹148';
+    verifiedMetaTag.textContent = '⚡ 410+ Living & Bedroom Floors · Zero Porosity Spec';
+    specMaterial.textContent = 'Reclaimed Quarry Stone Aggregates (Hydraulic Pressed 4,500T)';
+    specStandard.textContent = 'IS 15622 : 2017 (Group BIa Fully Vitrified)';
+    specDim.textContent = '600 × 1200 × 9 MM (Satin Full-Body)';
+    specAbsorption.textContent = '< 0.05% (Impervious to water, wine, and tea stains)';
+    specSlip.textContent = 'R9 Matte Satin Finish with anti-bacterial nano seal';
+    specBreaking.textContent = '≥ 1,300 N (Heavy household load resistance)';
+    specSeal.textContent = 'Nano-Coated Stain Resistant Satin Seal';
+    specPack.textContent = '2 Pieces / Box (approx. 15.5 Sq Ft coverage)';
+    if (tileSpecSelect) tileSpecSelect.value = 'organic';
+  }
+  if (typeof updateCalc === 'function') updateCalc();
+}
+
+thumbClay.addEventListener('click', () => selectTileType('clay'));
+thumbOrganic.addEventListener('click', () => selectTileType('organic'));
+
+// Copy link button
+const copyLinkBtn = document.getElementById('copyLinkBtn');
+const copyLinkText = document.getElementById('copyLinkText');
+copyLinkBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    copyLinkText.textContent = 'Copied!';
+    setTimeout(() => { copyLinkText.textContent = 'Copy Link'; }, 2000);
+  }).catch(() => {
+    copyLinkText.textContent = 'Copied!';
+    setTimeout(() => { copyLinkText.textContent = 'Copy Link'; }, 2000);
+  });
+});
+
+// Tiles Calculator Logic
+const roomLength = document.getElementById('roomLength');
+const roomWidth = document.getElementById('roomWidth');
+const tileSpecSelect = document.getElementById('tileSpecSelect');
+const wastageSelect = document.getElementById('wastageSelect');
+const calcTotalArea = document.getElementById('calcTotalArea');
+const calcAreaBreakdown = document.getElementById('calcAreaBreakdown');
+const calcCost = document.getElementById('calcCost');
+const calcBoxes = document.getElementById('calcBoxes');
+const calcGrout = document.getElementById('calcGrout');
+
+function updateCalc() {
+  const l = parseFloat(roomLength.value) || 0;
+  const w = parseFloat(roomWidth.value) || 0;
+  const baseArea = l * w;
+  const wasteRate = parseFloat(wastageSelect.value) || 0.10;
+  const totalWithWastage = Math.round(baseArea * (1 + wasteRate));
+  const rate = tileSpecSelect.value === 'clay' ? 88 : 148;
+  const cost = totalWithWastage * rate;
+  
+  const boxSqFt = tileSpecSelect.value === 'clay' ? 9.7 : 15.5;
+  const boxes = Math.ceil(totalWithWastage / boxSqFt);
+  const groutBags = Math.max(1, Math.round(totalWithWastage / 100));
+
+  calcTotalArea.textContent = `${totalWithWastage.toLocaleString()} Sq Ft`;
+  calcAreaBreakdown.textContent = `Base area: ${baseArea.toLocaleString()} sq ft + ${Math.round(wasteRate * 100)}% cutting allowance (${Math.round(baseArea * wasteRate)} sq ft) for borders & skirtings.`;
+  calcCost.textContent = `₹${cost.toLocaleString()}`;
+  calcBoxes.textContent = `${boxes} Boxes`;
+  calcGrout.textContent = `${groutBags} Bags (${groutBags * 5} KG)`;
+}
+
+[roomLength, roomWidth, tileSpecSelect, wastageSelect].forEach(el => el.addEventListener('input', updateCalc));
+updateCalc();
+
+// Charts Section Toggle Logic
+const chartData = {
+  absorption: {
+    b1: 175, b2: 120, b3: 55, b4: 35,
+    v1: '5.5%', v2: '3.8%', v3: '0.08%', v4: '0.04%',
+    note: 'Terracotta clay natural porosity facilitates breathability and radiant cooling, maintaining an average floor temperature 7–9°C below glazed porcelain.'
+  },
+  heat: {
+    b1: 80, b2: 155, b3: 195, b4: 105,
+    v1: '31.2°C', v2: '37.8°C', v3: '41.5°C', v4: '33.4°C',
+    note: 'Measured under 40°C peak midday ambient solar radiation: natural unglazed terracotta clay reflects ambient heat, remaining significantly cooler to walk on.'
+  }
+};
+
+document.querySelectorAll('.chart-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.chart-toggle').forEach(b => b.className = 'btn btn-sm btn-secondary chart-toggle');
+    btn.className = 'btn btn-sm btn-primary chart-toggle';
+
+    const d = chartData[btn.dataset.mode];
+    document.getElementById('bar1').style.height = d.b1 + 'px';
+    document.getElementById('val1').textContent = d.v1;
+    document.getElementById('bar2').style.height = d.b2 + 'px';
+    document.getElementById('val2').textContent = d.v2;
+    document.getElementById('bar3').style.height = d.b3 + 'px';
+    document.getElementById('val3').textContent = d.v3;
+    document.getElementById('bar4').style.height = d.b4 + 'px';
+    document.getElementById('val4').textContent = d.v4;
+    document.getElementById('chartNote').textContent = d.note;
+  });
+});
+
+// Interactive Laying Pattern Visualizer
+const tileGrid = document.getElementById('tileGrid');
+for (let i = 0; i < 48; i++) {
+  const cell = document.createElement('div');
+  cell.className = 'tile-cell';
+  tileGrid.appendChild(cell);
+}
+
+let activeType = 'clay';
+let activePat = 'grid';
+const patternDesc = document.getElementById('patternDesc');
+const ratePreview = document.getElementById('ratePreview');
+
+function updateVisualizer() {
+  tileGrid.className = `tile-grid-view pattern-${activePat} type-${activeType}`;
+  const typeName = activeType === 'clay' ? 'NATURAL CLAY TERRACOTTA (300 × 300 MM)' : 'ORGANIC MINERAL STONE (600 × 1200 MM)';
+  const patName = activePat === 'grid' ? 'STACK GRID ALIGNMENT' : 'STAGGERED BRICK-BOND';
+  patternDesc.textContent = `${typeName} · ${patName}`;
+  ratePreview.textContent = activeType === 'clay' ? '₹88 / SQ FT' : '₹148 / SQ FT';
+}
+
+document.querySelectorAll('.type-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.type-toggle').forEach(b => b.className = 'btn btn-sm btn-secondary type-toggle');
+    btn.className = 'btn btn-sm btn-primary type-toggle';
+    activeType = btn.dataset.type;
+    updateVisualizer();
+  });
+});
+
+document.querySelectorAll('.pat-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.pat-toggle').forEach(b => b.className = 'btn btn-sm btn-secondary pat-toggle');
+    btn.className = 'btn btn-sm btn-primary pat-toggle';
+    activePat = btn.dataset.pat;
+    updateVisualizer();
+  });
+});
+// BOQ Modal Controller
+function openQuoteModal() {
+  const modal = document.getElementById('boqModal');
+  if (!modal) return;
+  const isOrganic = (typeof activeType !== 'undefined' && activeType === 'organic');
+  const specText = isOrganic 
+    ? 'Organic Mineral Stone Vitrified Flooring Tiles · IS 15622 (₹148 / Sq Ft)' 
+    : 'Natural Clay Terracotta Tiles · 300 × 300 MM (₹88 / Sq Ft)';
+  const specEl = document.getElementById('modalSpecDisplay');
+  if (specEl) specEl.textContent = specText;
+  
+  if (window.ostaadCurrentUser) {
+    const u = window.ostaadCurrentUser;
+    const nameEl = document.getElementById('bmName');
+    const emailEl = document.getElementById('bmEmail');
+    const phoneEl = document.getElementById('bmPhone');
+    const pinEl = document.getElementById('bmPincode');
+    if (nameEl && !nameEl.value) nameEl.value = u.displayName || (window.ostaadUserProfile ? window.ostaadUserProfile.displayName : '') || '';
+    if (emailEl && !emailEl.value) emailEl.value = u.email || '';
+    if (phoneEl && !phoneEl.value && window.ostaadUserProfile && window.ostaadUserProfile.phone) phoneEl.value = window.ostaadUserProfile.phone;
+    if (pinEl && !pinEl.value && window.ostaadUserProfile && window.ostaadUserProfile.pincode) pinEl.value = window.ostaadUserProfile.pincode;
+  }
+  
+  modal.style.display = 'flex';
+  requestAnimationFrame(() => {
+    modal.classList.add('open');
+  });
+  document.body.style.overflow = 'hidden';
+}
+
+function closeQuoteModal() {
+  const modal = document.getElementById('boqModal');
+  if (!modal) {
+    document.body.style.overflow = '';
+    return;
+  }
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => {
+    modal.style.display = 'none';
+  }, 300);
+}
+
+async function handleBoqSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('bmSubmitBtn');
+  const status = document.getElementById('bmStatus');
+  const modalSpec = document.getElementById('modalSpecDisplay')?.textContent || 'Tiles Specification';
+  
+  const payload = {
+    name: document.getElementById('bmName').value,
+    email: document.getElementById('bmEmail').value,
+    phone: document.getElementById('bmPhone').value,
+    pincode: document.getElementById('bmPincode').value,
+    stage: document.getElementById('bmStage').value,
+    quantity: document.getElementById('bmQuantity').value,
+    notes: document.getElementById('bmNotes').value,
+    product: 'Tiles & Surface Coverings',
+    spec: modalSpec,
+    submittedAt: new Date().toISOString()
+  };
+
+  btn.disabled = true;
+  btn.textContent = 'Transmitting to Engineering Desk...';
+
+  try {
+    if (window.ostaadSubmitQuote) {
+      await window.ostaadSubmitQuote(payload);
+    }
+    
+    // Web3Forms backup
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        access_key: '6d71ee60-2f5a-436e-b445-ec657bf48f2a',
+        subject: `New Tiles Quote Request - ${payload.name} (${payload.pincode})`,
+        from_name: 'Ostaad Tiles Procurement Desk',
+        ...payload
+      })
+    }).catch(err => console.log('Web3Forms backup dispatched'));
+
+    status.style.display = 'block';
+    status.style.color = '#2e7d32';
+    status.textContent = '✓ Quote request logged! Our technical engineering desk will connect shortly.';
+    btn.textContent = 'Quote Request Submitted ✓';
+    
+    setTimeout(() => {
+      closeQuoteModal();
+      document.getElementById('boqModalForm').reset();
+      status.style.display = 'none';
+      btn.disabled = false;
+      btn.textContent = 'Submit Quote Request to Engineering Desk →';
+    }, 2200);
+
+  } catch (err) {
+    status.style.display = 'block';
+    status.style.color = '#c62828';
+    status.textContent = 'Error logging request. Please contact support directly.';
+    btn.disabled = false;
+    btn.textContent = 'Retry Submission →';
+  }
+}
+
+window.openQuoteModal = openQuoteModal;
+window.closeQuoteModal = closeQuoteModal;
+window.handleBoqSubmit = handleBoqSubmit;
+</script>
+<script type="module" src="navbar-auth.js"></script>
+</body>
+</html>

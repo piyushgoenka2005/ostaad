@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="ostaad-logo.png">
+<link rel="stylesheet" href="cookie-consent.css">
+<title>Cement (Grade 53 & 43) · Ostaad Verified Specification</title>
+<meta name="description" content="Technical audit, comprehensive specification sheet, concrete mix calculator, and compressive curing simulator for OPC Grade 53 and Grade 43 cement.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;450;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#FAF7F4;
+  --surface:#FDFBF9;
+  --slate:#23384F;
+  --slate-light:#31465F;
+  --sage:#7C8764;
+  --sage-light:#8E9976;
+  --terracotta:#A87545;
+  --terracotta-light:#BA8B5E;
+  --taupe:#B8A18B;
+  --text:#54524D;
+  --recessed:#EAE4DE;
+  --line:rgba(184,161,139,.42);
+  --white:#FFFFFF;
+  --font-sans:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'Geist Mono',ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --shadow-hybrid:9px 9px 24px rgba(184,161,139,.16), -9px -9px 20px rgba(255,255,255,.85), 0 1px 0 rgba(255,255,255,.7) inset;
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:radial-gradient(circle at 18% 8%,rgba(255,255,255,.75),transparent 35%),var(--canvas);
+  color:var(--text);
+  font-family:var(--font-sans);
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+img,svg{display:block;max-width:100%;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;background:none;border:none;}
+ul{margin:0;padding:0;list-style:none;}
+h1,h2,h3,h4,p{margin:0;}
+em{font-family:Georgia,serif;font-weight:400;color:var(--terracotta);font-style:italic;}
+.mono{font-family:var(--font-mono);}
+.container{max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,50px);}
+.section{padding:clamp(50px,6vw,80px) 0;position:relative;}
+
+/* ============================================================
+   NAV — EXACT FROM index.html
+   ============================================================ */
+.nav-wrap{position:fixed;top:20px;left:0;right:0;z-index:100;display:flex;justify-content:center;transition:transform .4s var(--ease);}
+.nav-wrap.nav-hide{transform:translateY(-140%);}
+.nav{
+  display:flex;align-items:center;gap:clamp(18px,2.4vw,32px);
+  padding:10px 12px 10px 20px;
+  border-radius:16px;
+  background:rgba(253,251,249,.88);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--recessed);
+  box-shadow:none!important;
+  width:min(920px,calc(100vw - 32px));
+}
+.nav-logo{display:inline-flex;align-items:center;gap:8px;font-weight:500;font-size:15px;letter-spacing:.01em;color:var(--slate);white-space:nowrap;}
+.nav-logo-mark{width:25px;height:25px;overflow:hidden;flex:0 0 25px;border-radius:6px}.nav-logo-mark img{display:block;width:100%;height:100%;object-fit:cover;transform:scale(1.78)}
+.nav-logo b{font-weight:600;}
+.nav-links{display:flex;align-items:center;justify-content:center;flex:1;gap:clamp(22px,3vw,38px);margin:0;font-size:14px;color:var(--text);}
+.nav-links a{position:relative;padding:4px 0;}
+.nav-links a::after{content:'';position:absolute;left:0;right:0;bottom:-2px;height:1px;background:var(--slate);transform:scaleX(0);transform-origin:left;transition:transform 220ms var(--ease);}
+.nav-links a:hover::after{transform:scaleX(1);}
+.nav-cta{display:flex;align-items:center;gap:10px;}
+.nav-secondary{font-size:13px;color:var(--text);white-space:nowrap;display:none;}
+@media(min-width:1000px){.nav-secondary{display:inline;}}
+.nav-toggle{display:none;background:none;border:0;padding:8px;}
+.nav-toggle span{display:block;width:18px;height:1.5px;background:var(--slate);margin:4px 0;}
+@media(max-width:1024px){.nav{width:calc(100vw - 36px);}.nav-links{gap:22px;font-size:13px;}}
+@media(max-width:768px){
+  .nav-wrap{top:12px;}
+  .nav{padding:9px 12px 9px 16px;justify-content:space-between;}
+  .nav-links{display:none;}
+  .nav-secondary{display:none!important;}
+  .nav-toggle{display:block;}
+  .nav-cta .btn{padding:10px 12px;font-size:10px;}
+}
+@media(max-width:420px){
+  .nav-logo{font-size:13px;}
+  .nav-logo-mark{width:22px;height:22px;flex-basis:22px;}
+  .nav-cta .btn{padding:9px 10px;font-size:9px;}
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 22px;border-radius:12px;border:1px solid transparent;
+  font-size:14.5px;font-weight:500;letter-spacing:.01em;
+  transition:background 220ms var(--ease),transform 220ms var(--ease),border-color 220ms var(--ease),box-shadow 220ms var(--ease);
+  white-space:nowrap;
+}
+.btn .arrow{display:inline-block;transition:transform 220ms var(--ease);}
+.btn:hover .arrow{transform:translateX(4px);}
+.btn-primary{background:var(--slate);color:#fff;box-shadow:0 10px 24px rgba(35,56,79,.22);}
+.btn-primary:hover{background:var(--slate-light);}
+.btn-secondary{background:rgba(253,251,249,.7);border-color:var(--taupe);color:var(--slate);}
+.btn-secondary:hover{background:var(--surface);border-color:var(--slate);}
+.btn-sm{padding:8px 14px;font-size:12.5px;border-radius:9px;}
+
+/* ---------- Cards and Utilities ---------- */
+.card{
+  border-radius:18px;background:rgba(253,251,249,.92);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(234,228,222,.95);box-shadow:var(--shadow-hybrid);padding:24px;
+}
+.eyebrow{
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;color:var(--taupe);
+  display:inline-flex;align-items:center;gap:10px;margin-bottom:12px;text-transform:uppercase;
+}
+.eyebrow::before{content:'';width:20px;height:1px;background:currentColor;}
+
+.breadcrumb{
+  display:flex;align-items:center;gap:8px;font-family:var(--font-mono);
+  font-size:11.5px;color:var(--taupe);margin-bottom:18px;flex-wrap:wrap;
+}
+.breadcrumb a{color:var(--text);transition:color .2s;}
+.breadcrumb a:hover{color:var(--slate);}
+.breadcrumb span.sep{opacity:.4;}
+.breadcrumb span.current{color:var(--slate);font-weight:500;}
+
+/* ============================================================
+   TOP PRODUCT SHOWCASE SECTION (L&T-SuFin Inspired)
+   ============================================================ */
+.product-showcase-section{
+  padding-top:125px;padding-bottom:50px;position:relative;border-bottom:1px solid var(--recessed);
+}
+.product-showcase-grid{
+  display:grid;
+  grid-template-columns:350px 1fr 340px;
+  gap:28px;
+  align-items:start;
+}
+
+/* 1. Gallery Column (Left) */
+.gallery-col{display:flex;flex-direction:column;gap:16px;}
+.main-pack-view{
+  background:#fff;border-radius:16px;border:1px solid var(--recessed);
+  padding:24px;display:flex;align-items:center;justify-content:center;
+  height:370px;position:relative;overflow:hidden;box-shadow:var(--shadow-hybrid);
+}
+.main-pack-view img{
+  max-width:100%;max-height:100%;object-fit:contain;
+  transition:transform .4s var(--ease);
+}
+.main-pack-view:hover img{transform:scale(1.06);}
+.pack-badge-grade{
+  position:absolute;top:14px;left:14px;
+  font-family:var(--font-mono);font-size:10px;font-weight:600;
+  padding:4px 10px;border-radius:6px;background:var(--slate);color:#fff;
+  letter-spacing:.08em;
+}
+.pack-badge-cert{
+  position:absolute;bottom:14px;left:14px;
+  font-family:var(--font-mono);font-size:9.5px;
+  padding:3px 8px;border-radius:5px;background:rgba(234,228,222,.7);color:var(--slate);
+}
+
+.pack-thumbnails{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+}
+.thumb-btn{
+  background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:8px 10px;display:flex;align-items:center;gap:10px;
+  transition:all .2s var(--ease);text-align:left;cursor:pointer;
+}
+.thumb-btn:hover{border-color:var(--slate);background:rgba(250,247,244,.9);}
+.thumb-btn.active{border-color:var(--slate);background:rgba(35,56,79,.06);outline:2px solid var(--slate);}
+.thumb-img{width:36px;height:36px;object-fit:contain;flex-shrink:0;}
+.thumb-title{font-size:12px;font-weight:600;color:var(--slate);display:block;}
+.thumb-sub{font-family:var(--font-mono);font-size:10px;color:var(--taupe);display:block;}
+
+.need-help-box{
+  padding:16px 18px;border-radius:14px;background:rgba(250,247,244,.85);
+  border:1px solid var(--line);display:flex;flex-direction:column;gap:8px;
+}
+.need-help-box h4{font-size:13px;font-weight:600;color:var(--slate);}
+.need-help-box p{font-size:12px;color:var(--text);line-height:1.45;}
+.need-help-box .btn{padding:8px 14px;font-size:12px;align-self:flex-start;margin-top:4px;}
+
+/* 2. Detail & Specs Column (Center) */
+.detail-col{display:flex;flex-direction:column;gap:18px;}
+.product-main-title{
+  font-size:clamp(26px,3.2vw,36px);font-weight:500;color:var(--slate);
+  line-height:1.15;letter-spacing:-.035em;margin:0 0 6px;
+}
+.detail-meta-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.meta-verified-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-mono);font-size:11px;color:var(--sage);
+  background:rgba(124,135,100,.14);border:1px solid rgba(124,135,100,.3);
+  padding:4px 10px;border-radius:20px;font-weight:500;
+}
+.copy-link-btn{
+  font-family:var(--font-mono);font-size:11px;color:var(--taupe);
+  display:inline-flex;align-items:center;gap:5px;cursor:pointer;
+  padding:4px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;
+  transition:all .2s var(--ease);
+}
+.copy-link-btn:hover{color:var(--slate);border-color:var(--slate);}
+
+/* Offers & Benchmarks box */
+.offers-card{
+  background:rgba(253,251,249,.95);border:1px solid var(--line);
+  border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;
+}
+.offers-title{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:var(--taupe);text-transform:uppercase;}
+.offer-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text);line-height:1.45;}
+.offer-item .chk{color:var(--sage);font-weight:700;font-size:14px;line-height:1.2;}
+.offer-item strong{color:var(--slate);}
+
+/* Trust Row */
+.trust-badges-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+}
+.trust-pill{
+  background:rgba(255,255,255,.9);border:1px solid var(--recessed);
+  border-radius:12px;padding:12px 10px;display:flex;flex-direction:column;gap:4px;
+  text-align:center;
+}
+.trust-pill .ico{font-size:18px;}
+.trust-pill .t-label{font-size:11.5px;font-weight:600;color:var(--slate);line-height:1.3;}
+.trust-pill .t-sub{font-family:var(--font-mono);font-size:9.5px;color:var(--taupe);}
+
+/* Specifications Sheet Table */
+.specs-sheet-card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;
+}
+.specs-sheet-card h3{
+  font-size:16px;font-weight:600;color:var(--slate);margin-bottom:14px;letter-spacing:-.01em;
+}
+.specs-sheet-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.specs-sheet-table tr{border-bottom:1px solid var(--recessed);}
+.specs-sheet-table tr:last-child{border-bottom:0;}
+.specs-sheet-table th{
+  text-align:left;padding:9px 6px;color:var(--taupe);
+  font-family:var(--font-mono);font-weight:450;width:40%;font-size:11px;
+}
+.specs-sheet-table td{
+  padding:9px 6px;color:var(--slate);font-weight:500;
+}
+
+/* 3. Procurement Sidebar Column (Right) */
+.procure-col{
+  display:flex;flex-direction:column;gap:18px;position:sticky;top:90px;
+}
+.procure-card{
+  background:#fff;border:1px solid var(--line);border-radius:16px;
+  padding:22px;box-shadow:var(--shadow-hybrid);display:flex;flex-direction:column;gap:14px;
+}
+.procure-shipper{
+  font-family:var(--font-mono);font-size:10.5px;color:var(--taupe);line-height:1.45;
+  border-bottom:1px dashed var(--recessed);padding-bottom:12px;
+}
+.procure-shipper strong{color:var(--slate);display:block;font-size:11.5px;}
+.procure-price-wrap{display:flex;flex-direction:column;gap:2px;}
+.procure-price-wrap .lbl{font-family:var(--font-mono);font-size:10px;color:var(--taupe);letter-spacing:.06em;}
+.procure-price-wrap .amt{font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--slate);line-height:1;}
+.procure-price-wrap .sub{font-family:var(--font-mono);font-size:11px;color:var(--sage);margin-top:2px;}
+
+.procure-how-it-works{
+  background:rgba(250,247,244,.75);border:1px solid var(--recessed);
+  border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;
+}
+.procure-how-it-works h4{font-size:12.5px;font-weight:600;color:var(--slate);}
+.procure-step{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:var(--text);line-height:1.4;}
+.step-dot{
+  width:18px;height:18px;border-radius:50%;background:var(--slate);color:#fff;
+  font-family:var(--font-mono);font-size:10px;font-weight:600;display:grid;place-items:center;flex-shrink:0;margin-top:1px;
+}
+
+/* ============================================================
+   CEMENT CALCULATOR SECTION
+   ============================================================ */
+.calc-field{margin-bottom:18px;}
+.calc-field label{display:block;font-family:var(--font-mono);font-size:11px;color:var(--taupe);margin-bottom:6px;letter-spacing:.06em;}
+.calc-select,.calc-input{
+  width:100%;height:44px;padding:0 14px;border-radius:10px;background:#fff;border:1px solid var(--line);
+  font-family:var(--font-sans);font-size:14px;color:var(--slate);outline:none;
+}
+.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;}
+.calc-res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px;padding-top:20px;border-top:1px solid var(--recessed);}
+.res-box{background:rgba(250,247,244,.8);padding:14px;border-radius:10px;border:1px solid var(--recessed);text-align:center;}
+.res-box .lbl{font-family:var(--font-mono);font-size:10px;color:var(--taupe);}
+.res-box .val{font-family:var(--font-mono);font-size:20px;font-weight:600;color:var(--slate);margin-top:4px;}
+
+/* ============================================================
+   LINE CHART CURING KINETICS SIMULATOR
+   ============================================================ */
+.curve-chart-box {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid var(--recessed);
+  padding: 24px 28px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(35, 56, 79, 0.04);
+}
+
+.chart-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--recessed);
+}
+
+.chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  user-select: none;
+  border: 1px solid rgba(0,0,0,0.06);
+  background: rgba(250, 247, 244, 0.6);
+}
+
+.chart-legend-item:hover {
+  background: #fff;
+  border-color: var(--line);
+}
+
+.chart-legend-item.active {
+  background: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(35, 56, 79, 0.08);
+}
+
+.chart-legend-item.legend-53.active {
+  border-color: #1B365D;
+  color: #1B365D;
+}
+.chart-legend-item.legend-43.active {
+  border-color: #C86D3B;
+  color: #C86D3B;
+}
+.chart-legend-item.legend-ppc.active {
+  border-color: #2E7D5B;
+  color: #2E7D5B;
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend-dot.dot-53 { background: #1B365D; }
+.legend-dot.dot-43 { background: #C86D3B; }
+.legend-dot.dot-ppc { background: #2E7D5B; }
+
+.curing-svg-wrap {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.curing-svg-wrap svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* SVG Line Series Styling & Interactive Focus */
+.chart-series-line {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: opacity 0.35s ease, stroke-width 0.35s ease, filter 0.35s ease;
+}
+
+.series-line-53 { stroke: #1B365D; stroke-width: 3.5px; }
+.series-line-43 { stroke: #C86D3B; stroke-width: 3.5px; }
+.series-line-ppc { stroke: #2E7D5B; stroke-width: 3.5px; }
+
+.series-area-fill {
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.series-points circle {
+  transition: transform 0.25s ease, r 0.25s ease, opacity 0.25s ease;
+  cursor: pointer;
+}
+
+.series-point-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  text-anchor: middle;
+}
+
+/* Dynamic State: Highlighting Grade 53 */
+.curve-chart-box[data-active="53"] .series-line-53 {
+  stroke-width: 4.5px;
+  opacity: 1;
+  filter: drop-shadow(0 4px 10px rgba(27, 54, 93, 0.45));
+}
+.curve-chart-box[data-active="53"] .series-fill-53 { opacity: 0.15; }
+.curve-chart-box[data-active="53"] .series-line-43 { stroke-width: 2px; opacity: 0.22; }
+.curve-chart-box[data-active="53"] .series-fill-43 { opacity: 0; }
+.curve-chart-box[data-active="53"] .series-line-ppc { stroke-width: 2px; opacity: 0.22; }
+.curve-chart-box[data-active="53"] .series-fill-ppc { opacity: 0; }
+.curve-chart-box[data-active="53"] .points-53 circle { r: 6.5px; }
+.curve-chart-box[data-active="53"] .points-43 circle { opacity: 0.25; r: 3.5px; }
+.curve-chart-box[data-active="53"] .points-ppc circle { opacity: 0.25; r: 3.5px; }
+.curve-chart-box[data-active="53"] .labels-53 { opacity: 1; font-weight: 700; fill: #1B365D; }
+.curve-chart-box[data-active="53"] .labels-43 { opacity: 0.15; }
+.curve-chart-box[data-active="53"] .labels-ppc { opacity: 0.15; }
+
+/* Dynamic State: Highlighting Grade 43 */
+.curve-chart-box[data-active="43"] .series-line-43 {
+  stroke-width: 4.5px;
+  opacity: 1;
+  filter: drop-shadow(0 4px 10px rgba(200, 109, 59, 0.45));
+}
+.curve-chart-box[data-active="43"] .series-fill-43 { opacity: 0.15; }
+.curve-chart-box[data-active="43"] .series-line-53 { stroke-width: 2px; opacity: 0.22; }
+.curve-chart-box[data-active="43"] .series-fill-53 { opacity: 0; }
+.curve-chart-box[data-active="43"] .series-line-ppc { stroke-width: 2px; opacity: 0.22; }
+.curve-chart-box[data-active="43"] .series-fill-ppc { opacity: 0; }
+.curve-chart-box[data-active="43"] .points-43 circle { r: 6.5px; }
+.curve-chart-box[data-active="43"] .points-53 circle { opacity: 0.25; r: 3.5px; }
+.curve-chart-box[data-active="43"] .points-ppc circle { opacity: 0.25; r: 3.5px; }
+.curve-chart-box[data-active="43"] .labels-43 { opacity: 1; font-weight: 700; fill: #C86D3B; }
+.curve-chart-box[data-active="43"] .labels-53 { opacity: 0.15; }
+.curve-chart-box[data-active="43"] .labels-ppc { opacity: 0.15; }
+
+/* Dynamic State: Highlighting PPC */
+.curve-chart-box[data-active="ppc"] .series-line-ppc {
+  stroke-width: 4.5px;
+  opacity: 1;
+  filter: drop-shadow(0 4px 10px rgba(46, 125, 91, 0.45));
+}
+.curve-chart-box[data-active="ppc"] .series-fill-ppc { opacity: 0.15; }
+.curve-chart-box[data-active="ppc"] .series-line-53 { stroke-width: 2px; opacity: 0.22; }
+.curve-chart-box[data-active="ppc"] .series-fill-53 { opacity: 0; }
+.curve-chart-box[data-active="ppc"] .series-line-43 { stroke-width: 2px; opacity: 0.22; }
+.curve-chart-box[data-active="ppc"] .series-fill-43 { opacity: 0; }
+.curve-chart-box[data-active="ppc"] .points-ppc circle { r: 6.5px; }
+.curve-chart-box[data-active="ppc"] .points-53 circle { opacity: 0.25; r: 3.5px; }
+.curve-chart-box[data-active="ppc"] .points-43 circle { opacity: 0.25; r: 3.5px; }
+.curve-chart-box[data-active="ppc"] .labels-ppc { opacity: 1; font-weight: 700; fill: #2E7D5B; }
+.curve-chart-box[data-active="ppc"] .labels-53 { opacity: 0.15; }
+.curve-chart-box[data-active="ppc"] .labels-43 { opacity: 0.15; }
+
+/* ============================================================
+   BENCHMARK MATRIX SECTION WITH COLUMN HIGHLIGHT
+   ============================================================ */
+.spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+.spec-table th, .spec-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--recessed);
+  font-size: 13.5px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.spec-table th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--taupe);
+  letter-spacing: .06em;
+  background: rgba(250,247,244,.6);
+}
+
+.spec-table.highlight-53 th.col-53,
+.spec-table.highlight-53 td.col-53 {
+  background: rgba(27, 54, 93, 0.08);
+  font-weight: 600;
+  color: #1B365D;
+}
+.spec-table.highlight-53 th.col-53 {
+  background: rgba(27, 54, 93, 0.16);
+  border-bottom: 2px solid #1B365D;
+}
+
+.spec-table.highlight-43 th.col-43,
+.spec-table.highlight-43 td.col-43 {
+  background: rgba(200, 109, 59, 0.09);
+  font-weight: 600;
+  color: #C86D3B;
+}
+.spec-table.highlight-43 th.col-43 {
+  background: rgba(200, 109, 59, 0.18);
+  border-bottom: 2px solid #C86D3B;
+}
+
+.spec-table.highlight-ppc th.col-ppc,
+.spec-table.highlight-ppc td.col-ppc {
+  background: rgba(46, 125, 91, 0.09);
+  font-weight: 600;
+  color: #2E7D5B;
+}
+.spec-table.highlight-ppc th.col-ppc {
+  background: rgba(46, 125, 91, 0.18);
+  border-bottom: 2px solid #2E7D5B;
+}
+
+/* ============================================================
+   QUOTE / BOQ MODAL STYLES IN PRODUCT-CEMENT
+   ============================================================ */
+.boq-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(15, 23, 42, 0.68);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.boq-modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.boq-modal-dialog {
+  position: relative;
+  background: #FCFAF7;
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 92vh;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  padding: 24px 28px;
+  box-shadow: 0 30px 70px -15px rgba(15, 23, 42, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+  transform: scale(0.95) translateY(14px);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.boq-modal-dialog::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.boq-modal-backdrop.open .boq-modal-dialog {
+  transform: scale(1) translateY(0);
+}
+.boq-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--recessed);
+  border: 1px solid var(--border, rgba(0,0,0,0.1));
+  color: var(--slate);
+  font-size: 19px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+.boq-modal-close:hover {
+  background: var(--slate);
+  color: #fff;
+  border-color: var(--slate);
+  transform: rotate(90deg);
+}
+.boq-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--amber, #C86D3B);
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+.boq-modal-header h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--slate);
+  letter-spacing: -0.02em;
+  margin: 0 0 4px;
+}
+.boq-modal-header p {
+  font-size: 13px;
+  color: var(--taupe);
+  line-height: 1.4;
+  margin: 0 0 12px;
+}
+.boq-spec-badge {
+  background: rgba(217, 119, 6, 0.08);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 14px;
+}
+.boq-spec-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  color: var(--amber, #C86D3B);
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+.boq-spec-val {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--slate);
+}
+.boq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.boq-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.boq-field.full {
+  grid-column: 1 / -1;
+}
+.boq-field label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--taupe);
+  letter-spacing: 0.06em;
+}
+.boq-field input, .boq-field select, .boq-field textarea {
+  width: 100%;
+  background: #fff;
+  border: 1px solid rgba(184, 161, 139, 0.5);
+  border-radius: 9px;
+  padding: 8px 11px;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  color: var(--slate);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+.boq-field input:focus, .boq-field select:focus, .boq-field textarea:focus {
+  border-color: var(--amber, #C86D3B);
+  box-shadow: 0 0 0 3px rgba(200, 109, 59, 0.15);
+}
+.boq-field textarea {
+  resize: vertical;
+  min-height: 52px;
+}
+.boq-trust-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--taupe);
+  margin-top: 8px;
+  text-align: center;
+}
+.boq-error-msg {
+  color: #dc2626;
+  font-size: 12.5px;
+  text-align: center;
+  margin-top: 8px;
+  background: #fef2f2;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+}
+.boq-success {
+  text-align: center;
+  padding: 24px 12px 12px;
+}
+.boq-success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.boq-success h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--slate);
+  margin: 0 0 8px;
+}
+.boq-success p {
+  font-size: 14px;
+  color: var(--taupe);
+  line-height: 1.5;
+  margin: 0 auto 18px;
+  max-width: 460px;
+}
+.boq-sla-box {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 0 auto 18px;
+  max-width: 440px;
+  text-align: left;
+}
+.boq-sla-item .sla-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--taupe);
+  letter-spacing: 0.08em;
+  margin-bottom: 2px;
+}
+.boq-sla-item .sla-val {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--slate);
+}
+@media (max-width: 640px) {
+  .boq-modal-dialog { padding: 24px 18px; }
+  .boq-grid { grid-template-columns: 1fr; gap: 12px; }
+  .boq-sla-box { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   FOOTER & MOBILE NAV
+   ============================================================ */
+footer{background:#192c40;color:#fff;padding:60px 5% 24px;margin-top:80px;}
+.foot-top{max-width:1240px;margin:auto;display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.14);padding-bottom:40px;}
+.foot-bottom{max-width:1240px;margin:20px auto 0;display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,.45);}
+
+.mobile-nav{display:none;}
+@media(max-width:1024px){
+  .product-showcase-grid{grid-template-columns:320px 1fr;}
+  .procure-col{grid-column:1 / -1;position:static;}
+}
+@media(max-width:768px){
+  .product-showcase-grid{grid-template-columns:1fr;}
+  .sim-grid{grid-template-columns:1fr;}
+  .trust-badges-row{grid-template-columns:1fr;}
+  .mobile-nav{
+    display:flex;position:fixed;bottom:14px;left:14px;right:14px;z-index:100;
+    background:rgba(253,251,249,.94);backdrop-filter:blur(22px);border:1px solid var(--recessed);border-radius:18px;
+    padding:8px 4px;justify-content:space-around;
+  }
+  .mobile-nav a{display:flex;flex-direction:column;align-items:center;font-size:9.5px;color:var(--taupe);gap:4px;flex:1;}
+  .mobile-nav a svg{width:18px;height:18px;stroke:currentColor;fill:none;}
+  .mobile-nav a.active{color:var(--slate);}
+  body{padding-bottom:76px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAV
+     ============================================================ -->
+<div class="nav-wrap" id="navWrap">
+  <nav class="nav">
+    <a href="index.html#hero" class="nav-logo"><span class="nav-logo-mark"><img src="ostaad-logo.png" alt=""></span><b>OSTAAD</b></a>
+    <ul class="nav-links">
+      <li><a href="products.html">Product</a></li>
+      <li><a href="index.html#see">Experience</a></li>
+      <li><a href="index.html#faq">FAQ</a></li>
+      <li><a href="about.html">About us</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a class="nav-secondary" href="contact.html">Contact Ostaad</a>
+      <a href="contact.html" class="btn btn-primary btn-sm">Start a Project <span class="arrow">→</span></a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- ============================================================
+       1. TOP PRODUCT SHOWCASE & SPECS (L&T-SuFin Inspired)
+       ============================================================ -->
+  <section class="product-showcase-section">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a> <span class="sep">›</span>
+        <a href="products.html">Products</a> <span class="sep">›</span>
+        <span class="current" id="crumbTitle">OPC 53 Grade Cement</span>
+      </div>
+
+      <div class="product-showcase-grid">
+
+        <!-- LEFT COLUMN: Product Pack & Consultation -->
+        <div class="gallery-col">
+          <div class="main-pack-view">
+            <span class="pack-badge-grade" id="badgeGrade">OPC 53 ACTIVE</span>
+            <img id="mainPackImg" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7X8G20TkSBtZVfJ2ZARi2nBIKgM00wHQkV-SWT_JeBEt4ghF25-nk2ygj&s=10" alt="JK Super OPC 53 Grade Cement">
+            <span class="pack-badge-cert">IS 12269 CERTIFIED</span>
+          </div>
+
+          <!-- Thumbnail selector to toggle between 53 and 43 -->
+          <div class="pack-thumbnails">
+            <button type="button" class="thumb-btn active" id="thumb53" data-grade="53">
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7X8G20TkSBtZVfJ2ZARi2nBIKgM00wHQkV-SWT_JeBEt4ghF25-nk2ygj&s=10" alt="Grade 53" class="thumb-img">
+              <div>
+                <span class="thumb-title">OPC 53 Grade</span>
+                <span class="thumb-sub">₹385 · RCC Slab/Beam</span>
+              </div>
+            </button>
+
+            <button type="button" class="thumb-btn" id="thumb43" data-grade="43">
+              <img src="https://5.imimg.com/data5/HK/IA/GLADMIN-45594007/jk-super-cement-opc-500x500.png" alt="Grade 43" class="thumb-img">
+              <div>
+                <span class="thumb-title">OPC 43 Grade</span>
+                <span class="thumb-sub">₹360 · Masonry/Plaster</span>
+              </div>
+            </button>
+          </div>
+
+          <!-- Need Help card (from screenshot) -->
+          <div class="need-help-box">
+            <h4>Need Technical Guidance?</h4>
+            <p>Unsure whether to specify Grade 53 or 43 for your foundation or slab? Our civil engineers will audit your structural drawings.</p>
+            <a href="contact.html" class="btn btn-secondary btn-sm">Submit Enquiry <span>→</span></a>
+          </div>
+        </div>
+
+        <!-- CENTER COLUMN: Specifications, Offers & Trust -->
+        <div class="detail-col">
+          <div>
+            <h1 class="product-main-title" id="productTitle">JK Super Ordinary Portland Cement (OPC 53)</h1>
+            <div class="detail-meta-bar">
+              <div class="meta-verified-tag">⚡ 480+ Bari Built · Verified Mill Baseline</div>
+              <button type="button" class="copy-link-btn" id="copyLinkBtn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                <span id="copyLinkText">Copy Link</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Offers / Verification callouts (inspired by L&T-SuFin) -->
+          <div class="offers-card">
+            <div class="offers-title">Offers & Procurement Benchmarks</div>
+            <div class="offer-item">
+              <span class="chk">✓</span>
+              <div><strong>Live Verified Rate:</strong> <span id="rateLabel">₹385 / 50 KG Bag (Grade 53)</span> & ₹360 / Bag (Grade 43) · Direct Mill Benchmark.</div>
+            </div>
+            <div class="offer-item">
+              <span class="chk">✓</span>
+              <div><strong>Batch MTC Guaranteed:</strong> Verified Mill Test Certificate dispatched with every load, confirming 3d & 28d strength tests.</div>
+            </div>
+            <div class="offer-item">
+              <span class="chk">✓</span>
+              <div><strong>Factory Moisture-Proof Bags:</strong> Sealed multi-ply HDPE valve bags preventing moisture intrusion and premature clinker hydration.</div>
+            </div>
+          </div>
+
+          <!-- Trust Badges Row (from screenshot) -->
+          <div class="trust-badges-row">
+            <div class="trust-pill">
+              <span class="ico">🚚</span>
+              <span class="t-label">Assured Direct Delivery</span>
+              <span class="t-sub">Site dispatch in 24–48 hrs</span>
+            </div>
+            <div class="trust-pill">
+              <span class="ico">⏱️</span>
+              <span class="t-label">Fresh Clinker Guarantee</span>
+              <span class="t-sub">&lt; 15 days batch age</span>
+            </div>
+            <div class="trust-pill">
+              <span class="ico">🛡️</span>
+              <span class="t-label">BIS Certified Quality</span>
+              <span class="t-sub">IS 12269 & IS 8112</span>
+            </div>
+          </div>
+
+          <!-- Technical Specifications Table (clean center table from screenshot) -->
+          <div class="specs-sheet-card">
+            <h3>Technical Specifications</h3>
+            <table class="specs-sheet-table">
+              <tbody>
+                <tr>
+                  <th>Product Type</th>
+                  <td id="specType">Ordinary Portland Cement (OPC)</td>
+                </tr>
+                <tr>
+                  <th>Standard Compliance</th>
+                  <td id="specStandard">IS 12269 : 2013 (Grade 53) / IS 8112 : 2013 (Grade 43)</td>
+                </tr>
+                <tr>
+                  <th>Compressive Strength @ 28 Days</th>
+                  <td id="specStr28">≥ 53.0 MPa (Achieved: 54.5 MPa)</td>
+                </tr>
+                <tr>
+                  <th>Compressive Strength @ 3 Days</th>
+                  <td id="specStr3">≥ 27.0 MPa (Achieved: 28.2 MPa)</td>
+                </tr>
+                <tr>
+                  <th>Initial Setting Time</th>
+                  <td>165 mins (BIS Requirement: Min 30 mins)</td>
+                </tr>
+                <tr>
+                  <th>Final Setting Time</th>
+                  <td>245 mins (BIS Requirement: Max 600 mins)</td>
+                </tr>
+                <tr>
+                  <th>Soundness (Le Chatelier)</th>
+                  <td>1.5 mm (BIS Limit: Max 10 mm)</td>
+                </tr>
+                <tr>
+                  <th>Fineness (Blaine air)</th>
+                  <td>285 m²/kg (BIS Requirement: Min 225 m²/kg)</td>
+                </tr>
+                <tr>
+                  <th>Packaging Format</th>
+                  <td>50 KG Net Multi-Ply Poly-Lined Valve Bag</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Procurement & How it works card -->
+        <div class="procure-col">
+          <div class="procure-card">
+            <div class="procure-shipper">
+              Shipped by <strong>Ostaad Verified Logistics</strong>
+              Sold by <strong>Direct Primary Mill Network</strong>
+            </div>
+
+            <div class="procure-price-wrap">
+              <div class="lbl">TRANSPARENT PROCUREMENT BENCHMARK</div>
+              <div class="amt" id="procurePrice">₹385</div>
+              <div class="sub">PER 50 KG BAG · TAX INCLUSIVE</div>
+            </div>
+
+            <button type="button" id="topRequestQuoteBtn" onclick="openQuoteModal()" class="btn btn-primary" style="width:100%;justify-content:center;cursor:pointer;">Request Quote for Bulk <span class="arrow">→</span></button>
+            <a href="#cementCalc" class="btn btn-secondary" style="width:100%;justify-content:center;">Calculate Bag Quota <span class="arrow">↓</span></a>
+
+            <!-- How Request Quote for Bulk Works (inspired by video/steps in screenshot) -->
+            <div class="procure-how-it-works">
+              <h4>How does Ostaad Bulk Buying work?</h4>
+              <div class="procure-step">
+                <span class="step-dot">1</span>
+                <div><strong>Calculate volume below:</strong> Input your roof slab, column, or plaster dimensions in our Cement Calculator.</div>
+              </div>
+              <div class="procure-step">
+                <span class="step-dot">2</span>
+                <div><strong>Receive mill-direct quote:</strong> Transparent pricing with zero regional dealer hoarding inflation.</div>
+              </div>
+              <div class="procure-step">
+                <span class="step-dot">3</span>
+                <div><strong>Site delivery with MTC:</strong> Factory-fresh bags unloaded at your site with certified batch lab reports.</div>
+              </div>
+            </div>
+
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--sage);text-align:center;padding-top:4px;">
+              ● 100% GENUINE PORTLAND CLINKER · NO ADULTERATION
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       2. CEMENT CALCULATOR SECTION
+       ============================================================ -->
+  <section class="section" id="cementCalc">
+    <div class="container">
+      <div class="eyebrow">CEMENT CALCULATOR</div>
+      <h2 style="font-size:32px;color:var(--slate);letter-spacing:-.03em;margin-bottom:10px;">Cement Calculator — Concrete Mix & Bag Estimation</h2>
+      <p style="color:var(--text);max-width:640px;margin-bottom:30px;">Input the casting area or structural element dimensions to compute the exact ratio of Cement bags, Coarse Sand, Aggregate, and water needed.</p>
+
+      <div class="sim-grid">
+        <div class="card">
+          <div class="calc-field">
+            <label>STRUCTURAL ELEMENT</label>
+            <select id="elemSelect" class="calc-select">
+              <option value="slab">RCC Roof Slab (5 Inch Thick)</option>
+              <option value="column">Columns & Heavy Pillars (M25 Grade)</option>
+              <option value="beam">Plinth & Lintel Beams (M20 Grade)</option>
+              <option value="plaster">Internal Wall Plaster (12mm Thick)</option>
+            </select>
+          </div>
+
+          <div class="calc-field">
+            <label id="areaLabel">SLAB SURFACE AREA (SQ FT)</label>
+            <input type="number" id="dimInput" class="calc-input" value="1000" min="50" max="10000">
+          </div>
+
+          <div class="calc-field">
+            <label>CEMENT GRADE PREFERENCE</label>
+            <select id="gradeSelect" class="calc-select">
+              <option value="53">OPC 53 (₹385/bag) — Recommended for Slabs</option>
+              <option value="43">OPC 43 (₹360/bag) — Economical for Masonry</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card" style="background:var(--slate);color:#fff;">
+          <div class="eyebrow" style="color:rgba(255,255,255,.6);">CALCULATED STRUCTURAL REQUIREMENT</div>
+          <div style="font-size:28px;font-weight:600;font-family:var(--font-mono);margin:10px 0;" id="resBags">134 Bags</div>
+          <p style="font-size:13.5px;color:rgba(255,255,255,.75);margin-bottom:20px;" id="resDesc">Mix Design: M20 Nominal (1 : 1.5 : 3) with water-cement ratio 0.50.</p>
+
+          <div class="calc-res-grid">
+            <div class="res-box" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15);">
+              <div class="lbl" style="color:rgba(255,255,255,.6);">CEMENT COST</div>
+              <div class="val" style="color:#fff;" id="resCost">₹51,590</div>
+            </div>
+            <div class="res-box" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15);">
+              <div class="lbl" style="color:rgba(255,255,255,.6);">SAND REQD</div>
+              <div class="val" style="color:#fff;" id="resSand">290 cft</div>
+            </div>
+            <div class="res-box" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15);">
+              <div class="lbl" style="color:rgba(255,255,255,.6);">AGGREGATE</div>
+              <div class="val" style="color:#fff;" id="resAggr">580 cft</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       3. CHARTS SECTION — COMPRESSIVE STRENGTH DEVELOPMENT
+       ============================================================ -->
+  <section class="section" id="chartsSection" style="background:var(--surface);border-top:1px solid var(--recessed);border-bottom:1px solid var(--recessed);">
+    <div class="container">
+      <div class="eyebrow">CURING KINETICS SIMULATOR</div>
+      <h2 style="font-size:32px;color:var(--slate);letter-spacing:-.03em;margin-bottom:10px;">Compressive Strength Development Over Time</h2>
+      <p style="color:var(--text);max-width:620px;margin-bottom:30px;">Toggle between Grade 53, Grade 43, and PPC to simulate how hydraulic compressive strength develops over the standard 28-day water curing cycle.</p>
+
+      <div style="display:flex;gap:10px;margin-bottom:20px;">
+        <button class="btn btn-sm btn-primary grade-toggle" data-grade="53">OPC Grade 53</button>
+        <button class="btn btn-sm btn-secondary grade-toggle" data-grade="43">OPC Grade 43</button>
+        <button class="btn btn-sm btn-secondary grade-toggle" data-grade="ppc">PPC (Pozzolana)</button>
+      </div>
+
+      <div class="curve-chart-box" id="curveChartBox" data-active="53">
+        <!-- Interactive Multi-Series Legend -->
+        <div class="chart-legend-row">
+          <div class="chart-legend-item legend-53 active" data-grade="53" title="Click to highlight Grade 53 curve">
+            <span class="legend-dot dot-53"></span>
+            <span>OPC Grade 53 (IS 12269) · High Early Strength</span>
+          </div>
+          <div class="chart-legend-item legend-43" data-grade="43" title="Click to highlight Grade 43 curve">
+            <span class="legend-dot dot-43"></span>
+            <span>OPC Grade 43 (IS 8112) · General Structural</span>
+          </div>
+          <div class="chart-legend-item legend-ppc" data-grade="ppc" title="Click to highlight PPC curve">
+            <span class="legend-dot dot-ppc"></span>
+            <span>PPC Pozzolana (IS 1489) · Dense Matrix & Durability</span>
+          </div>
+        </div>
+
+        <div class="curing-svg-wrap">
+          <svg viewBox="0 0 760 290" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="grad53" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#1B365D" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#1B365D" stop-opacity="0.0"/>
+              </linearGradient>
+              <linearGradient id="grad43" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#C86D3B" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#C86D3B" stop-opacity="0.0"/>
+              </linearGradient>
+              <linearGradient id="gradPpc" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2E7D5B" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#2E7D5B" stop-opacity="0.0"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Horizontal Y-Grid lines -->
+            <g class="chart-grid" stroke="rgba(184, 161, 139, 0.25)" stroke-dasharray="4 4" stroke-width="1">
+              <line x1="60" y1="35" x2="720" y2="35" />
+              <line x1="60" y1="82.5" x2="720" y2="82.5" />
+              <line x1="60" y1="130" x2="720" y2="130" />
+              <line x1="60" y1="177.5" x2="720" y2="177.5" />
+              <line x1="60" y1="225" x2="720" y2="225" stroke-dasharray="none" stroke="rgba(35, 56, 79, 0.2)" stroke-width="1.5" />
+            </g>
+
+            <!-- Y-Axis Scale Labels (MPa) -->
+            <g font-family="var(--font-mono)" font-size="10" fill="var(--taupe)" text-anchor="end">
+              <text x="50" y="39">60 MPa</text>
+              <text x="50" y="86.5">45 MPa</text>
+              <text x="50" y="134">30 MPa</text>
+              <text x="50" y="181.5">15 MPa</text>
+              <text x="50" y="228">0 MPa</text>
+            </g>
+
+            <!-- Vertical Milestone Guideline tracks -->
+            <g stroke="rgba(184, 161, 139, 0.15)" stroke-dasharray="2 2" stroke-width="1">
+              <line x1="120" y1="35" x2="120" y2="225" />
+              <line x1="300" y1="35" x2="300" y2="225" />
+              <line x1="490" y1="35" x2="490" y2="225" />
+              <line x1="680" y1="35" x2="680" y2="225" />
+            </g>
+
+            <!-- Area fills under curves -->
+            <path class="series-area-fill series-fill-53" fill="url(#grad53)" d="M 120 225 L 120 139.5 C 200 126, 230 116, 300 107.8 C 380 97, 420 86, 490 79.2 C 570 72, 610 57, 680 52.25 L 680 225 Z" />
+            <path class="series-area-fill series-fill-43" fill="url(#grad43)" d="M 120 225 L 120 152.2 C 200 138, 230 128, 300 120.5 C 380 112, 420 107, 490 101.5 C 570 95, 610 88, 680 83.1 L 680 225 Z" />
+            <path class="series-area-fill series-fill-ppc" fill="url(#gradPpc)" d="M 120 225 L 120 172.7 C 200 162, 230 156, 300 152.2 C 380 143, 420 132, 490 126.8 C 570 120, 610 109, 680 104.0 L 680 225 Z" />
+
+            <!-- Series 1: Grade 53 Line (Deep Blue / Slate #1B365D) -->
+            <path class="chart-series-line series-line-53" d="M 120 139.5 C 200 126, 230 116, 300 107.8 C 380 97, 420 86, 490 79.2 C 570 72, 610 57, 680 52.25" />
+
+            <!-- Series 2: Grade 43 Line (Terracotta #C86D3B) -->
+            <path class="chart-series-line series-line-43" d="M 120 152.2 C 200 138, 230 128, 300 120.5 C 380 112, 420 107, 490 101.5 C 570 95, 610 88, 680 83.1" />
+
+            <!-- Series 3: PPC Line (Emerald #2E7D5B) -->
+            <path class="chart-series-line series-line-ppc" d="M 120 172.7 C 200 162, 230 156, 300 152.2 C 380 143, 420 132, 490 126.8 C 570 120, 610 109, 680 104.0" />
+
+            <!-- Grade 53 Points & Labels -->
+            <g class="series-points points-53" fill="#1B365D" stroke="#fff" stroke-width="2">
+              <circle cx="120" cy="139.5" r="5" />
+              <circle cx="300" cy="107.8" r="5" />
+              <circle cx="490" cy="79.2" r="5" />
+              <circle cx="680" cy="52.25" r="5" />
+            </g>
+            <g class="series-point-label labels-53" fill="#1B365D">
+              <text x="120" y="125">27.0 MPa</text>
+              <text x="300" y="93">37.0 MPa</text>
+              <text x="490" y="65">46.0 MPa</text>
+              <text x="680" y="38">54.5 MPa</text>
+            </g>
+
+            <!-- Grade 43 Points & Labels -->
+            <g class="series-points points-43" fill="#C86D3B" stroke="#fff" stroke-width="2">
+              <circle cx="120" cy="152.2" r="4.5" />
+              <circle cx="300" cy="120.5" r="4.5" />
+              <circle cx="490" cy="101.5" r="4.5" />
+              <circle cx="680" cy="83.1" r="4.5" />
+            </g>
+            <g class="series-point-label labels-43" fill="#C86D3B">
+              <text x="120" y="142">23.0 MPa</text>
+              <text x="300" y="110">33.0 MPa</text>
+              <text x="490" y="91">39.0 MPa</text>
+              <text x="680" y="73">44.8 MPa</text>
+            </g>
+
+            <!-- PPC Points & Labels -->
+            <g class="series-points points-ppc" fill="#2E7D5B" stroke="#fff" stroke-width="2">
+              <circle cx="120" cy="172.7" r="4.5" />
+              <circle cx="300" cy="152.2" r="4.5" />
+              <circle cx="490" cy="126.8" r="4.5" />
+              <circle cx="680" cy="104.0" r="4.5" />
+            </g>
+            <g class="series-point-label labels-ppc" fill="#2E7D5B">
+              <text x="120" y="163">16.5 MPa</text>
+              <text x="300" y="142">23.0 MPa</text>
+              <text x="490" y="117">31.0 MPa</text>
+              <text x="680" y="94">38.2 MPa</text>
+            </g>
+
+            <!-- X-Axis Milestone Labels -->
+            <g font-family="var(--font-mono)" font-size="11" fill="var(--slate)" font-weight="600" text-anchor="middle">
+              <text x="120" y="252">DAY 3</text>
+              <text x="300" y="252">DAY 7</text>
+              <text x="490" y="252">DAY 14</text>
+              <text x="680" y="252">DAY 28 (FINAL)</text>
+            </g>
+            <g font-family="var(--font-mono)" font-size="9.5" fill="var(--taupe)" text-anchor="middle">
+              <text x="120" y="267">Initial De-shutter</text>
+              <text x="300" y="267">65% Standard Cure</text>
+              <text x="490" y="267">85% Structural Load</text>
+              <text x="680" y="267">100% 28-Day Target</text>
+            </g>
+          </svg>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:18px;font-family:var(--font-mono);font-size:11px;color:var(--taupe);flex-wrap:wrap;gap:8px;border-top:1px solid var(--recessed);padding-top:14px;">
+          <span>TEST STANDARD: IS 4031 (PART 6) HYDRAULIC COMPRESSIVE STRENGTH</span>
+          <span id="gradeNote">Target: ≥ 53.0 MPa at 28 days for heavy multi-story frames.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4. BENCHMARK MATRIX SECTION (BIS STANDARDS)
+       ============================================================ -->
+  <section class="section" id="matrixSection" style="padding-top:60px;">
+    <div class="container">
+      <div class="card">
+        <div class="eyebrow">TECHNICAL COMPLIANCE AUDIT</div>
+        <h3 style="font-size:22px;color:var(--slate);margin-bottom:6px;letter-spacing:-.02em;">Bureau of Indian Standards (BIS) Benchmark Matrix</h3>
+        <p style="color:var(--taupe);font-family:var(--font-mono);font-size:12px;margin-bottom:16px;">PHYSICAL & CHEMICAL TESTING CRITERIA AS PER IS 4031 & IS 4032</p>
+
+        <table class="spec-table highlight-53" id="benchmarkMatrix">
+          <thead>
+            <tr>
+              <th>PROPERTY</th>
+              <th class="col-53">IS 12269 (GRADE 53)</th>
+              <th class="col-43">IS 8112 (GRADE 43)</th>
+              <th class="col-ppc">IS 1489 (PPC)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>3-Day Compressive Strength</td>
+              <td class="col-53">≥ 27.0 MPa</td>
+              <td class="col-43">≥ 23.0 MPa</td>
+              <td class="col-ppc">≥ 16.0 MPa</td>
+            </tr>
+            <tr>
+              <td>7-Day Compressive Strength</td>
+              <td class="col-53">≥ 37.0 MPa</td>
+              <td class="col-43">≥ 33.0 MPa</td>
+              <td class="col-ppc">≥ 22.0 MPa</td>
+            </tr>
+            <tr>
+              <td>28-Day Compressive Strength</td>
+              <td class="col-53">≥ 53.0 MPa</td>
+              <td class="col-43">≥ 43.0 MPa</td>
+              <td class="col-ppc">≥ 33.0 MPa</td>
+            </tr>
+            <tr>
+              <td>Initial Setting Time</td>
+              <td class="col-53">≥ 30 mins</td>
+              <td class="col-43">≥ 30 mins</td>
+              <td class="col-ppc">≥ 30 mins</td>
+            </tr>
+            <tr>
+              <td>Final Setting Time</td>
+              <td class="col-53">≤ 600 mins</td>
+              <td class="col-43">≤ 600 mins</td>
+              <td class="col-ppc">≤ 600 mins</td>
+            </tr>
+            <tr>
+              <td>Fineness (Blaine m²/kg)</td>
+              <td class="col-53">≥ 225</td>
+              <td class="col-43">≥ 225</td>
+              <td class="col-ppc">≥ 300</td>
+            </tr>
+            <tr>
+              <td>Soundness (Le Chatelier)</td>
+              <td class="col-53">≤ 10 mm</td>
+              <td class="col-43">≤ 10 mm</td>
+              <td class="col-ppc">≤ 10 mm</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+  <!-- ============================================================
+       REQUEST QUOTE / BOQ INTEGRATION DIALOG MODAL
+       ============================================================ -->
+  <div class="boq-modal-backdrop" id="boqModal" role="dialog" aria-modal="true" aria-labelledby="boqModalTitle" style="display:none;">
+    <div class="boq-modal-dialog">
+      <button type="button" class="boq-modal-close" id="closeBoqModal" aria-label="Close dialog">×</button>
+
+      <!-- Authentication Required Gate -->
+      <div id="boqAuthGate" style="display:none; text-align:center; padding: 24px 12px 14px;">
+        <div style="width:58px; height:58px; border-radius:50%; background:rgba(200,109,59,.12); color:#C86D3B; display:flex; align-items:center; justify-content:center; margin: 0 auto 16px;">
+          <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h3 style="font-size:22px; font-weight:700; color:var(--slate); margin:0 0 8px;">Authentication Required</h3>
+        <p style="font-size:14px; color:var(--taupe); max-width:440px; margin:0 auto 20px; line-height:1.5;">
+          You must be logged in to request a verified mill-direct bulk quote and engineering BOQ audit for your project.
+        </p>
+        
+        <div class="boq-spec-badge" style="max-width:440px; margin: 0 auto 24px; text-align:left;">
+          <span class="boq-spec-label">TARGET CEMENT SPECIFICATION</span>
+          <span class="boq-spec-val" id="boqGateSpecVal">JK Super OPC 53 Grade Cement (IS 12269)</span>
+        </div>
+
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+          <a href="login.html?redirect=product-cement.html" class="btn btn-primary" style="padding:12px 24px; font-size:13.5px; border-radius:12px; text-decoration:none;">
+            <span>Sign In to Continue</span> <span class="arrow">→</span>
+          </a>
+          <a href="signup.html?redirect=product-cement.html" class="btn btn-secondary" style="padding:12px 24px; font-size:13.5px; border-radius:12px; text-decoration:none;">
+            Create New Account
+          </a>
+        </div>
+      </div>
+
+      <div id="boqFormContainer">
+        <div class="boq-modal-header">
+          <span class="boq-eyebrow">MILL-DIRECT PROCUREMENT & BOQ</span>
+          <h3 id="boqModalTitle">Request Verified Bulk Quote</h3>
+          <p>Connect verified factory rates and laboratory testing baseline directly into your project's procurement schedule.</p>
+
+          <div class="boq-spec-badge" id="boqSpecBadge">
+            <span class="boq-spec-label">TARGET MATERIAL SPECIFICATION</span>
+            <span class="boq-spec-val" id="boqSpecVal">JK Super OPC 53 Grade Cement · IS 12269 (₹385/Bag)</span>
+          </div>
+        </div>
+
+        <form id="boqForm" class="boq-form">
+          <input type="hidden" name="access_key" value="6d71ee60-2f5a-436e-b445-ec657bf48f2a">
+          <input type="hidden" name="subject" id="boqSubject" value="New Bulk Cement Quote Request - Ostaad">
+          <input type="hidden" name="from_name" value="Ostaad Cement Procurement Desk">
+          <input type="hidden" name="specification" id="boqSpecInput" value="JK Super OPC 53 Grade Cement (IS 12269)">
+
+          <div class="boq-grid">
+            <div class="boq-field">
+              <label for="boqName">FULL NAME *</label>
+              <input type="text" id="boqName" name="name" required placeholder="e.g. Rahul Sen">
+            </div>
+
+            <div class="boq-field">
+              <label for="boqEmail">WORK / PERSONAL EMAIL *</label>
+              <input type="email" id="boqEmail" name="email" required placeholder="e.g. rahul@example.com">
+            </div>
+
+            <div class="boq-field">
+              <label for="boqPhone">PHONE / WHATSAPP *</label>
+              <input type="tel" id="boqPhone" name="phone" required placeholder="+91 98300 XXXXX">
+            </div>
+
+            <div class="boq-field">
+              <label for="boqPincode">PROJECT PIN CODE *</label>
+              <input type="text" id="boqPincode" name="pincode" required pattern="[0-9]{6}" maxlength="6" placeholder="e.g. 700091">
+            </div>
+
+            <div class="boq-field">
+              <label for="boqStage">CURRENT PROJECT STAGE</label>
+              <select id="boqStage" name="project_stage">
+                <option value="Structural RCC Casting">Structural RCC Casting</option>
+                <option value="Planning & Architectural Drawings">Planning & Architectural Drawings</option>
+                <option value="Excavation & Footing Foundation">Excavation & Footing Foundation</option>
+                <option value="Brickwork & Plastering">Brickwork & Plastering</option>
+                <option value="Flooring, Tiling & Finishing">Flooring, Tiling & Finishing</option>
+              </select>
+            </div>
+
+            <div class="boq-field">
+              <label for="boqQty">ESTIMATED QUANTITY (BAGS)</label>
+              <input type="text" id="boqQty" name="quantity" placeholder="e.g. ~350 Bags / 1,500 sq ft slab">
+            </div>
+
+            <div class="boq-field full">
+              <label for="boqNotes">PROJECT NOTES & BLUEPRINT REQUIREMENTS</label>
+              <textarea id="boqNotes" name="notes" rows="3" placeholder="Specify project site, required dispatch timeline, or structural grade preferences."></textarea>
+            </div>
+          </div>
+
+          <button type="submit" id="boqSubmitBtn" class="btn btn-primary" style="width:100%; justify-content:center; padding:14px; font-size:14px; border-radius:12px; cursor:pointer;">
+            <span>Submit Quote Request to Engineering Desk</span> <span class="arrow">→</span>
+          </button>
+
+          <div class="boq-trust-note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Verified MTC Guaranteed · Zero Price Tampering · Direct Mill Logistics</span>
+          </div>
+
+          <div class="boq-error-msg" id="boqErrorMsg" style="display:none;"></div>
+        </form>
+      </div>
+
+      <!-- Success State -->
+      <div id="boqSuccessState" class="boq-success" style="display:none;">
+        <div class="boq-success-icon">
+          <svg viewBox="0 0 24 24" width="32" height="32" stroke="#059669" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h3>Quote Request Submitted!</h3>
+        <p>Your cement procurement inquiry for <strong id="boqSuccessSpec">OPC 53 Cement</strong> has been logged with our Civil Engineering Desk. An audited quote and test certificates will be sent to <strong id="boqSuccessEmail">your email</strong>.</p>
+        
+        <div class="boq-sla-box">
+          <div class="boq-sla-item">
+            <span class="sla-label">ESTIMATED RESPONSE TIME</span>
+            <span class="sla-val">&lt; 3 Business Hours</span>
+          </div>
+          <div class="boq-sla-item">
+            <span class="sla-label">LOGISTICS AUDIT</span>
+            <span class="sla-val">Direct Mill Dispatch</span>
+          </div>
+        </div>
+
+        <button type="button" id="boqSuccessCloseBtn" class="btn btn-secondary" style="padding:10px 24px; font-size:13.5px; border-radius:10px; cursor:pointer;">Close Window</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="foot-top">
+    <div>
+      <h3 style="font-size:15px;letter-spacing:.14em;margin-bottom:8px;">OSTAAD</h3>
+      <p style="font-size:13px;color:rgba(255,255,255,.6);max-width:320px;">The costing and procurement intelligence layer for residential construction.</p>
+    </div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--taupe);margin-bottom:12px;">SPECIFICATIONS</div>
+      <div style="display:flex;gap:20px;font-size:13px;flex-wrap:wrap;">
+        <a href="products.html">All Products</a>
+        <a href="product-cement.html" style="color:#fff;font-weight:600;">Cement</a>
+        <a href="product-tiles.html">Tiles</a>
+        <a href="product-paint.html">Paint</a>
+        <a href="product-plywood.html">Plywood</a>
+        <a href="product-waterproofing.html">Waterproofing</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 Ostaad Technologies Pvt Ltd</span>
+    <span>SEE. KNOW. BUILD.</span>
+  </div>
+</footer>
+
+<nav class="mobile-nav">
+  <a href="index.html"><svg viewBox="0 0 24 24"><path d="M4 20V10l8-6 8 6v10"/></svg>Home</a>
+  <a href="products.html" class="active"><svg viewBox="0 0 24 24"><path d="M12 3v18M7 8l5-5 5 5"/></svg>Products</a>
+  <a href="index.html#see"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>Experience</a>
+  <a href="contact.html"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="m4 7 8 6 8-6"/></svg>Contact</a>
+</nav>
+
+<script src="cookie-consent.js"></script>
+<script>
+// Floating Nav hide/show
+const navWrap = document.getElementById('navWrap');
+let lastY = window.scrollY;
+window.addEventListener('scroll', ()=>{
+  const y = window.scrollY;
+  if(y > lastY && y > 140){ navWrap?.classList.add('nav-hide'); }
+  else{ navWrap?.classList.remove('nav-hide'); }
+  lastY = y;
+},{passive:true});
+
+// Interactive Thumbnail Switcher between Grade 53 and 43
+const thumb53 = document.getElementById('thumb53');
+const thumb43 = document.getElementById('thumb43');
+const mainPackImg = document.getElementById('mainPackImg');
+const badgeGrade = document.getElementById('badgeGrade');
+const crumbTitle = document.getElementById('crumbTitle');
+const productTitle = document.getElementById('productTitle');
+const rateLabel = document.getElementById('rateLabel');
+const procurePrice = document.getElementById('procurePrice');
+const specStr28 = document.getElementById('specStr28');
+const specStr3 = document.getElementById('specStr3');
+
+const img53 = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7X8G20TkSBtZVfJ2ZARi2nBIKgM00wHQkV-SWT_JeBEt4ghF25-nk2ygj&s=10';
+const img43 = 'https://5.imimg.com/data5/HK/IA/GLADMIN-45594007/jk-super-cement-opc-500x500.png';
+
+function setChartAndMatrixGrade(grade) {
+  currentSelectedGrade = grade;
+  const chartBox = document.getElementById('curveChartBox');
+  const matrixTable = document.getElementById('benchmarkMatrix');
+  const gradeNote = document.getElementById('gradeNote');
+
+  // 1. Update Chart Box active attribute
+  if (chartBox) {
+    chartBox.setAttribute('data-active', grade);
+  }
+
+  // 2. Update Grade Buttons
+  document.querySelectorAll('.grade-toggle').forEach(btn => {
+    if (btn.dataset.grade === grade) {
+      btn.className = 'btn btn-sm btn-primary grade-toggle';
+    } else {
+      btn.className = 'btn btn-sm btn-secondary grade-toggle';
+    }
+  });
+
+  // 3. Update Chart Legend
+  document.querySelectorAll('.chart-legend-item').forEach(item => {
+    if (item.dataset.grade === grade) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+
+  // 4. Update Benchmark Matrix Column Highlight
+  if (matrixTable) {
+    matrixTable.classList.remove('highlight-53', 'highlight-43', 'highlight-ppc');
+    matrixTable.classList.add(`highlight-${grade}`);
+  }
+
+  // 5. Update Kinetics Note
+  if (gradeNote && gradeData[grade]) {
+    gradeNote.textContent = gradeData[grade].note;
+  }
+}
+
+function selectGrade(grade) {
+  if (grade === '53') {
+    if (thumb53) thumb53.classList.add('active');
+    if (thumb43) thumb43.classList.remove('active');
+    if (mainPackImg) {
+      mainPackImg.src = img53;
+      mainPackImg.alt = 'JK Super OPC 53 Grade Cement';
+    }
+    if (badgeGrade) badgeGrade.textContent = 'OPC 53 ACTIVE';
+    if (crumbTitle) crumbTitle.textContent = 'OPC 53 Grade Cement';
+    if (productTitle) productTitle.textContent = 'JK Super Ordinary Portland Cement (OPC 53)';
+    if (rateLabel) rateLabel.textContent = '₹385 / 50 KG Bag (Grade 53)';
+    if (procurePrice) procurePrice.textContent = '₹385';
+    if (specStr28) specStr28.textContent = '≥ 53.0 MPa (Achieved: 54.5 MPa)';
+    if (specStr3) specStr3.textContent = '≥ 27.0 MPa (Achieved: 28.2 MPa)';
+    if (gradeSelect) gradeSelect.value = '53';
+  } else if (grade === '43') {
+    if (thumb43) thumb43.classList.add('active');
+    if (thumb53) thumb53.classList.remove('active');
+    if (mainPackImg) {
+      mainPackImg.src = img43;
+      mainPackImg.alt = 'JK Super OPC 43 Grade Cement';
+    }
+    if (badgeGrade) badgeGrade.textContent = 'OPC 43 ACTIVE';
+    if (crumbTitle) crumbTitle.textContent = 'OPC 43 Grade Cement';
+    if (productTitle) productTitle.textContent = 'JK Super Ordinary Portland Cement (OPC 43)';
+    if (rateLabel) rateLabel.textContent = '₹360 / 50 KG Bag (Grade 43)';
+    if (procurePrice) procurePrice.textContent = '₹360';
+    if (specStr28) specStr28.textContent = '≥ 43.0 MPa (Achieved: 45.2 MPa)';
+    if (specStr3) specStr3.textContent = '≥ 23.0 MPa (Achieved: 24.1 MPa)';
+    if (gradeSelect) gradeSelect.value = '43';
+  }
+  setChartAndMatrixGrade(grade);
+  if (typeof updateCalc === 'function') updateCalc();
+}
+
+if (thumb53) thumb53.addEventListener('click', () => selectGrade('53'));
+if (thumb43) thumb43.addEventListener('click', () => selectGrade('43'));
+
+// Grade Toggles above Chart
+document.querySelectorAll('.grade-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const grade = btn.dataset.grade;
+    selectGrade(grade);
+  });
+});
+
+// Chart Legend clicks
+document.querySelectorAll('.chart-legend-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const grade = item.dataset.grade;
+    selectGrade(grade);
+  });
+});
+
+// Copy link button logic
+const copyLinkBtn = document.getElementById('copyLinkBtn');
+const copyLinkText = document.getElementById('copyLinkText');
+if (copyLinkBtn) {
+  copyLinkBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      if (copyLinkText) copyLinkText.textContent = 'Copied!';
+      setTimeout(() => { if (copyLinkText) copyLinkText.textContent = 'Copy Link'; }, 2000);
+    }).catch(() => {
+      if (copyLinkText) copyLinkText.textContent = 'Copied!';
+      setTimeout(() => { if (copyLinkText) copyLinkText.textContent = 'Copy Link'; }, 2000);
+    });
+  });
+}
+
+// 1. Curing Simulator Metadata
+const gradeData = {
+  '53': { 
+    note: 'OPC Grade 53 achieves rapid 27 MPa strength at 3 days, reaching 54.5 MPa for high-load multi-story framing.',
+    title: 'JK Super Ordinary Portland Cement (OPC 53)',
+    spec: 'JK Super OPC 53 Grade Cement · IS 12269 (₹385 / 50 KG Bag)'
+  },
+  '43': { 
+    note: 'OPC Grade 43 achieves 23 MPa at 3 days, reaching 44.8 MPa with lower hydration heat for masonry & plaster.',
+    title: 'JK Super Ordinary Portland Cement (OPC 43)',
+    spec: 'JK Super OPC 43 Grade Cement · IS 8112 (₹360 / 50 KG Bag)'
+  },
+  'ppc': { 
+    note: 'PPC Pozzolana cures steadily from 16.5 MPa to 38.2 MPa, developing dense hydration gels highly resistant to sulfates.',
+    title: 'Portland Pozzolana Cement (PPC)',
+    spec: 'PPC Pozzolana Cement · IS 1489 (₹345 / 50 KG Bag)'
+  }
+};
+
+let currentSelectedGrade = '53';
+
+// 2. Concrete Mix Calculator Logic
+const elemSelect = document.getElementById('elemSelect');
+const dimInput = document.getElementById('dimInput');
+const gradeSelect = document.getElementById('gradeSelect');
+const resBags = document.getElementById('resBags');
+const resCost = document.getElementById('resCost');
+const resSand = document.getElementById('resSand');
+const resAggr = document.getElementById('resAggr');
+const resDesc = document.getElementById('resDesc');
+
+function updateCalc() {
+  if (!elemSelect || !dimInput || !gradeSelect) return;
+  const elem = elemSelect.value;
+  const val = parseFloat(dimInput.value) || 0;
+  const rate = gradeSelect.value === '53' ? 385 : 360;
+
+  let bags = 0, sand = 0, aggr = 0, desc = '';
+
+  if (elem === 'slab') {
+    const volCft = val * 0.416; // 5" slab volume
+    bags = Math.round(volCft * 0.32); // M20 nominal
+    sand = Math.round(volCft * 0.45);
+    aggr = Math.round(volCft * 0.9);
+    desc = 'Mix Design: M20 Nominal (1 : 1.5 : 3) with W/C ratio 0.50 for 5" Slab.';
+  } else if (elem === 'column') {
+    bags = Math.round(val * 0.18);
+    sand = Math.round(val * 0.22);
+    aggr = Math.round(val * 0.44);
+    desc = 'Mix Design: M25 High-Strength (1 : 1 : 2) with W/C ratio 0.45.';
+  } else if (elem === 'beam') {
+    bags = Math.round(val * 0.15);
+    sand = Math.round(val * 0.25);
+    aggr = Math.round(val * 0.5);
+    desc = 'Mix Design: M20 Reinforced Beam (1 : 1.5 : 3).';
+  } else {
+    bags = Math.round(val * 0.045);
+    sand = Math.round(val * 0.18);
+    aggr = 0;
+    desc = 'Mortar Mix: 1 : 4 (Cement : Fine River Sand) for 12mm Smooth Plaster.';
+  }
+
+  const cost = bags * rate;
+  if (resBags) resBags.textContent = `${bags.toLocaleString()} Bags`;
+  if (resCost) resCost.textContent = `₹${cost.toLocaleString()}`;
+  if (resSand) resSand.textContent = `${sand} cft`;
+  if (resAggr) resAggr.textContent = aggr > 0 ? `${aggr} cft` : 'N/A';
+  if (resDesc) resDesc.textContent = desc;
+}
+
+[elemSelect, dimInput, gradeSelect].forEach(el => {
+  if (el) el.addEventListener('input', updateCalc);
+});
+updateCalc();
+
+// 3. Quote Request Modal Logic
+function openQuoteModal() {
+  const boqModal = document.getElementById('boqModal');
+  if (!boqModal) return;
+
+  const isAuth = !!window.ostaadCurrentUser;
+  const authGate = document.getElementById('boqAuthGate');
+  const boqFormContainer = document.getElementById('boqFormContainer');
+  const boqSuccessState = document.getElementById('boqSuccessState');
+  const boqErrorMsg = document.getElementById('boqErrorMsg');
+  const boqSubmitBtn = document.getElementById('boqSubmitBtn');
+  const boqSpecVal = document.getElementById('boqSpecVal');
+  const boqGateSpecVal = document.getElementById('boqGateSpecVal');
+  const boqSpecInput = document.getElementById('boqSpecInput');
+  const boqSubject = document.getElementById('boqSubject');
+  
+  const currentGradeObj = (gradeData && gradeData[currentSelectedGrade]) ? gradeData[currentSelectedGrade] : gradeData['53'];
+  const specText = currentGradeObj ? currentGradeObj.spec : 'JK Super OPC 53 Grade Cement · IS 12269 (₹385/Bag)';
+  if (boqSpecVal) boqSpecVal.textContent = specText;
+  if (boqGateSpecVal) boqGateSpecVal.textContent = specText;
+  if (boqSpecInput) boqSpecInput.value = specText;
+  if (boqSubject) boqSubject.value = `Bulk Cement Quote Request - ${currentGradeObj ? currentGradeObj.title : 'OPC Cement'} - Ostaad`;
+
+  if (!isAuth) {
+    if (authGate) authGate.style.display = 'block';
+    if (boqFormContainer) boqFormContainer.style.display = 'none';
+    if (boqSuccessState) boqSuccessState.style.display = 'none';
+  } else {
+    if (authGate) authGate.style.display = 'none';
+    if (boqFormContainer) boqFormContainer.style.display = 'block';
+    if (boqSuccessState) boqSuccessState.style.display = 'none';
+    if (boqErrorMsg) {
+      boqErrorMsg.style.display = 'none';
+      boqErrorMsg.textContent = '';
+    }
+    if (boqSubmitBtn) {
+      boqSubmitBtn.disabled = false;
+      boqSubmitBtn.innerHTML = '<span>Submit Quote Request to Engineering Desk</span> <span class="arrow">→</span>';
+    }
+
+    // Auto pre-fill
+    const nameEl = document.getElementById('boqName');
+    const emailEl = document.getElementById('boqEmail');
+    const phoneEl = document.getElementById('boqPhone');
+    const pincodeEl = document.getElementById('boqPincode');
+    if (nameEl && window.ostaadCurrentUser) {
+      nameEl.value = window.ostaadCurrentUser.displayName || (window.ostaadUserProfile ? window.ostaadUserProfile.displayName : '');
+    }
+    if (emailEl && window.ostaadCurrentUser) {
+      emailEl.value = window.ostaadCurrentUser.email || '';
+    }
+    if (phoneEl && window.ostaadUserProfile && window.ostaadUserProfile.phone && !phoneEl.value) {
+      phoneEl.value = window.ostaadUserProfile.phone;
+    }
+    if (pincodeEl && window.ostaadUserProfile && window.ostaadUserProfile.pincode && !pincodeEl.value) {
+      pincodeEl.value = window.ostaadUserProfile.pincode;
+    }
+  }
+
+  boqModal.style.display = 'flex';
+  requestAnimationFrame(() => {
+    boqModal.classList.add('open');
+  });
+  document.body.style.overflow = 'hidden';
+}
+window.openQuoteModal = openQuoteModal;
+
+function closeQuoteModal() {
+  const boqModal = document.getElementById('boqModal');
+  if (!boqModal) {
+    document.body.style.overflow = '';
+    return;
+  }
+  boqModal.classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => {
+    boqModal.style.display = 'none';
+  }, 300);
+}
+window.closeQuoteModal = closeQuoteModal;
+
+// Wire buttons & modal events
+const topRequestQuoteBtn = document.getElementById('topRequestQuoteBtn');
+const closeBoqModal = document.getElementById('closeBoqModal');
+const boqSuccessCloseBtn = document.getElementById('boqSuccessCloseBtn');
+const boqModalEl = document.getElementById('boqModal');
+const boqForm = document.getElementById('boqForm');
+
+if (topRequestQuoteBtn) topRequestQuoteBtn.addEventListener('click', openQuoteModal);
+if (closeBoqModal) closeBoqModal.addEventListener('click', closeQuoteModal);
+if (boqSuccessCloseBtn) boqSuccessCloseBtn.addEventListener('click', closeQuoteModal);
+if (boqModalEl) {
+  boqModalEl.addEventListener('click', (e) => {
+    if (e.target === boqModalEl) closeQuoteModal();
+  });
+}
+document.addEventListener('keydown', (e) => {
+  const modal = document.getElementById('boqModal');
+  if (e.key === 'Escape' && modal && modal.classList.contains('open')) closeQuoteModal();
+});
+
+if (boqForm) {
+  boqForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!window.ostaadCurrentUser) {
+      window.location.href = 'login.html?redirect=product-cement.html';
+      return;
+    }
+
+    const submitBtn = document.getElementById('boqSubmitBtn');
+    const errEl = document.getElementById('boqErrorMsg');
+    const formBox = document.getElementById('boqFormContainer');
+    const successBox = document.getElementById('boqSuccessState');
+    const emailTarget = document.getElementById('boqSuccessEmail');
+    const specTarget = document.getElementById('boqSuccessSpec');
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>⏳ Sending to Engineering Desk...</span>';
+    }
+    if (errEl) errEl.style.display = 'none';
+
+    const formData = new FormData(boqForm);
+    const json = JSON.stringify(Object.fromEntries(formData));
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: json
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        if (window.OstaadAuth && window.OstaadAuth.saveUserBOQ) {
+          window.OstaadAuth.saveUserBOQ(Object.fromEntries(formData)).catch(err => console.warn('Firestore BOQ:', err));
+        }
+        const emailVal = document.getElementById('boqEmail') ? document.getElementById('boqEmail').value : '';
+        if (emailTarget) emailTarget.textContent = emailVal || 'your email';
+        if (specTarget) specTarget.textContent = (gradeData[currentSelectedGrade] || gradeData['53']).title;
+        if (formBox) formBox.style.display = 'none';
+        if (successBox) successBox.style.display = 'block';
+        boqForm.reset();
+      } else {
+        throw new Error(data.message || 'Submission failed');
+      }
+    } catch (err) {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Submit Quote Request to Engineering Desk</span> <span class="arrow">→</span>';
+      }
+      if (errEl) {
+        errEl.textContent = 'Submission error. Please check your connection or contact us at contact@ostaad.in';
+        errEl.style.display = 'block';
+      }
+    }
+  });
+}
+
+// Pre-fill on auth change
+window.addEventListener('load', () => {
+  if (window.OstaadAuth && window.OstaadAuth.onAuthStateChange) {
+    window.OstaadAuth.onAuthStateChange(({ isAuthenticated, user, profile }) => {
+      if (isAuthenticated && user) {
+        const nameEl = document.getElementById('boqName');
+        const emailEl = document.getElementById('boqEmail');
+        const phoneEl = document.getElementById('boqPhone');
+        const pincodeEl = document.getElementById('boqPincode');
+        if (nameEl && !nameEl.value) nameEl.value = user.displayName || (profile ? profile.displayName : '');
+        if (emailEl && !emailEl.value) emailEl.value = user.email || '';
+        if (phoneEl && profile && profile.phone && !phoneEl.value) phoneEl.value = profile.phone;
+        if (pincodeEl && profile && profile.pincode && !pincodeEl.value) pincodeEl.value = profile.pincode;
+      }
+    });
+  }
+});
+</script>
+<script type="module" src="navbar-auth.js"></script>
+</body>
+</html>
