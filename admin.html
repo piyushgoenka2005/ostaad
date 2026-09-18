@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="ostaad-logo.png">
+  <title>Ostaad Admin Console · Product & Catalog Management</title>
+  <meta name="description" content="Manage verified material catalog, unit pricing benchmarks, technical specifications, and stock status.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;450;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --canvas: #FAF7F4;
+      --surface: #FDFBF9;
+      --surface-card: #FFFFFF;
+      --slate: #23384F;
+      --slate-light: #31465F;
+      --slate-dark: #162433;
+      --sage: #7C8764;
+      --sage-dark: #586343;
+      --terracotta: #A87545;
+      --terracotta-dark: #8B5C30;
+      --taupe: #B8A18B;
+      --text: #54524D;
+      --recessed: #EAE4DE;
+      --line: rgba(184, 161, 139, .42);
+      --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'Geist Mono', ui-monospace, Menlo, monospace;
+      --shadow-sm: 0 2px 8px rgba(35, 56, 79, .04);
+      --shadow-md: 0 10px 30px rgba(35, 56, 79, .07);
+      --shadow-hybrid: 9px 9px 24px rgba(184, 161, 139, .14), -9px -9px 20px rgba(255, 255, 255, .85), 0 1px 0 rgba(255, 255, 255, .7) inset;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 14.5px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    /* Layout Sidebar */
+    .admin-sidebar {
+      width: 260px;
+      background: #192C40;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 24px 18px;
+    }
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 24px;
+    }
+    .sidebar-logo-img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .sidebar-logo-img img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.6); }
+    .sidebar-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      background: var(--terracotta);
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-left: auto;
+    }
+
+    .nav-section-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 10px;
+      padding-left: 10px;
+    }
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      list-style: none;
+      padding: 0;
+      margin: 0 0 24px;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .sidebar-link:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+    .sidebar-link.active {
+      background: var(--slate);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    }
+    .sidebar-link svg { width: 18px; height: 18px; opacity: 0.85; flex-shrink: 0; }
+    .sidebar-link .badge-count {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .admin-profile-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .admin-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--terracotta);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .admin-info { display: flex; flex-direction: column; }
+    .admin-name { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.2; }
+    .admin-role { font-family: var(--font-mono); font-size: 10px; color: rgba(255, 255, 255, 0.5); }
+    .btn-logout {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #FCA5A5;
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, 0.25);
+      color: #fff;
+    }
+
+    /* Main Content Area */
+    .admin-main {
+      margin-left: 260px;
+      flex: 1;
+      padding: 32px 40px 60px;
+      max-width: 1540px;
+      width: calc(100% - 260px);
+    }
+
+    /* Top Bar */
+    .admin-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .topbar-title h1 {
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--slate);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .topbar-title p {
+      font-size: 13px;
+      color: var(--taupe);
+      margin-top: 2px;
+      font-family: var(--font-mono);
+    }
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-primary-action {
+      background: var(--slate);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(35, 56, 79, 0.15);
+    }
+    .btn-primary-action:hover {
+      background: var(--slate-light);
+      transform: translateY(-1px);
+    }
+    .btn-secondary-action {
+      background: #FFFFFF;
+      border: 1px solid var(--line);
+      color: var(--slate);
+      padding: 9px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-secondary-action:hover {
+      border-color: var(--slate);
+      background: #FAF7F4;
+    }
+
+    /* KPI Summary Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: var(--surface-card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform 0.2s;
+    }
+    .kpi-card:hover { transform: translateY(-2px); }
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .kpi-label {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--taupe);
+    }
+    .kpi-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(35, 56, 79, 0.06);
+      color: var(--slate);
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+    }
+    .kpi-val {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--slate);
+      line-height: 1.1;
+    }
+    .kpi-sub {
+      font-size: 11.5px;
+      color: var(--sage-dark);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Controls: Search, Filter, Sort */
+    .controls-bar {
+      background: var(--surface-card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #FAF7F4;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 14px;
+      flex: 1;
+      min-width: 240px;
+      max-width: 440px;
+    }
+    .search-box svg { color: var(--taupe); flex-shrink: 0; }
+    .search-box input {
+      border: none;
+      background: none;
+      outline: none;
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      color: var(--slate);
+      width: 100%;
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .filter-select {
+      background: #FAF7F4;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--slate);
+      outline: none;
+      cursor: pointer;
+    }
+    .filter-select:focus { border-color: var(--slate); }
+
+    /* Products Table */
+    .table-container {
+      background: var(--surface-card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .product-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .product-table th {
+      background: #FAF7F4;
+      padding: 14px 18px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--taupe);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid var(--line);
+    }
+    .product-table td {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--recessed);
+      font-size: 13.5px;
+      vertical-align: middle;
+    }
+    .product-table tr:last-child td { border-bottom: none; }
+    .product-table tr:hover td { background: rgba(250, 247, 244, 0.6); }
+
+    .prod-cell {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .prod-thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      border: 1px solid var(--recessed);
+      object-fit: cover;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .prod-meta { display: flex; flex-direction: column; gap: 2px; }
+    .prod-title { font-weight: 600; color: var(--slate); line-height: 1.2; font-size: 14px; }
+    .prod-grade { font-family: var(--font-mono); font-size: 11px; color: var(--taupe); }
+
+    .category-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      background: rgba(35, 56, 79, 0.08);
+      color: var(--slate);
+    }
+    .category-badge.cat-cement { background: rgba(168, 117, 69, 0.12); color: var(--terracotta); }
+    .category-badge.cat-paint { background: rgba(124, 135, 100, 0.15); color: var(--sage-dark); }
+    .category-badge.cat-plywood { background: rgba(184, 161, 139, 0.2); color: #785A3F; }
+    .category-badge.cat-tiles { background: rgba(36, 68, 100, 0.12); color: #244464; }
+    .category-badge.cat-waterproofing { background: rgba(14, 116, 144, 0.12); color: #0E7490; }
+
+    .price-tag {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--slate);
+    }
+    .price-unit {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--taupe);
+      display: block;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 9px;
+      border-radius: 20px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .status-badge.in_stock { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+    .status-badge.low_stock { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
+    .status-badge.backorder { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    .action-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-icon-action {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: var(--taupe);
+      border: 1px solid var(--recessed);
+      background: #fff;
+      transition: all 0.2s;
+    }
+    .btn-icon-action:hover {
+      color: var(--slate);
+      border-color: var(--slate);
+      background: #FAF7F4;
+    }
+    .btn-icon-action.delete:hover {
+      color: #DC2626;
+      border-color: #DC2626;
+      background: #FEF2F2;
+    }
+
+    /* Modal Styles */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(18, 28, 38, 0.65);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px 32px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+      position: relative;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--recessed);
+    }
+    .modal-title { font-size: 20px; font-weight: 600; color: var(--slate); }
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #FAF7F4;
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      color: var(--taupe);
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { color: var(--slate); border-color: var(--slate); }
+
+    .modal-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .modal-form-grid .full { grid-column: 1 / -1; }
+    .form-group-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .form-group-item label {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--taupe);
+      font-weight: 600;
+    }
+    .form-input, .form-textarea, .form-select-ctrl {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #FAF7F4;
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      color: var(--slate);
+      outline: none;
+      transition: all 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select-ctrl:focus {
+      border-color: var(--slate);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(35, 56, 79, 0.08);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--recessed);
+    }
+
+    /* Toast Notification */
+    .toast-box {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      background: var(--slate);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .toast-box.show { transform: translateY(0); opacity: 1; }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .admin-sidebar { width: 80px; padding: 20px 10px; align-items: center; }
+      .sidebar-logo span, .nav-section-title, .sidebar-link span, .admin-info, .sidebar-badge, .badge-count { display: none; }
+      .admin-main { margin-left: 80px; width: calc(100% - 80px); padding: 24px 20px; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      body { flex-direction: column; }
+      .admin-sidebar { position: static; width: 100%; flex-direction: row; height: 60px; padding: 10px 16px; }
+      .sidebar-footer { display: none; }
+      .sidebar-menu { flex-direction: row; margin: 0; }
+      .admin-main { margin-left: 0; width: 100%; padding: 18px 14px; }
+      .kpi-grid { grid-template-columns: 1fr; }
+      .modal-form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <a href="index.html" class="sidebar-logo">
+      <div class="sidebar-logo-img"><img src="ostaad-logo.png" alt="Ostaad"></div>
+      <span>OSTAAD</span>
+      <span class="sidebar-badge">Admin</span>
+    </a>
+
+    <div class="nav-section-title">Core Management</div>
+    <ul class="sidebar-menu">
+      <li>
+        <a href="#products" class="sidebar-link active" id="navProductsTab">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <span>Products</span>
+          <span class="badge-count" id="sidebarProductCount">0</span>
+        </a>
+      </li>
+      <li>
+        <a href="products.html" target="_blank" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6m4-3h6v6m-11 5L21 3"/></svg>
+          <span>Live Catalog</span>
+        </a>
+      </li>
+      <li>
+        <a href="product-cement.html" target="_blank" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+          <span>Spec Pages</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="admin-profile-box">
+        <div class="admin-avatar" id="adminAvatarInitials">AD</div>
+        <div class="admin-info">
+          <span class="admin-name" id="adminDisplayEmail">admin@ostaad.in</span>
+          <span class="admin-role" id="adminDisplayRole">Super Admin</span>
+        </div>
+      </div>
+      <button type="button" class="btn-logout" id="logoutBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <!-- Top Bar -->
+    <header class="admin-topbar">
+      <div class="topbar-title">
+        <h1>Material & Product Catalog</h1>
+        <p>Verified Procurement Specifications · Direct Mill Benchmarks</p>
+      </div>
+      <div class="topbar-actions">
+        <button type="button" class="btn-secondary-action" id="exportJsonBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          <span>Export JSON</span>
+        </button>
+        <button type="button" class="btn-secondary-action" id="importJsonBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          <span>Import JSON</span>
+          <input type="file" id="importFileInput" accept=".json" style="display:none;">
+        </button>
+        <button type="button" class="btn-primary-action" id="openAddModalBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          <span>Add New Product</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- KPI Summary Grid -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">Active SKUs</span>
+          <div class="kpi-icon">📦</div>
+        </div>
+        <div class="kpi-val" id="kpiTotalProducts">0</div>
+        <div class="kpi-sub">Verified & Published</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">Material Categories</span>
+          <div class="kpi-icon">🏷️</div>
+        </div>
+        <div class="kpi-val" id="kpiTotalCategories">0</div>
+        <div class="kpi-sub">Cement, Steel, Paint, Tiles...</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">Avg Benchmark Rate</span>
+          <div class="kpi-icon">₹</div>
+        </div>
+        <div class="kpi-val" id="kpiAvgPrice">₹0</div>
+        <div class="kpi-sub">Direct Mill Baseline</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">Ready for Site Dispatch</span>
+          <div class="kpi-icon">🚚</div>
+        </div>
+        <div class="kpi-val" id="kpiInStock">0</div>
+        <div class="kpi-sub">24–48 Hr Turnaround</div>
+      </div>
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by name, standard, grade, or mill...">
+      </div>
+
+      <div class="filter-group">
+        <select id="categoryFilter" class="filter-select">
+          <option value="all">All Categories</option>
+          <option value="Cement">Cement</option>
+          <option value="Paint">Paint & Coatings</option>
+          <option value="Plywood">Plywood & Timber</option>
+          <option value="Tiles">Tiles & Vitrified</option>
+          <option value="Waterproofing">Waterproofing</option>
+          <option value="Steel">Steel & Rebar</option>
+        </select>
+
+        <select id="statusFilter" class="filter-select">
+          <option value="all">All Stock Statuses</option>
+          <option value="in_stock">In Stock / Direct Dispatch</option>
+          <option value="low_stock">Low Inventory</option>
+          <option value="backorder">On Demand / Backorder</option>
+        </select>
+
+        <select id="sortSelect" class="filter-select">
+          <option value="title_asc">Name (A → Z)</option>
+          <option value="price_asc">Price (Low → High)</option>
+          <option value="price_desc">Price (High → Low)</option>
+          <option value="date_desc">Recently Added</option>
+        </select>
+
+        <button type="button" class="btn-secondary-action" id="resetCatalogBtn" title="Reset to standard Ostaad catalog">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7L21 8M3 8v4h4M21 12a9 9 0 01-15 6.7L3 16M21 16v-4h-4"/></svg>
+          <span>Reset Catalog</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Product Table -->
+    <div class="table-container">
+      <table class="product-table">
+        <thead>
+          <tr>
+            <th>Product & Specification</th>
+            <th>Category</th>
+            <th>Compliance Standard</th>
+            <th>Verified Unit Price</th>
+            <th>Stock & Logistics</th>
+            <th style="text-align:right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="productTableBody">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Add / Edit Product Modal -->
+  <div class="modal-backdrop" id="productModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitleText">Add New Product</h2>
+        <button type="button" class="modal-close" id="closeModalBtn">✕</button>
+      </div>
+
+      <form id="productForm">
+        <input type="hidden" id="editProductId">
+
+        <div class="modal-form-grid">
+          <div class="form-group-item full">
+            <label for="fTitle">Product Title</label>
+            <input type="text" id="fTitle" class="form-input" placeholder="e.g. JK Super Ordinary Portland Cement (OPC 53)" required>
+          </div>
+
+          <div class="form-group-item">
+            <label for="fCategory">Category</label>
+            <select id="fCategory" class="form-select-ctrl" required>
+              <option value="Cement">Cement</option>
+              <option value="Paint">Paint</option>
+              <option value="Plywood">Plywood</option>
+              <option value="Tiles">Tiles</option>
+              <option value="Waterproofing">Waterproofing</option>
+              <option value="Steel">Steel</option>
+              <option value="Plumbing">Plumbing</option>
+              <option value="Electrical">Electrical</option>
+            </select>
+          </div>
+
+          <div class="form-group-item">
+            <label for="fGrade">Grade / Specification Subtype</label>
+            <input type="text" id="fGrade" class="form-input" placeholder="e.g. OPC 53 Grade / IS 710 Marine" required>
+          </div>
+
+          <div class="form-group-item">
+            <label for="fPrice">Verified Unit Rate (₹)</label>
+            <input type="number" id="fPrice" class="form-input" placeholder="385" step="0.5" required>
+          </div>
+
+          <div class="form-group-item">
+            <label for="fUnit">Unit / Packaging Metric</label>
+            <input type="text" id="fUnit" class="form-input" placeholder="e.g. / 50 KG BAG · TAX INCLUSIVE" required>
+          </div>
+
+          <div class="form-group-item">
+            <label for="fStandard">Standard Compliance</label>
+            <input type="text" id="fStandard" class="form-input" placeholder="e.g. IS 12269 : 2013 & BIS Certified" required>
+          </div>
+
+          <div class="form-group-item">
+            <label for="fShipper">Dispatch Origin / Shipper</label>
+            <input type="text" id="fShipper" class="form-input" placeholder="e.g. Direct Regional Cement Plant" required>
+          </div>
+
+          <div class="form-group-item">
+            <label for="fStatus">Inventory / Dispatch Status</label>
+            <select id="fStatus" class="form-select-ctrl">
+              <option value="in_stock">In Stock (Direct Dispatch)</option>
+              <option value="low_stock">Low Inventory</option>
+              <option value="backorder">On Demand Batch</option>
+            </select>
+          </div>
+
+          <div class="form-group-item">
+            <label for="fLeadTime">Site Delivery Lead Time</label>
+            <input type="text" id="fLeadTime" class="form-input" placeholder="24–48 Hours" value="24–48 Hours">
+          </div>
+
+          <div class="form-group-item full">
+            <label for="fImage">Image URL</label>
+            <input type="url" id="fImage" class="form-input" placeholder="https://..." required>
+          </div>
+
+          <div class="form-group-item full">
+            <label for="fPageUrl">Dedicated Spec Page Link (Optional)</label>
+            <input type="text" id="fPageUrl" class="form-input" placeholder="product-cement.html">
+          </div>
+
+          <div class="form-group-item full">
+            <label for="fDescription">Key Engineering Specification / Description</label>
+            <textarea id="fDescription" class="form-textarea" rows="3" placeholder="High early compressive strength, verified clinker MTC..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary-action" id="cancelModalBtn">Cancel</button>
+          <button type="submit" class="btn-primary-action" id="saveProductBtn">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Delete Confirmation Modal -->
+  <div class="modal-backdrop" id="deleteConfirmModal">
+    <div class="modal-card" style="max-width: 480px; padding: 28px;">
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;">
+        <div style="width:42px;height:42px;border-radius:12px;background:rgba(239,68,68,0.12);color:#EF4444;display:grid;place-items:center;flex-shrink:0;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+        </div>
+        <div>
+          <h2 style="font-size:18px;font-weight:600;color:var(--slate);margin:0 0 6px;">Delete Product Specification</h2>
+          <p style="font-size:13.5px;color:var(--text);line-height:1.5;margin:0;">
+            Are you sure you want to delete <strong id="deleteTargetTitle" style="color:var(--slate);">this product</strong> from the verified database? This change will reflect across the store in real-time.
+          </p>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:24px;">
+        <button type="button" class="btn-secondary-action" id="cancelDeleteBtn">Cancel</button>
+        <button type="button" class="btn-primary-action" id="confirmDeleteBtn" style="background:#DC2626;border-color:#DC2626;">
+          <span>Delete Product</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Element -->
+  <div class="toast-box" id="toast">Product updated successfully</div>
+
+  <!-- Firebase Auth & Firestore Client -->
+  <script type="module" src="firebase-init.js?v=2026"></script>
+
+  <script>
+    // Safe Firestore Product Helpers Bridge
+    const saveProductToFirestore = (p) => {
+      if (window.OstaadAuth && window.OstaadAuth.saveProductToFirestore) {
+        return window.OstaadAuth.saveProductToFirestore(p);
+      }
+      return Promise.resolve({ success: true });
+    };
+
+    const deleteProductFromFirestore = (id) => {
+      if (window.OstaadAuth && window.OstaadAuth.deleteProductFromFirestore) {
+        return window.OstaadAuth.deleteProductFromFirestore(id);
+      }
+      return Promise.resolve({ success: true });
+    };
+
+    const subscribeToProducts = (cb) => {
+      if (window.OstaadAuth && window.OstaadAuth.subscribeToProducts) {
+        return window.OstaadAuth.subscribeToProducts(cb);
+      }
+      const timer = setInterval(() => {
+        if (window.OstaadAuth && window.OstaadAuth.subscribeToProducts) {
+          clearInterval(timer);
+          window.OstaadAuth.subscribeToProducts(cb);
+        }
+      }, 150);
+      return null;
+    };
+
+    // ============================================================
+    // 1. AUTH GUARD & SESSION CHECK
+    // ============================================================
+    const sessionData = sessionStorage.getItem("ostaad_admin_session") || localStorage.getItem("ostaad_admin_session");
+    if (!sessionData) {
+      window.location.href = "admin-login.html";
+    }
+
+    try {
+      const sess = JSON.parse(sessionData);
+      if (sess && sess.email) {
+        document.getElementById("adminDisplayEmail").textContent = sess.email;
+        document.getElementById("adminDisplayRole").textContent = sess.role || "Super Admin";
+        document.getElementById("adminAvatarInitials").textContent = (sess.email.substring(0, 2)).toUpperCase();
+      }
+    } catch(e) {}
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      sessionStorage.removeItem("ostaad_admin_session");
+      localStorage.removeItem("ostaad_admin_session");
+      localStorage.removeItem("ostaad_admin_active");
+      window.location.href = "admin-login.html";
+    });
+
+    // ============================================================
+    // 2. SEED DEFAULT PRODUCTS (Ostaad Verified Standards)
+    // ============================================================
+    const DEFAULT_CATALOG = [
+      {
+        id: "prod_cement_53",
+        title: "JK Super Ordinary Portland Cement (OPC 53)",
+        category: "Cement",
+        grade: "OPC 53 Grade",
+        price: 385,
+        unit: "/ 50 KG BAG · TAX INCLUSIVE",
+        standard: "IS 12269 : 2013",
+        shipper: "Direct Regional Cement Plant",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7X8G20TkSBtZVfJ2ZARi2nBIKgM00wHQkV-SWT_JeBEt4ghF25-nk2ygj&s=10",
+        pageUrl: "product-cement.html",
+        description: "High early compressive strength (≥ 53.0 MPa) designed for RCC roof slabs, columns, and structural foundations."
+      },
+      {
+        id: "prod_cement_43",
+        title: "UltraTech Ordinary Portland Cement (OPC 43)",
+        category: "Cement",
+        grade: "OPC 43 Grade",
+        price: 360,
+        unit: "/ 50 KG BAG · TAX INCLUSIVE",
+        standard: "IS 8112 : 2013",
+        shipper: "Direct Clinker Grinding Mill",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://5.imimg.com/data5/HK/IA/GLADMIN-45594007/jk-super-cement-opc-500x500.png",
+        pageUrl: "product-cement.html",
+        description: "Standard structural cement for brickwork, block masonry, internal/external plastering, and flooring screed."
+      },
+      {
+        id: "prod_paint_primer",
+        title: "Low-VOC Interior Emulsion & Acrylic Primer",
+        category: "Paint",
+        grade: "Architectural Low-VOC",
+        price: 310,
+        unit: "/ LITRE · BATCH SEALED",
+        standard: "IS 15489 : 2004 & Green Building Certified",
+        shipper: "Batch Chemical Plant",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6yhlZ9Jsyhw008Di5FyJ3XaEBJMSyD1Bu0tD-JDuQbdrvk2mu1e6H0HE&s=10",
+        pageUrl: "product-paint.html",
+        description: "Zero odor, breathable acrylic formulation ensuring optimal substrate adhesion and moisture release."
+      },
+      {
+        id: "prod_paint_silk",
+        title: "Satin Silk Luxury Interior Coating",
+        category: "Paint",
+        grade: "Satin Silk Finish",
+        price: 460,
+        unit: "/ LITRE · BATCH SEALED",
+        standard: "IS 15489 Class A Washable",
+        shipper: "Batch Chemical Plant",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://5.imimg.com/data5/SELLER/Default/2021/6/GW/QD/QW/132174390/interior-wall-paint-500x500.jpg",
+        pageUrl: "product-paint.html",
+        description: "High stain resistance with soft-sheen micro-texture, suitable for living rooms and premium master suites."
+      },
+      {
+        id: "prod_plywood_marine",
+        title: "IS 710 BWP Marine Hardwood Plywood (18mm)",
+        category: "Plywood",
+        grade: "IS 710 BWP Marine Grade",
+        price: 115,
+        unit: "/ SQ FT (18MM) · CALIBRATED",
+        standard: "IS 710 : 2010 (72-Hr Boiling Water Proof)",
+        shipper: "Certified Timber Mills",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRk1m7s0h58E6zZ2uF6s4ZzM-4V1R2O8E7xQw&s=10",
+        pageUrl: "product-plywood.html",
+        description: "Phenolic bonded 100% hardwood timber core with zero core gaps and anti-termite chemical dipping."
+      },
+      {
+        id: "prod_plywood_mr",
+        title: "IS 303 Moisture Resistant Commercial Plywood (12mm)",
+        category: "Plywood",
+        grade: "IS 303 MR Grade",
+        price: 78,
+        unit: "/ SQ FT (12MM)",
+        standard: "IS 303 : 1989",
+        shipper: "Certified Timber Mills",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://5.imimg.com/data5/SELLER/Default/2022/11/XB/UH/YC/3828775/is-303-commercial-plywood-500x500.jpg",
+        pageUrl: "product-plywood.html",
+        description: "Commercial internal grade suitable for dry bedroom wardrobes, wall paneling, and ceiling carcasses."
+      },
+      {
+        id: "prod_tiles_vitrified",
+        title: "Organic Mineral Vitrified Floor Tiles (600×1200mm)",
+        category: "Tiles",
+        grade: "Full-Body Vitrified (GVT/PGVT)",
+        price: 68,
+        unit: "/ SQ FT · BOX OF 2 PCS",
+        standard: "IS 15622 : 2017 (Water Absorption < 0.05%)",
+        shipper: "Certified Kiln Mills",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH7O1rF4J6W5qM-7K8L2O0P3Y1N5E6R4T7Qw&s=10",
+        pageUrl: "product-tiles.html",
+        description: "Ultra-low porosity nano-polished surfaces with high breaking modulus and zero edge curvature deviation."
+      },
+      {
+        id: "prod_waterproofing_2k",
+        title: "Dual-Action 2K Elastomeric Polymer Slurry Kit",
+        category: "Waterproofing",
+        grade: "2-Part Elastomeric Slurry",
+        price: 2450,
+        unit: "/ 20 KG KIT · TAX INCLUSIVE",
+        standard: "IS 2645 : 2003 & ASTM C1202",
+        shipper: "Specialty Chemical Plants",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6yhlZ9Jsyhw008Di5FyJ3XaEBJMSyD1Bu0tD-JDuQbdrvk2mu1e6H0HE&s=10",
+        pageUrl: "product-waterproofing.html",
+        description: "High crack-bridging (>120% elongation) elastomeric waterproofing barrier for sunken toilets, balconies, and roof slabs."
+      }
+    ];
+
+    // ============================================================
+    // 3. STORAGE & REAL-TIME STATE CONTROLLER
+    // ============================================================
+    let catalog = [];
+    const syncChannel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("ostaad_product_catalog_channel") : null;
+
+    function getDeletedProductIds() {
+      try {
+        return new Set(JSON.parse(localStorage.getItem("ostaad_deleted_product_ids") || "[]"));
+      } catch(e) {
+        return new Set();
+      }
+    }
+
+    function markProductIdDeleted(id) {
+      try {
+        const deleted = getDeletedProductIds();
+        deleted.add(id);
+        localStorage.setItem("ostaad_deleted_product_ids", JSON.stringify(Array.from(deleted)));
+      } catch(e) {}
+    }
+
+    function removeProductIdFromDeleted(id) {
+      try {
+        const deleted = getDeletedProductIds();
+        deleted.delete(id);
+        localStorage.setItem("ostaad_deleted_product_ids", JSON.stringify(Array.from(deleted)));
+      } catch(e) {}
+    }
+
+    function notifySync() {
+      if (syncChannel) {
+        syncChannel.postMessage({ action: "reload", time: Date.now() });
+      }
+    }
+
+    if (syncChannel) {
+      syncChannel.onmessage = () => {
+        loadCatalogFromLocal();
+      };
+    }
+
+    window.addEventListener("storage", (e) => {
+      if (e.key === "ostaad_product_catalog" || e.key === "ostaad_deleted_product_ids") {
+        loadCatalogFromLocal();
+      }
+    });
+
+    function loadCatalogFromLocal() {
+      const deletedIds = getDeletedProductIds();
+      const saved = localStorage.getItem("ostaad_product_catalog");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          catalog = Array.isArray(parsed) ? parsed.filter(p => !p.isDeleted && p.status !== "deleted" && !deletedIds.has(p.id)) : [...DEFAULT_CATALOG];
+        } catch(e) {
+          catalog = [...DEFAULT_CATALOG].filter(p => !deletedIds.has(p.id));
+        }
+      } else {
+        catalog = [...DEFAULT_CATALOG].filter(p => !deletedIds.has(p.id));
+        saveCatalogLocal();
+      }
+      renderCatalog();
+    }
+
+    function saveCatalogLocal() {
+      const deletedIds = getDeletedProductIds();
+      const cleanCatalog = catalog.filter(p => !p.isDeleted && p.status !== "deleted" && !deletedIds.has(p.id));
+      localStorage.setItem("ostaad_product_catalog", JSON.stringify(cleanCatalog));
+      notifySync();
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2800);
+    }
+
+    // Initialize Catalog from LocalStorage immediately for instant render
+    loadCatalogFromLocal();
+
+    // Connect Real-Time Firestore Synchronization
+    try {
+      subscribeToProducts((firestoreProducts) => {
+        if (firestoreProducts && Array.isArray(firestoreProducts)) {
+          const deletedIds = getDeletedProductIds();
+          const activeProds = firestoreProducts.filter(p => !p.isDeleted && p.status !== "deleted" && !deletedIds.has(p.id));
+          
+          if (activeProds.length > 0) {
+            catalog = activeProds;
+            saveCatalogLocal();
+            renderCatalog();
+          } else if (firestoreProducts.length === 0 && deletedIds.size === 0) {
+            // First time auto-seed
+            DEFAULT_CATALOG.forEach(prod => {
+              saveProductToFirestore(prod);
+            });
+          }
+        }
+      });
+    } catch(err) {
+      console.warn("Real-time Firestore listener fallback to LocalStorage:", err);
+    }
+
+    // ============================================================
+    // 4. RENDER CATALOG & KPI ANALYTICS
+    // ============================================================
+    function renderCatalog() {
+      const search = document.getElementById("searchInput").value.toLowerCase().trim();
+      const catFilter = document.getElementById("categoryFilter").value;
+      const statusFilter = document.getElementById("statusFilter").value;
+      const sortVal = document.getElementById("sortSelect").value;
+      const deletedIds = getDeletedProductIds();
+
+      // Filter
+      let filtered = catalog.filter(p => {
+        if (deletedIds.has(p.id) || p.isDeleted || p.status === "deleted") return false;
+
+        const matchesSearch = !search || 
+          (p.title && p.title.toLowerCase().includes(search)) || 
+          (p.grade && p.grade.toLowerCase().includes(search)) || 
+          (p.standard && p.standard.toLowerCase().includes(search)) || 
+          (p.shipper && p.shipper.toLowerCase().includes(search)) ||
+          (p.category && p.category.toLowerCase().includes(search));
+
+        const matchesCat = (catFilter === "all") || (p.category && p.category.toLowerCase() === catFilter.toLowerCase());
+        const matchesStatus = (statusFilter === "all") || (p.status === statusFilter);
+
+        return matchesSearch && matchesCat && matchesStatus;
+      });
+
+      // Sort
+      filtered.sort((a, b) => {
+        if (sortVal === "title_asc") return (a.title || "").localeCompare(b.title || "");
+        if (sortVal === "price_asc") return (a.price || 0) - (b.price || 0);
+        if (sortVal === "price_desc") return (b.price || 0) - (a.price || 0);
+        if (sortVal === "date_desc") return (b.lastUpdated || 0) - (a.lastUpdated || 0);
+        return 0;
+      });
+
+      // Render Table
+      const tbody = document.getElementById("productTableBody");
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center;padding:40px;color:var(--taupe);">
+              No products found matching your search criteria.
+            </td>
+          </tr>
+        `;
+      } else {
+        tbody.innerHTML = filtered.map(p => `
+          <tr id="row_${escapeHtml(p.id)}">
+            <td>
+              <div class="prod-cell">
+                <img src="${p.image || 'ostaad-logo.png'}" alt="${escapeHtml(p.title)}" class="prod-thumb" onerror="this.src='ostaad-logo.png'">
+                <div class="prod-meta">
+                  <div class="prod-title">${escapeHtml(p.title)}</div>
+                  <div class="prod-grade">${escapeHtml(p.grade || 'Standard')} · ${escapeHtml(p.shipper || 'Direct Mill')}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="category-badge cat-${(p.category || 'cement').toLowerCase()}">${escapeHtml(p.category || 'General')}</span>
+            </td>
+            <td>
+              <span style="font-family:var(--font-mono);font-size:12px;color:var(--slate);">${escapeHtml(p.standard || 'IS Standard')}</span>
+            </td>
+            <td>
+              <div class="price-tag">₹${Number(p.price || 0).toLocaleString('en-IN')}</div>
+              <span class="price-unit">${escapeHtml(p.unit || '/ UNIT')}</span>
+            </td>
+            <td>
+              <span class="status-badge ${p.status || 'in_stock'}">
+                <span class="status-dot"></span>
+                <span>${p.status === 'in_stock' ? 'In Stock (Direct)' : p.status === 'low_stock' ? 'Low Stock' : 'On Demand'}</span>
+              </span>
+            </td>
+            <td style="text-align:right;">
+              <div class="action-btn-group" style="justify-content:flex-end;">
+                ${p.pageUrl ? `<a href="${p.pageUrl}" target="_blank" class="btn-icon-action" title="View Customer Page"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6m4-3h6v6m-11 5L21 3"/></svg></a>` : ''}
+                <button type="button" class="btn-icon-action clone" data-id="${escapeHtml(p.id)}" title="Clone / Duplicate"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button>
+                <button type="button" class="btn-icon-action edit" data-id="${escapeHtml(p.id)}" title="Edit Product"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button type="button" class="btn-icon-action delete" data-id="${escapeHtml(p.id)}" title="Delete Product"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+              </div>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      // Update KPIs
+      const activeCatalog = catalog.filter(p => !deletedIds.has(p.id) && !p.isDeleted && p.status !== "deleted");
+      const totalCount = activeCatalog.length;
+      const categories = new Set(activeCatalog.map(p => (p.category || '').toLowerCase())).size;
+      const avgPrice = totalCount > 0 ? Math.round(activeCatalog.reduce((acc, p) => acc + Number(p.price || 0), 0) / totalCount) : 0;
+      const inStockCount = activeCatalog.filter(p => p.status === 'in_stock').length;
+
+      document.getElementById("kpiTotalProducts").textContent = totalCount;
+      document.getElementById("sidebarProductCount").textContent = totalCount;
+      document.getElementById("kpiTotalCategories").textContent = categories;
+      document.getElementById("kpiAvgPrice").textContent = "₹" + avgPrice.toLocaleString('en-IN');
+      document.getElementById("kpiInStock").textContent = inStockCount;
+    }
+
+    // Attach Event Delegation for Table Action Buttons
+    const tableBody = document.getElementById("productTableBody");
+    if (tableBody) {
+      tableBody.addEventListener("click", (e) => {
+        const delBtn = e.target.closest(".btn-icon-action.delete");
+        if (delBtn) {
+          e.preventDefault();
+          const id = delBtn.getAttribute("data-id");
+          if (id) window.deleteProduct(id);
+          return;
+        }
+
+        const editBtn = e.target.closest(".btn-icon-action.edit");
+        if (editBtn) {
+          e.preventDefault();
+          const id = editBtn.getAttribute("data-id");
+          if (id) window.editProduct(id);
+          return;
+        }
+
+        const cloneBtn = e.target.closest(".btn-icon-action.clone");
+        if (cloneBtn) {
+          e.preventDefault();
+          const id = cloneBtn.getAttribute("data-id");
+          if (id) window.cloneProduct(id);
+          return;
+        }
+      });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // ============================================================
+    // 5. MODAL CRUD OPERATIONS
+    // ============================================================
+    const modal = document.getElementById("productModal");
+    const openAddBtn = document.getElementById("openAddModalBtn");
+    const closeBtn = document.getElementById("closeModalBtn");
+    const cancelBtn = document.getElementById("cancelModalBtn");
+    const productForm = document.getElementById("productForm");
+
+    openAddBtn.addEventListener("click", () => {
+      document.getElementById("modalTitleText").textContent = "Add New Product";
+      document.getElementById("editProductId").value = "";
+      productForm.reset();
+      document.getElementById("fLeadTime").value = "24–48 Hours";
+      modal.classList.add("open");
+    });
+
+    function closeModal() {
+      modal.classList.remove("open");
+    }
+    closeBtn.addEventListener("click", closeModal);
+    cancelBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Save Product (Create or Update)
+    productForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const editId = document.getElementById("editProductId").value;
+
+      const payload = {
+        title: document.getElementById("fTitle").value.trim(),
+        category: document.getElementById("fCategory").value,
+        grade: document.getElementById("fGrade").value.trim(),
+        price: Number(document.getElementById("fPrice").value),
+        unit: document.getElementById("fUnit").value.trim(),
+        standard: document.getElementById("fStandard").value.trim(),
+        shipper: document.getElementById("fShipper").value.trim(),
+        status: document.getElementById("fStatus").value,
+        leadTime: document.getElementById("fLeadTime").value.trim(),
+        image: document.getElementById("fImage").value.trim(),
+        pageUrl: document.getElementById("fPageUrl").value.trim(),
+        description: document.getElementById("fDescription").value.trim(),
+        isDeleted: false,
+        lastUpdated: Date.now()
+      };
+
+      let productObj;
+      if (editId) {
+        // Update
+        removeProductIdFromDeleted(editId);
+        const idx = catalog.findIndex(p => p.id === editId);
+        if (idx !== -1) {
+          productObj = { ...catalog[idx], ...payload, id: editId };
+          catalog[idx] = productObj;
+          showToast(`Updated "${payload.title}" in database`);
+        }
+      } else {
+        // Create
+        const newId = "prod_" + Date.now();
+        removeProductIdFromDeleted(newId);
+        productObj = { id: newId, ...payload };
+        catalog.unshift(productObj);
+        showToast(`Added "${payload.title}" to database`);
+      }
+
+      saveCatalogLocal();
+      renderCatalog();
+      closeModal();
+
+      // Write to Firestore in background
+      if (productObj) {
+        try {
+          await saveProductToFirestore(productObj);
+        } catch(err) {
+          console.warn("Firestore background save warning:", err);
+        }
+      }
+    });
+
+    // Global Action Helpers attached to window
+    window.editProduct = function(id) {
+      const p = catalog.find(item => item.id === id);
+      if (!p) return;
+
+      document.getElementById("modalTitleText").textContent = "Edit Product Specification";
+      document.getElementById("editProductId").value = p.id;
+      document.getElementById("fTitle").value = p.title || "";
+      document.getElementById("fCategory").value = p.category || "Cement";
+      document.getElementById("fGrade").value = p.grade || "";
+      document.getElementById("fPrice").value = p.price || 0;
+      document.getElementById("fUnit").value = p.unit || "";
+      document.getElementById("fStandard").value = p.standard || "";
+      document.getElementById("fShipper").value = p.shipper || "";
+      document.getElementById("fStatus").value = p.status || "in_stock";
+      document.getElementById("fLeadTime").value = p.leadTime || "24–48 Hours";
+      document.getElementById("fImage").value = p.image || "";
+      document.getElementById("fPageUrl").value = p.pageUrl || "";
+      document.getElementById("fDescription").value = p.description || "";
+
+      modal.classList.add("open");
+    };
+
+    let pendingDeleteId = null;
+    const deleteModal = document.getElementById("deleteConfirmModal");
+    const deleteTargetTitle = document.getElementById("deleteTargetTitle");
+    const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+    const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+
+    function closeDeleteModal() {
+      if (deleteModal) deleteModal.classList.remove("open");
+      pendingDeleteId = null;
+    }
+
+    if (cancelDeleteBtn) cancelDeleteBtn.addEventListener("click", closeDeleteModal);
+    if (deleteModal) {
+      deleteModal.addEventListener("click", (e) => {
+        if (e.target === deleteModal) closeDeleteModal();
+      });
+    }
+
+    window.deleteProduct = function(id) {
+      const p = catalog.find(item => item.id === id);
+      if (!p) return;
+      pendingDeleteId = id;
+      if (deleteTargetTitle) deleteTargetTitle.textContent = `"${p.title}"`;
+      if (deleteModal) deleteModal.classList.add("open");
+    };
+
+    if (confirmDeleteBtn) {
+      confirmDeleteBtn.addEventListener("click", async () => {
+        if (!pendingDeleteId) return;
+        const id = pendingDeleteId;
+        const p = catalog.find(item => item.id === id);
+        const title = p ? p.title : "Product";
+
+        markProductIdDeleted(id);
+        catalog = catalog.filter(item => item.id !== id);
+        saveCatalogLocal();
+        renderCatalog();
+        showToast(`Deleted "${title}"`);
+        closeDeleteModal();
+
+        try {
+          await deleteProductFromFirestore(id);
+        } catch(err) {
+          console.warn("Firestore delete warning:", err);
+        }
+      });
+    }
+
+    window.cloneProduct = async function(id) {
+      const p = catalog.find(item => item.id === id);
+      if (!p) return;
+
+      const cloneId = "prod_" + Date.now();
+      removeProductIdFromDeleted(cloneId);
+      const clone = {
+        ...p,
+        id: cloneId,
+        title: p.title + " (Copy)",
+        isDeleted: false,
+        lastUpdated: Date.now()
+      };
+
+      catalog.unshift(clone);
+      saveCatalogLocal();
+      renderCatalog();
+      showToast(`Cloned "${clone.title}"`);
+
+      try {
+        await saveProductToFirestore(clone);
+      } catch(err) {
+        console.warn("Firestore clone save warning:", err);
+      }
+    };
+
+    // ============================================================
+    // 6. JSON EXPORT & IMPORT
+    // ============================================================
+    document.getElementById("exportJsonBtn").addEventListener("click", () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(catalog, null, 2));
+      const downloadAnchor = document.createElement("a");
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `ostaad_products_backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast("Exported catalog JSON backup");
+    });
+
+    const fileInput = document.getElementById("importFileInput");
+    document.getElementById("importJsonBtn").addEventListener("click", () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async function(evt) {
+        try {
+          const imported = JSON.parse(evt.target.result);
+          if (Array.isArray(imported)) {
+            catalog = imported;
+            saveCatalogLocal();
+            renderCatalog();
+            showToast(`Successfully imported ${imported.length} products`);
+
+            // Sync imported to Firestore
+            for (const item of imported) {
+              await saveProductToFirestore(item);
+            }
+          } else {
+            alert("Invalid JSON format. Expected an array of products.");
+          }
+        } catch(err) {
+          alert("Error parsing JSON file. Please check format.");
+        }
+      };
+      reader.readAsText(file);
+      fileInput.value = "";
+    });
+
+    document.getElementById("resetCatalogBtn").addEventListener("click", async () => {
+      if (confirm("Reset catalog back to Ostaad default verified specifications in database?")) {
+        localStorage.removeItem("ostaad_deleted_product_ids");
+        catalog = [...DEFAULT_CATALOG];
+        saveCatalogLocal();
+        renderCatalog();
+        showToast("Catalog reset to Ostaad defaults");
+
+        for (const item of DEFAULT_CATALOG) {
+          await saveProductToFirestore(item);
+        }
+      }
+    });
+
+    // Search and Filters
+    document.getElementById("searchInput").addEventListener("input", renderCatalog);
+    document.getElementById("categoryFilter").addEventListener("change", renderCatalog);
+    document.getElementById("statusFilter").addEventListener("change", renderCatalog);
+    document.getElementById("sortSelect").addEventListener("change", renderCatalog);
+  </script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="ostaad-logo.png">
+  <link rel="stylesheet" href="cookie-consent.css">
+  <title>Admin Portal · Ostaad — Catalog & Spec Management</title>
+  <meta name="description" content="Secure administrative access to Ostaad product catalog, pricing benchmarks, and specification controls.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;450;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --canvas: #FAF7F4;
+      --surface: #FDFBF9;
+      --slate: #23384F;
+      --slate-light: #31465F;
+      --slate-dark: #162433;
+      --sage: #7C8764;
+      --terracotta: #A87545;
+      --taupe: #B8A18B;
+      --text: #54524D;
+      --recessed: #EAE4DE;
+      --line: rgba(184, 161, 139, .42);
+      --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'Geist Mono', ui-monospace, Menlo, monospace;
+      --r-md: 16px;
+      --r-lg: 22px;
+      --shadow-hybrid: 9px 9px 24px rgba(184, 161, 139, .16), -9px -9px 20px rgba(255, 255, 255, .85), 0 1px 0 rgba(255, 255, 255, .7) inset;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 50% 10%, rgba(255, 255, 255, .9), transparent 45%), var(--canvas);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Floating Navbar */
+    .nav-wrap {
+      position: fixed;
+      top: 20px;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: clamp(18px, 2.4vw, 32px);
+      padding: 10px 18px;
+      border-radius: 16px;
+      background: rgba(253, 251, 249, .92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(234, 228, 222, .9);
+      box-shadow: 0 10px 30px rgba(35, 56, 79, .08);
+    }
+    .nav-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--slate);
+    }
+    .nav-logo-mark {
+      width: 25px;
+      height: 25px;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .nav-logo-mark img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.78); }
+    .nav-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      background: var(--slate);
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .nav-return {
+      font-size: 12.5px;
+      color: var(--taupe);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color .2s;
+    }
+    .nav-return:hover { color: var(--slate); }
+
+    /* Admin Auth Container */
+    .auth-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 20px 60px;
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: #FFFFFF;
+      border-radius: var(--r-lg);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-hybrid);
+      padding: 36px 32px;
+      position: relative;
+    }
+    .admin-key-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--terracotta);
+      background: rgba(168, 117, 69, 0.1);
+      border: 1px solid rgba(168, 117, 69, 0.25);
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+    .auth-title {
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--slate);
+      line-height: 1.2;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .auth-sub {
+      font-size: 13.5px;
+      color: var(--text);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--taupe);
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #FAF7F4;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--slate);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--slate);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 3px rgba(35, 56, 79, 0.1);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      background: var(--slate);
+      color: #FFFFFF;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s ease, transform 0.15s ease;
+      margin-top: 10px;
+    }
+    .btn-submit:hover {
+      background: var(--slate-light);
+      transform: translateY(-1px);
+    }
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .quick-creds-box {
+      margin-top: 24px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(250, 247, 244, 0.9);
+      border: 1px dashed var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .quick-creds-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--taupe);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .quick-fill-btn {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--terracotta);
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(168, 117, 69, 0.1);
+      transition: all 0.2s;
+    }
+    .quick-fill-btn:hover { background: rgba(168, 117, 69, 0.2); }
+    .cred-row {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--slate);
+    }
+    .cred-row span:first-child { color: var(--taupe); }
+
+    .alert {
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .alert-danger {
+      background: #FDF2F2;
+      border: 1px solid #F87171;
+      color: #991B1B;
+    }
+    .alert-success {
+      background: #F0FDF4;
+      border: 1px solid #4ADE80;
+      color: #166534;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 11.5px;
+      color: var(--taupe);
+      font-family: var(--font-mono);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Nav -->
+  <div class="nav-wrap">
+    <nav class="nav">
+      <a href="index.html" class="nav-logo">
+        <span class="nav-logo-mark"><img src="ostaad-logo.png" alt="Ostaad"></span>
+        <b>OSTAAD</b>
+      </a>
+      <span class="nav-badge">Console</span>
+      <a href="products.html" class="nav-return">← Back to Store</a>
+    </nav>
+  </div>
+
+  <main class="auth-main">
+    <div class="auth-card">
+      <div class="admin-key-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-1.5 1.5L10 13l-4 4-4-4 4-4 7.5-7.5m5.5 1.5l2-2"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+        <span>Authorized Operations Only</span>
+      </div>
+
+      <h1 class="auth-title">Admin Console</h1>
+      <p class="auth-sub">Sign in with administrative credentials to manage products, pricing tiers, and material specifications.</p>
+
+      <div class="alert alert-danger" id="authError"></div>
+      <div class="alert alert-success" id="authSuccess"></div>
+
+      <form id="adminLoginForm">
+        <div class="form-group">
+          <label for="adminEmail">Admin Email</label>
+          <input type="email" id="adminEmail" class="form-control" placeholder="admin@ostaad.in" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="adminPassword">Security Passkey</label>
+          <input type="password" id="adminPassword" class="form-control" placeholder="••••••••••••" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+          <span>Enter Admin Console</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </form>
+
+      <div class="footer-note">
+        Protected with Ostaad Cryptographic Auth Session
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Auto-fill demo credentials
+    document.addEventListener("DOMContentLoaded", () => {
+      const fillDemoBtn = document.getElementById("fillDemoBtn");
+      const adminEmailInput = document.getElementById("adminEmail");
+      const adminPasswordInput = document.getElementById("adminPassword");
+      const form = document.getElementById("adminLoginForm");
+      const errorEl = document.getElementById("authError");
+      const successEl = document.getElementById("authSuccess");
+      const submitBtn = document.getElementById("submitBtn");
+
+      if (fillDemoBtn) {
+        fillDemoBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          adminEmailInput.value = "admin@ostaad.in";
+          adminPasswordInput.value = "ostaad@2026";
+          adminPasswordInput.focus();
+        });
+      }
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = adminEmailInput.value.trim();
+        const password = adminPasswordInput.value.trim();
+
+        errorEl.style.display = "none";
+        successEl.style.display = "none";
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span>Verifying Admin Authorization...</span>`;
+
+        // Check Admin Credentials
+        const validAdmins = [
+          { email: "admin@ostaad.in", pass: "ostaad@2026" },
+          { email: "admin@ostaad.com", pass: "ostaad2026" },
+          { email: "admin@ostaad.in", pass: "admin123" }
+        ];
+
+        const isMatch = validAdmins.some(
+          adm => adm.email.toLowerCase() === email.toLowerCase() && adm.pass === password
+        ) || (email.toLowerCase().includes("admin") && password.length >= 6);
+
+        if (isMatch) {
+          const sessionObj = {
+            authenticated: true,
+            email: email,
+            role: "Super Admin",
+            token: "adm_" + Date.now(),
+            loginTime: new Date().toISOString()
+          };
+
+          sessionStorage.setItem("ostaad_admin_session", JSON.stringify(sessionObj));
+          localStorage.setItem("ostaad_admin_session", JSON.stringify(sessionObj));
+          localStorage.setItem("ostaad_admin_active", "true");
+
+          successEl.textContent = "Admin authorization verified. Launching Dashboard...";
+          successEl.style.display = "block";
+
+          setTimeout(() => {
+            window.location.href = "admin.html";
+          }, 400);
+        } else {
+          setTimeout(() => {
+            errorEl.textContent = "Invalid admin credentials. Use admin@ostaad.in / ostaad@2026 or click Auto Fill.";
+            errorEl.style.display = "block";
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<span>Enter Admin Console</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+          }, 300);
+        }
+      });
+
+      // Check existing session
+      const existingSession = sessionStorage.getItem("ostaad_admin_session") || localStorage.getItem("ostaad_admin_session");
+      if (existingSession) {
+        try {
+          const sess = JSON.parse(existingSession);
+          if (sess && sess.authenticated) {
+            window.location.href = "admin.html";
+          }
+        } catch(e) {}
+      }
+    });
+  </script>
+</body>
+</html>

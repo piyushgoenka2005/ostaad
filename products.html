@@ -2664,7 +2664,7 @@
   </nav>
 
   <script src="cookie-consent.js"></script>
-  <script type="module" src="firebase-init.js"></script>
+  <script type="module" src="firebase-init.js?v=2"></script>
   <script type="module" src="navbar-auth.js"></script>
 
   <!-- ============================================================
@@ -2699,34 +2699,328 @@
       lastY = y;
     }, { passive: true });
 
+    const subscribeToProducts = (cb) => {
+      if (window.OstaadAuth && window.OstaadAuth.subscribeToProducts) {
+        return window.OstaadAuth.subscribeToProducts(cb);
+      }
+      const timer = setInterval(() => {
+        if (window.OstaadAuth && window.OstaadAuth.subscribeToProducts) {
+          clearInterval(timer);
+          window.OstaadAuth.subscribeToProducts(cb);
+        }
+      }, 150);
+      return null;
+    };
+
     // 4. Cursor spotlight effect on cards
-    document.querySelectorAll('.spotlight').forEach(card => {
-      card.addEventListener('mousemove', e => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        card.style.setProperty('--mx', `${x}px`);
-        card.style.setProperty('--my', `${y}px`);
+    function attachSpotlight(container) {
+      container.querySelectorAll('.spotlight').forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--mx', `${x}px`);
+          card.style.setProperty('--my', `${y}px`);
+        });
       });
-    });
+    }
 
+    // Default Seed Catalog
+    const DEFAULT_CATALOG = [
+      {
+        id: "cement-53",
+        title: "OPC 53 Grade Cement",
+        category: "Cement",
+        grade: "OPC 53 Grade",
+        price: 385,
+        unit: "/ 50 KG BAG",
+        standard: "IS 12269 · GRADE 53",
+        shipper: "Direct Regional Cement Plant",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7X8G20TkSBtZVfJ2ZARi2nBIKgM00wHQkV-SWT_JeBEt4ghF25-nk2ygj&s=10",
+        pageUrl: "product-cement.html",
+        description: "High-strength Ordinary Portland Cement engineered for rapid hardening, heavy-load RCC slabs, beams, and columns."
+      },
+      {
+        id: "cement-43",
+        title: "OPC 43 Grade Cement",
+        category: "Cement",
+        grade: "OPC 43 Grade",
+        price: 360,
+        unit: "/ 50 KG BAG",
+        standard: "IS 8112 · GRADE 43",
+        shipper: "Direct Clinker Grinding Mill",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://5.imimg.com/data5/HK/IA/GLADMIN-45594007/jk-super-cement-opc-500x500.png",
+        pageUrl: "product-cement.html",
+        description: "Balanced hydration Ordinary Portland Cement suited for brickwork, interior/exterior plastering, and floor screeding."
+      },
+      {
+        id: "tiles-clay",
+        title: "Clay Made Terracotta Tiles",
+        category: "Tiles",
+        grade: "Natural Kiln Terracotta",
+        price: 88,
+        unit: "/ SQ FT",
+        standard: "IS 15622 · TERRACOTTA",
+        shipper: "Certified Kiln Mills",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://5.imimg.com/data5/SELLER/Default/2025/11/563527066/EB/DC/JR/211062845/terracotta-tiles-for-flooring-500x500.jpeg",
+        pageUrl: "product-tiles.html",
+        description: "Kiln-fired natural clay floor & cladding tiles offering thermal cooling, slip resistance, and timeless regional aesthetics."
+      },
+      {
+        id: "tiles-organic",
+        title: "Organic Mineral Vitrified Tiles",
+        category: "Tiles",
+        grade: "Group B1a Full Body",
+        price: 148,
+        unit: "/ SQ FT",
+        standard: "IS 15622 · GROUP BIA",
+        shipper: "Certified Kiln Mills",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTT-dH97F_U_GULv002a0-feDSXoYAR6l_AkKq4BQ7TQ&s=10",
+        pageUrl: "product-tiles.html",
+        description: "Eco-conscious organic stone aggregate vitrified tiles with micro-beveled edges and anti-bacterial satin seal."
+      },
+      {
+        id: "paint-emulsion",
+        title: "Architectural Low-VOC Paint",
+        category: "Paint",
+        grade: "Class A Washable",
+        price: 34,
+        unit: "/ SQ FT APPLIED",
+        standard: "IS 15489 · CLASS A",
+        shipper: "Batch Chemical Plant",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTjkrafCni3qdRD-VeAS-k9Rasafu0PHsmMHVsBnUj7qa1fjJixta9V88&s=10",
+        pageUrl: "product-paint.html",
+        description: "Breathable acrylic emulsion paint with antifungal micro-pores, high scrub resistance, and warm muted mineral tones."
+      },
+      {
+        id: "plywood-bwp",
+        title: "BWP Grade Marine Plywood",
+        category: "Plywood",
+        grade: "IS 710 BWP Marine",
+        price: 118,
+        unit: "/ SQ FT (19MM)",
+        standard: "IS 710 · BWP MARINE",
+        shipper: "Certified Timber Mills",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbnjlkHLe3ZqWNSRftoqV4EtrXLIXLh98fXLB7PN7Iv0KdSDwDoctDq-8&s=10",
+        pageUrl: "product-plywood.html",
+        description: "Boiling Water Proof 100% selected hardwood core bonded with unextended phenol formaldehyde resin, zero core gaps."
+      },
+      {
+        id: "waterproofing-2k",
+        title: "Waterproofing Compound & 2K Slurry",
+        category: "Waterproofing",
+        grade: "Dual System Slurry",
+        price: 145,
+        unit: "/ LITRE",
+        standard: "IS 2645 · DUAL ACTION",
+        shipper: "Specialty Chemical Plants",
+        status: "in_stock",
+        leadTime: "24–48 Hours",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6yhlZ9Jsyhw008Di5FyJ3XaEBJMSyD1Bu0tD-JDuQbdrvk2mu1e6H0HE&s=10",
+        pageUrl: "product-waterproofing.html",
+        description: "Integral concrete waterproofing additive paired with 2K polymer-modified flexible barrier slurry for foundations & sunken slabs."
+      }
+    ];
 
-
-    // 6. Category Filter and Live Search
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const searchInput = document.getElementById('searchInput');
-    const productCards = document.querySelectorAll('.product-card');
-
+    let dynamicCatalog = [];
     const urlParams = new URLSearchParams(window.location.search);
     let currentCategory = urlParams.get('filter') || 'cement';
     let currentQuery = '';
 
-    function applyFilters() {
-      productCards.forEach(card => {
+    const gridContainer = document.getElementById('productsGrid');
+    const searchInput = document.getElementById('searchInput');
+    const filterPillsContainer = document.getElementById('filterPills');
+
+    // Real-time broadcast channel
+    const syncChannel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("ostaad_product_catalog_channel") : null;
+    if (syncChannel) {
+      syncChannel.onmessage = () => {
+        loadCatalog();
+      };
+    }
+    window.addEventListener("storage", (e) => {
+      if (e.key === "ostaad_product_catalog" || e.key === "ostaad_deleted_product_ids") {
+        loadCatalog();
+      }
+    });
+
+    function getDeletedProductIds() {
+      try {
+        return new Set(JSON.parse(localStorage.getItem("ostaad_deleted_product_ids") || "[]"));
+      } catch(e) {
+        return new Set();
+      }
+    }
+
+    function loadCatalog() {
+      const deletedIds = getDeletedProductIds();
+      const saved = localStorage.getItem("ostaad_product_catalog");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          dynamicCatalog = Array.isArray(parsed) ? parsed.filter(p => !p.isDeleted && p.status !== "deleted" && !deletedIds.has(p.id)) : [...DEFAULT_CATALOG];
+        } catch(e) {
+          dynamicCatalog = [...DEFAULT_CATALOG].filter(p => !deletedIds.has(p.id));
+        }
+      } else {
+        dynamicCatalog = [...DEFAULT_CATALOG].filter(p => !deletedIds.has(p.id));
+      }
+      renderDynamicCatalog();
+    }
+
+    // Connect to Firestore real-time updates
+    try {
+      subscribeToProducts((firestoreProducts) => {
+        if (firestoreProducts && Array.isArray(firestoreProducts)) {
+          const deletedIds = getDeletedProductIds();
+          dynamicCatalog = firestoreProducts.filter(p => !p.isDeleted && p.status !== "deleted" && !deletedIds.has(p.id));
+          localStorage.setItem("ostaad_product_catalog", JSON.stringify(dynamicCatalog));
+          renderDynamicCatalog();
+        }
+      });
+    } catch(err) {
+      console.warn("Products page Firestore listener fallback:", err);
+    }
+
+    function renderDynamicCatalog() {
+      if (!gridContainer) return;
+
+      // Update Filter Tabs and Category Counts
+      const catCounts = {};
+      dynamicCatalog.forEach(p => {
+        const cat = (p.category || 'other').toLowerCase();
+        catCounts[cat] = (catCounts[cat] || 0) + 1;
+      });
+
+      // Default categories to show in filter bar
+      const standardCats = ['cement', 'tiles', 'paint', 'plywood', 'waterproofing'];
+      Object.keys(catCounts).forEach(cat => {
+        if (!standardCats.includes(cat) && cat !== 'other') {
+          standardCats.push(cat);
+        }
+      });
+
+      if (filterPillsContainer) {
+        filterPillsContainer.innerHTML = standardCats.map(cat => {
+          const count = catCounts[cat] || 0;
+          const isActive = (cat === currentCategory.toLowerCase());
+          const catDisplayName = cat.charAt(0).toUpperCase() + cat.slice(1);
+          return `<button class="filter-btn ${isActive ? 'active' : ''}" data-filter="${cat}" role="tab" aria-selected="${isActive ? 'true' : 'false'}">${catDisplayName} <span class="count">${count}</span></button>`;
+        }).join('');
+
+        // Re-attach filter click handlers
+        filterPillsContainer.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            filterPillsContainer.querySelectorAll('.filter-btn').forEach(b => {
+              b.classList.remove('active');
+              b.setAttribute('aria-selected', 'false');
+            });
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+            currentCategory = btn.dataset.filter;
+            filterAndDisplayCards();
+          });
+        });
+      }
+
+      // Render Cards in Grid
+      gridContainer.innerHTML = dynamicCatalog.map(p => {
+        const catLower = (p.category || 'cement').toLowerCase();
+        const fallbackPage = catLower === 'cement' ? 'product-cement.html' :
+                             catLower === 'paint' ? 'product-paint.html' :
+                             catLower === 'plywood' ? 'product-plywood.html' :
+                             catLower === 'tiles' ? 'product-tiles.html' :
+                             catLower === 'waterproofing' ? 'product-waterproofing.html' : 'products.html';
+        const pageLink = p.pageUrl || fallbackPage;
+
+        return `
+          <article class="product-card spotlight" data-category="${catLower}" data-id="${p.id}" data-href="${pageLink}">
+            <div class="card-top-bar">
+              <span class="cat-tag ${catLower}">${(p.category || 'MATERIAL').toUpperCase()}</span>
+              <span class="spec-code">${p.standard || p.grade || 'IS VERIFIED'}</span>
+            </div>
+            <h3 class="product-title"><a href="${pageLink}" style="color:inherit;">${p.title}</a></h3>
+            <p class="product-subtitle">${p.description || ((p.grade || '') + ' · ' + (p.shipper || 'Direct Mill Dispatch'))}</p>
+
+            <div class="product-sample">
+              <img src="${p.image || 'ostaad-logo.png'}" alt="${p.title}" loading="lazy" onerror="this.src='ostaad-logo.png'">
+            </div>
+
+            <div class="card-bottom">
+              <div class="price-row">
+                <div class="price-main">
+                  <span class="currency">₹</span><span class="amount">${Number(p.price || 0).toLocaleString('en-IN')}</span>
+                  <span class="unit">${p.unit || ''}</span>
+                </div>
+                <span class="price-badge">${p.status === 'in_stock' ? 'IN STOCK' : 'VERIFIED RATE'}</span>
+              </div>
+              <div class="card-actions">
+                <button type="button" class="btn btn-secondary btn-sm inspect-btn" data-target="${p.id}">Quick Inspect</button>
+                <a href="${pageLink}" class="btn btn-primary btn-sm">Full Spec <span>→</span></a>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      // Attach Card Click & Quick Inspect Events
+      gridContainer.querySelectorAll('.product-card').forEach(card => {
+        card.setAttribute('role', 'link');
+        card.setAttribute('tabindex', '0');
+
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('.inspect-btn')) return;
+          if (e.target.closest('a')) return;
+
+          const href = card.getAttribute('data-href');
+          if (href) {
+            if (e.metaKey || e.ctrlKey) {
+              window.open(href, '_blank');
+            } else {
+              window.location.href = href;
+            }
+          }
+        });
+
+        card.addEventListener('keydown', (e) => {
+          if ((e.key === 'Enter' || e.key === ' ') && e.target === card) {
+            e.preventDefault();
+            const href = card.getAttribute('data-href');
+            if (href) window.location.href = href;
+          }
+        });
+      });
+
+      gridContainer.querySelectorAll('.inspect-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openSpecModal(btn.dataset.target);
+        });
+      });
+
+      attachSpotlight(gridContainer);
+      filterAndDisplayCards();
+    }
+
+    function filterAndDisplayCards() {
+      const cards = gridContainer.querySelectorAll('.product-card');
+      cards.forEach(card => {
         const cardCat = card.dataset.category;
         const cardText = card.textContent.toLowerCase();
 
-        const matchesCat = (cardCat === currentCategory);
+        const matchesCat = (cardCat === currentCategory.toLowerCase());
         const matchesQuery = !currentQuery || cardText.includes(currentQuery);
 
         if (matchesCat && matchesQuery) {
@@ -2737,214 +3031,17 @@
       });
     }
 
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterBtns.forEach(b => {
-          b.classList.remove('active');
-          b.setAttribute('aria-selected', 'false');
-        });
-        btn.classList.add('active');
-        btn.setAttribute('aria-selected', 'true');
-        currentCategory = btn.dataset.filter;
-        applyFilters();
-      });
-    });
-
-    // Sync active state from currentCategory on initial load
-    filterBtns.forEach(b => {
-      if (b.dataset.filter === currentCategory) {
-        b.classList.add('active');
-        b.setAttribute('aria-selected', 'true');
-      } else {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
-      }
-    });
-    applyFilters();
-
     if (searchInput) {
       searchInput.addEventListener('input', e => {
         currentQuery = e.target.value.trim().toLowerCase();
-        applyFilters();
+        filterAndDisplayCards();
       });
     }
 
-    // 7. Product Specification Modal / Drawer Data
-    const productDetails = {
-      'cement-53': {
-        category: 'CEMENT',
-        code: 'IS 12269 · OPC GRADE 53',
-        title: 'OPC 53 Grade Cement',
-        sub: 'HIGH EARLY STRENGTH STRUCTURAL BINDER',
-        sampleClass: 'sample-cement-53',
-        imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7X8G20TkSBtZVfJ2ZARi2nBIKgM00wHQkV-SWT_JeBEt4ghF25-nk2ygj&s=10',
-        price: '₹385 / Bag',
-        pageUrl: 'product-cement.html',
-        desc: 'Ordinary Portland Cement Grade 53 produces high early strength concrete. It achieves 27 MPa in just 3 days and exceeds 53 MPa at 28 days, allowing quicker removal of shuttering and higher structural safety margins for multi-storey frames.',
-        table: [
-          ['Standard Compliance', 'IS 12269 : 2013'],
-          ['Compressive Strength (3 Days)', '≥ 27.0 N/mm²'],
-          ['Compressive Strength (7 Days)', '≥ 37.0 N/mm²'],
-          ['Compressive Strength (28 Days)', '≥ 53.0 N/mm²'],
-          ['Initial Setting Time', 'Minimum 30 minutes'],
-          ['Final Setting Time', 'Maximum 600 minutes'],
-          ['Soundness (Le Chatelier)', '< 10 mm expansion'],
-          ['Fineness (Blaine air)', '≥ 225 m²/kg']
-        ],
-        uses: [
-          'RCC columns, heavy foundations, cantilevers, and roof slabs.',
-          'Pre-stressed concrete girders and high-load loadbearing framing.',
-          'Projects requiring faster formwork cycling and de-shuttering.'
-        ]
-      },
-      'cement-43': {
-        category: 'CEMENT',
-        code: 'IS 8112 · OPC GRADE 43',
-        title: 'OPC 43 Grade Cement',
-        sub: 'GENERAL PURPOSE MASONRY & PLASTER BINDER',
-        sampleClass: 'sample-cement-43',
-        imgUrl: 'https://5.imimg.com/data5/HK/IA/GLADMIN-45594007/jk-super-cement-opc-500x500.png',
-        price: '₹360 / Bag',
-        pageUrl: 'product-cement.html',
-        desc: 'Ordinary Portland Cement Grade 43 has a more moderate rate of hydration than Grade 53, creating fewer thermal stresses and shrinkage cracks in brickwork joints and wall plasters. It is the gold standard for masonry and internal screeds.',
-        table: [
-          ['Standard Compliance', 'IS 8112 : 2013'],
-          ['Compressive Strength (3 Days)', '≥ 23.0 N/mm²'],
-          ['Compressive Strength (7 Days)', '≥ 33.0 N/mm²'],
-          ['Compressive Strength (28 Days)', '≥ 43.0 N/mm²'],
-          ['Initial Setting Time', 'Minimum 30 minutes'],
-          ['Final Setting Time', 'Maximum 600 minutes'],
-          ['Workability / Cohesion', 'High plasticity for trowel work']
-        ],
-        uses: [
-          'Brick and concrete block masonry work.',
-          'Internal ceiling and wall plastering.',
-          'External protective plaster screeds and boundary wall construction.'
-        ]
-      },
-      'tiles-clay': {
-        category: 'TILES',
-        code: 'IS 15622 · TERRACOTTA CLAY',
-        title: 'Clay Made Terracotta Tiles',
-        sub: 'BREATHABLE HIGH-FIRE KILN EARTHEN TILES',
-        sampleClass: 'sample-clay-tiles',
-        imgUrl: 'https://5.imimg.com/data5/SELLER/Default/2025/11/563527066/EB/DC/JR/211062845/terracotta-tiles-for-flooring-500x500.jpeg',
-        price: '₹88 / Sq Ft',
-        pageUrl: 'product-tiles.html',
-        desc: 'Made from virgin alluvial clay and wood-fired to 1,050°C. These tiles stay cool under direct sunlight, breathe moisture gently, and age gracefully with a natural earthy patina that modern synthetic porcelain cannot match.',
-        table: [
-          ['Material Composition', '100% Natural Filtered Alluvial Clay'],
-          ['Dimensions', '300 × 300 × 16 MM'],
-          ['Thermal Conductivity', '0.65 W/mK (Acts as natural insulator)'],
-          ['Water Absorption', '3.5% — 5.0%'],
-          ['Surface Friction / Grip', 'R11 Slip Rating (High friction when wet)'],
-          ['Color Fastness', 'UV proof (No synthetic pigments)']
-        ],
-        uses: [
-          'Open courtyards, verandahs, and rooftop terraces to lower heat gain.',
-          'Traditional interior flooring and living accents.',
-          'Exterior vertical facade cladding.'
-        ]
-      },
-      'tiles-organic': {
-        category: 'TILES',
-        code: 'IS 15622 · ORGANIC VITRIFIED',
-        title: 'Organic Mineral Vitrified Tiles',
-        sub: 'RECLAIMED QUARRY MINERAL MATTE TILES',
-        sampleClass: 'sample-organic-tiles',
-        imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTT-dH97F_U_GULv002a0-feDSXoYAR6l_AkKq4BQ7TQ&s=10',
-        price: '₹148 / Sq Ft',
-        pageUrl: 'product-tiles.html',
-        desc: 'Engineered using recycled mineral stone aggregates under 4,500 tonnes of hydraulic pressure. Impervious to household stains, zero water ingress, and styled with subtle organic travertine and limestone veining.',
-        table: [
-          ['Body Density', 'Full-body rectified vitrified'],
-          ['Dimensions', '600 × 1200 × 9 MM'],
-          ['Breaking Strength', '≥ 1300 N'],
-          ['Water Absorption', '< 0.05%'],
-          ['Surface Seal', 'Nano-coated anti-fungal matte seal'],
-          ['Chemical Resistance', 'Resistant to household acids & alkalis']
-        ],
-        uses: [
-          'Seamless living room, bedroom, and kitchen flooring.',
-          'Bathroom walls and wet zone enclosures with joint spacers.',
-          'High footfall interior corridors.'
-        ]
-      },
-      'paint-emulsion': {
-        category: 'PAINT',
-        code: 'IS 15489 · PREMIUM EMULSION',
-        title: 'Architectural Low-VOC Paint',
-        sub: 'MICRO-POROUS BREATHABLE INTERIOR EMULSION',
-        sampleClass: 'sample-paint',
-        imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTjkrafCni3qdRD-VeAS-k9Rasafu0PHsmMHVsBnUj7qa1fjJixta9V88&s=10',
-        price: '₹34 / Sq Ft Applied',
-        pageUrl: 'product-paint.html',
-        desc: 'High-solids acrylic copolymer formula that lets walls breathe while resisting wash-down scrubbing. Formulated with organic mineral pigments for high light diffusion and restful interior light.',
-        table: [
-          ['Standard', 'IS 15489 Class A Interior Specification'],
-          ['VOC Level', '< 15 g/L (Meets Green Building standards)'],
-          ['Washability / Scrub', '> 2,000 scrub cycles without sheen loss'],
-          ['Coverage', '140–160 sq.ft per litre for 2 coats'],
-          ['Anti-microbial', 'Zinc-pyrithione anti-mildew inhibitor'],
-          ['Sheen Level', 'Eggshell finish (8–12% gloss at 60°)']
-        ],
-        uses: [
-          'Master bedrooms, living rooms, and dry interior spaces.',
-          'Homes with children and pets needing washable wall finishes.',
-          'Spaces requiring low odor and same-day room occupancy.'
-        ]
-      },
-      'plywood-bwp': {
-        category: 'PLYWOOD',
-        code: 'IS 710 · BWP MARINE GRADE',
-        title: 'BWP Grade Marine Plywood',
-        sub: 'BOILING WATER PROOF CALIBRATED HARDWOOD',
-        sampleClass: 'sample-plywood',
-        imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbnjlkHLe3ZqWNSRftoqV4EtrXLIXLh98fXLB7PN7Iv0KdSDwDoctDq-8&s=10',
-        price: '₹118 / Sq Ft (19mm)',
-        pageUrl: 'product-plywood.html',
-        desc: 'Manufactured from 100% single-species tropical hardwood veneers, impregnated with high-solid unextended phenol formaldehyde resin. Withstands 72 continuous hours of boiling water without any ply delamination.',
-        table: [
-          ['Standard Compliance', 'IS 710 : 2010 Marine Grade'],
-          ['Adhesive', 'Unextended Phenolic Resin (PF)'],
-          ['Boiling Water Test', 'Zero delamination after 72 hrs boiling'],
-          ['Density', '≥ 750 KG / M³'],
-          ['Preservative Treatment', 'Dual vacuum pressure CCA treated'],
-          ['Screw Holding Capacity', '> 280 KGF on face / > 220 KGF on edge']
-        ],
-        uses: [
-          'Modular kitchen carcasses, under-sink cabinets, and wet zones.',
-          'Bathroom vanity shutters and utility wardrobes.',
-          'Long-span storage boxes prone to humidity swings.'
-        ]
-      },
-      'waterproofing-2k': {
-        category: 'WATERPROOFING',
-        code: 'IS 2645 · DUAL SYSTEM SLURRY',
-        title: 'Waterproofing Compound',
-        sub: 'INTEGRAL CONCRETE ADDITIVE + 2K ELASTOMERIC SLURRY',
-        sampleClass: 'sample-waterproofing',
-        imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6yhlZ9Jsyhw008Di5FyJ3XaEBJMSyD1Bu0tD-JDuQbdrvk2mu1e6H0HE&s=10',
-        price: '₹145 / Litre',
-        pageUrl: 'product-waterproofing.html',
-        desc: 'Combines an integral hydrophobic liquid that reduces water capillary pores inside fresh concrete with a 2-part polymer-modified acrylic cementitious coating that bridges hairline structural shrinkage cracks up to 1.2 mm.',
-        table: [
-          ['Standard Compliance', 'IS 2645 & ASTM C1202'],
-          ['Water Permeability', 'Reduces concrete permeability by > 60%'],
-          ['Slurry Elongation', '> 120% tensile elongation at break'],
-          ['Bond Strength', '> 1.5 N/mm² to cured concrete substrate'],
-          ['Chloride Ion Penetration', 'Very Low (< 1,000 Coulombs)'],
-          ['Pot Life (2K Mix)', '45 minutes at 30°C']
-        ],
-        uses: [
-          'Sunken toilet and bathroom slabs before piping backfill.',
-          'RCC roof slabs and open terraces under weathering tiles.',
-          'Underground water reservoirs, footings, and retaining basements.'
-        ]
-      }
-    };
+    // Initial load
+    loadCatalog();
 
-    // Open Drawer Logic
+    // 7. Product Specification Modal / Drawer Data & Logic
     const modalOverlay = document.getElementById('specModalOverlay');
     const drawerClose = document.getElementById('drawerClose');
     const drawerCatTag = document.getElementById('drawerCatTag');
@@ -2961,17 +3058,46 @@
     let currentActiveDrawerItem = null;
 
     function openSpecModal(id) {
-      const item = productDetails[id];
+      const found = dynamicCatalog.find(p => p.id === id || p.id === `prod_${id}`);
+      let item;
+
+      if (found) {
+        item = {
+          category: (found.category || 'MATERIAL').toUpperCase(),
+          code: found.standard || found.grade || 'VERIFIED SPECIFICATION',
+          title: found.title,
+          sub: (found.grade || '') + ' · ' + (found.shipper || 'DIRECT DISPATCH'),
+          sampleClass: '',
+          imgUrl: found.image || 'ostaad-logo.png',
+          price: `₹${Number(found.price || 0).toLocaleString('en-IN')} ${found.unit || ''}`,
+          pageUrl: found.pageUrl || 'products.html',
+          desc: found.description || `${found.title} is an Ostaad verified specification with direct mill procurement and verified quality compliance.`,
+          table: [
+            ['Standard Compliance', found.standard || 'IS / BIS Verified Standard'],
+            ['Verified Unit Rate', `₹${Number(found.price || 0).toLocaleString('en-IN')}`],
+            ['Packaging / Metric', found.unit || 'Standard Unit'],
+            ['Dispatch Origin', found.shipper || 'Direct Regional Plant'],
+            ['Stock & Logistics', found.status === 'in_stock' ? 'In Stock (Direct Dispatch)' : 'On Demand Batch'],
+            ['Site Delivery Lead Time', found.leadTime || '24–48 Hours']
+          ],
+          uses: [
+            'Direct site procurement with transparent bill-of-quantities costing.',
+            'Complies with regional structural engineering standards and tolerances.',
+            'Factory sealed batch testing with manufacturer test certificate.'
+          ]
+        };
+      }
+
       if (!item) return;
       currentActiveDrawerItem = item;
 
       drawerCatTag.textContent = item.category;
-      drawerCatTag.className = `cat-tag ${item.category.toLowerCase()}`;
+      drawerCatTag.className = `cat-tag ${(item.category || 'cement').toLowerCase()}`;
       drawerCode.textContent = item.code;
       drawerTitle.textContent = item.title;
       drawerSub.textContent = item.sub;
-      drawerSample.className = `product-sample ${item.sampleClass}`;
-      drawerSample.innerHTML = item.imgUrl ? `<img src="${item.imgUrl}" alt="${item.title}" loading="lazy">` : '';
+      drawerSample.className = `product-sample`;
+      drawerSample.innerHTML = item.imgUrl ? `<img src="${item.imgUrl}" alt="${item.title}" loading="lazy" onerror="this.src='ostaad-logo.png'">` : '';
       drawerDesc.textContent = item.desc;
       drawerPrice.textContent = item.price;
       if (drawerPageLink && item.pageUrl) {
@@ -3005,42 +3131,16 @@
       document.body.style.overflow = '';
     }
 
-    document.querySelectorAll('.inspect-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openSpecModal(btn.dataset.target);
+    if (drawerClose) drawerClose.addEventListener('click', closeSpecModal);
+    if (modalOverlay) {
+      modalOverlay.addEventListener('click', e => {
+        if (e.target === modalOverlay) closeSpecModal();
       });
-    });
-
-    // Full container clickable link to respective product page
-    document.querySelectorAll('.product-card').forEach(card => {
-      card.setAttribute('role', 'link');
-      card.setAttribute('tabindex', '0');
-
-      card.addEventListener('click', (e) => {
-        // If user clicked Quick Inspect button, do not navigate away
-        if (e.target.closest('.inspect-btn')) return;
-        // If user clicked an anchor tag directly, let native browser action proceed
-        if (e.target.closest('a')) return;
-
-        const href = card.getAttribute('data-href');
-        if (href) {
-          if (e.metaKey || e.ctrlKey) {
-            window.open(href, '_blank');
-          } else {
-            window.location.href = href;
-          }
-        }
-      });
-
-      // Accessible keyboard activation
-      card.addEventListener('keydown', (e) => {
-        if ((e.key === 'Enter' || e.key === ' ') && e.target === card) {
-          e.preventDefault();
-          const href = card.getAttribute('data-href');
-          if (href) window.location.href = href;
-        }
-      });
+    }
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modalOverlay.classList.contains('open')) {
+        closeSpecModal();
+      }
     });
 
     if (drawerClose) drawerClose.addEventListener('click', closeSpecModal);

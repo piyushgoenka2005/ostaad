@@ -9,6 +9,7 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signInWithPopup, 
+  signInAnonymously,
   GoogleAuthProvider, 
   signOut, 
   sendPasswordResetEmail, 
@@ -20,6 +21,9 @@ import {
   doc, 
   setDoc, 
   getDoc, 
+  getDocs,
+  deleteDoc,
+  onSnapshot,
   collection, 
   addDoc, 
   serverTimestamp, 
@@ -43,6 +47,13 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
+
+// Ensure anonymous session for database read/writes if not logged in
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    signInAnonymously(auth).catch(() => {});
+  }
+});
 
 /**
  * Creates or updates user profile in Firestore
@@ -110,6 +121,8 @@ export async function signInUser(email, password) {
     return { success: false, error: formatAuthError(error) };
   }
 }
+
+export const loginUser = signInUser;
 
 /**
  * Sign in with Google Popup
@@ -223,6 +236,94 @@ function formatAuthError(error) {
   }
 }
 
+/**
+ * Save product to Firestore database
+ */
+export async function saveProductToFirestore(product) {
+  try {
+    const docId = product.id || ("prod_" + Date.now());
+    const prodRef = doc(db, "products", docId);
+    const dataToSave = {
+      ...product,
+      id: docId,
+      isDeleted: false,
+      lastUpdated: Date.now()
+    };
+    await setDoc(prodRef, dataToSave, { merge: true });
+    return { success: true, id: docId };
+  } catch (error) {
+    console.error("Firestore product save error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Delete product from Firestore database (Hard delete + Soft delete flag)
+ */
+export async function deleteProductFromFirestore(productId) {
+  try {
+    const prodRef = doc(db, "products", productId);
+    // 1. Mark as deleted so real-time listeners drop it immediately
+    try {
+      await setDoc(prodRef, { isDeleted: true, status: "deleted", deletedAt: Date.now() }, { merge: true });
+    } catch(e) {
+      console.warn("Soft delete mark warning:", e);
+    }
+    // 2. Also delete document
+    await deleteDoc(prodRef);
+    return { success: true };
+  } catch (error) {
+    console.error("Firestore product delete error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Real-time listener for Firestore products
+ */
+export function subscribeToProducts(onDataCallback) {
+  try {
+    const prodCol = collection(db, "products");
+    return onSnapshot(prodCol, (snapshot) => {
+      const prods = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        if (!data.isDeleted && data.status !== "deleted") {
+          prods.push({ id: docSnap.id, ...data });
+        }
+      });
+      if (typeof onDataCallback === "function") {
+        onDataCallback(prods);
+      }
+    }, (error) => {
+      console.warn("Firestore product snapshot error:", error);
+    });
+  } catch (e) {
+    console.warn("Failed to subscribe to Firestore products:", e);
+    return null;
+  }
+}
+
+/**
+ * Fetch all products from Firestore once
+ */
+export async function fetchProductsFromFirestore() {
+  try {
+    const snap = await getDocs(collection(db, "products"));
+    const prods = [];
+    snap.forEach((docSnap) => {
+      const data = docSnap.data();
+      if (!data.isDeleted && data.status !== "deleted") {
+        prods.push({ id: docSnap.id, ...data });
+      }
+    });
+    return prods;
+  } catch (e) {
+    console.warn("Failed to fetch products from Firestore:", e);
+    return [];
+  }
+}
+
 // Expose on global window object for universal availability across vanilla scripts
 window.OstaadAuth = {
   auth,
@@ -233,7 +334,11 @@ window.OstaadAuth = {
   signOutUser,
   resetPassword,
   onAuthStateChange,
-  saveUserBOQ
+  saveUserBOQ,
+  saveProductToFirestore,
+  deleteProductFromFirestore,
+  subscribeToProducts,
+  fetchProductsFromFirestore
 };
 
 export { auth, db };

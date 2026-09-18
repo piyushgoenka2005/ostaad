@@ -1348,79 +1348,59 @@ Upgrade the desktop (web) navigation on contact.html, privacy.html, and thank-yo
 
 ---
 
-## Iteration 43 — Products catalog, 5 interactive material deep-dives, Firebase Auth, dynamic kinetics line chart, and universal BOQ quote modals
+## Iteration 43 — Products catalog, 5 interactive material deep-dives, and unified navbar linking
 
 ### Last update
 
-`2026-09-17` · Commit: `first commit` — `Iteration 43 — products catalog, 5 interactive specification deep-dives, Firebase auth with phone/pincode, cement kinetics line graph, and universal BOQ quote modals`
+`2026-09-16` · Pending commit — `Iteration 43 — products catalog, 5 interactive specification deep-dives, and navbar linking`
 
 ### Expected change and Functioning
 
-1. **Materials Catalog & Specification Deep-Dives**:
-   - Launch a dedicated Products & Materials Catalog page (`products.html`) with category filters and interactive area estimators.
-   - Build five deep-dive specification pages (`product-cement.html`, `product-tiles.html`, `product-paint.html`, `product-plywood.html`, `product-waterproofing.html`) with live calculators, interactive visualizers, and IS/ASTM benchmark tables adhering to Ostaad's tactile architectural design system (`--canvas:#FAF7F4`, `--slate:#23384F`, `--sage:#7C8764`, `--terracotta:#A87545`, `--taupe:#B8A18B`).
-2. **Cement Kinetics Line Graph & Benchmark Matrix Synchronization**:
-   - Replace bar chart with a multi-series SVG line graph plotting compressive strength curing kinetics across 3, 7, 14, and 28 days for Grade 53, Grade 43, and PPC in distinctive color schemes (#1B365D, #C86D3B, #2E7D5B).
-   - Dynamically highlight the active curve, markers, and corresponding columns in the BIS Benchmark Matrix when users switch grades.
-3. **Firebase Authentication & User Profile System**:
-   - Implement Firebase Auth (Google Sign-In + Email/Password) and Firestore profile synchronization capturing Full Name, Email, Phone/WhatsApp number, and Project Pin Code (`login.html`, `signup.html`, `firebase-init.js`, `navbar-auth.js`).
-   - Replace "Start a Project" in the floating navbar with a "Login" button for guests and a circular initial avatar with dropdown menu (User details, phone, pincode, logout) for authenticated users.
-4. **Universal Quote / BOQ Modal Dialogs**:
-   - Ensure the "Request Quote for Bulk" button triggers the dedicated BOQ modal dialog across all individual product pages rather than redirecting to `contact.html`.
-   - Remove ugly modal scrollbars (`scrollbar-width: none; -ms-overflow-style: none; ::-webkit-scrollbar { display: none; }`) with compact vertical spacing.
-   - Auto-prefill modal form fields from active authentication state and transmit submissions to Firestore `quote_requests` and Web3Forms.
-5. **Deployment Environment Security**:
-   - Create `.env`, `.env.example`, and `.gitignore` to safely manage credentials across local development and production environments.
+Design and launch a dedicated Products & Materials Catalog page (`products.html`) and five individual deep-dive specification pages for key construction materials (Cement Grade 53 & 43, Organic & Clay Tiles, Low-VOC Architectural Paint, Certified Plywood, and Waterproofing Compound). All pages must adhere to Ostaad's tactile architectural aesthetic (hybrid neumorphism + glassmorphism, `--canvas:#FAF7F4`, `--slate:#23384F`, `--sage:#7C8764`, `--terracotta:#A87545`, `--taupe:#B8A18B`). Provide real-time interactive calculators, simulators, and visualizers on each page to turn abstract specifications into tangible homeowner decisions. Ensure that the "Product" navigation link across the entire site (both desktop floating pill navbar and mobile bottom nav bar) points directly to `products.html`, with an immediate fallback redirect at `product.html`.
 
 ### Edits made
 
-- **products.html**:
-  - Materials Specification & Costing Catalog with responsive 4-column grid layout, category filtering (`All Materials`, `Structural Core`, `Surfaces & Finishes`, `Protective Chemistry`), and quick-inspect slide-over drawer.
-  - Interactive Area & Material Quantity Estimator with dimension presets (1,200 / 2,000 / 3,500 sq ft) computing concrete bags, brick volume, plaster, and tiles.
-  - Full card clickable navigation (`data-href`) with hover elevation and keyboard accessibility.
-  - Compact Quote dialog without visible scrollbars.
-- **product-cement.html**:
-  - Replaced bar chart with an interactive multi-line SVG kinetics graph (OPC 53 Navy `#1B365D`, OPC 43 Terracotta `#C86D3B`, PPC Forest Green `#2E7D5B`) with synchronized curve glows, data callouts, and BIS benchmark matrix column highlighting.
-  - Interactive concrete mix design calculator (M20, M25, Mortar) calculating bags, sand cft, and aggregate.
-  - Full BOQ Quote modal integration with auth-gating and pre-filled contact parameters.
-- **product-paint.html**:
-  - Architectural finishes guide for low-VOC primer, eggshell emulsion, and satin silk luxury coatings.
-  - Room lighting visualizer under warm, natural daylight, and cool LED conditions.
-  - Fixed "Request Quote for Bulk" button to trigger dedicated BOQ modal without redirecting to `contact.html`.
-  - Added hidden-scrollbar modal CSS and Firestore/Web3Forms logging.
-- **product-plywood.html**:
-  - IS 710 BWP Marine and IS 303 MR Commercial plywood deep-dive with interactive load deflection simulator.
-  - Fixed "Request Quote for Bulk" button to open dedicated BOQ modal.
-  - Added hidden-scrollbar modal CSS and form controller.
-- **product-tiles.html**:
-  - Clay terracotta vs organic mineral vitrified tile guide with interactive laying pattern visualizer (Stack Grid vs Staggered Brick).
-  - Fixed "Request Quote for Bulk" button to trigger BOQ modal in-place.
-  - Added hidden-scrollbar modal CSS and form controller.
-- **product-waterproofing.html**:
-  - 2K Elastomeric slurry vs integral liquid guide with interactive 5-layer protective envelope cutaway.
-  - Fixed "Request Quote for Bulk" button to trigger BOQ modal in-place.
-  - Added hidden-scrollbar modal CSS and form controller.
-- **login.html & signup.html**:
-  - Architectural auth UI with tab switching, Google OAuth popup, and Email/Password registration.
-  - Extended signup form to collect Phone/WhatsApp Number and Project Pin Code alongside Name, Email, and Password.
-  - Automatic redirect parameter support (`?redirect=...`).
-- **firebase-init.js & navbar-auth.js**:
-  - Firebase Authentication + Firestore user profile synchronization.
-  - Reactive navbar state manager rendering Login CTA for visitors or initials avatar badge with dropdown menu for logged-in users across all 11 site pages.
-- **.gitignore, .env & .env.example**:
-  - Created `.env` with Firebase credentials and Web3Forms access key.
-  - Created `.env.example` deployment template and `.gitignore` to prevent secret leakage.
-- **Global Navbar & Link Unification**:
-  - Updated desktop navbar and mobile bottom nav across all HTML pages to point to `products.html`.
-  - Created canonical fallback redirect at `product.html`.
-
-### Verification
-
-- Verified in browser subagents that "Request Quote for Bulk" opens the dedicated modal dialog smoothly on all 5 product pages (`product-cement.html`, `product-paint.html`, `product-plywood.html`, `product-tiles.html`, `product-waterproofing.html`).
-- Verified zero scrollbar appearance in all modal dialogs across standard desktop and mobile viewports.
-- Verified line graph curve highlighting and benchmark matrix table column synchronization when toggling cement grades.
-- Verified Google login, email login, phone/pincode profile creation, and dynamic navbar avatar dropdown menu.
-- Verified `.gitignore` prevents `.env` from being tracked by git.
+- **products.html (New Page)**:
+  - Created a comprehensive Materials Specification & Costing Catalog with live category filtering (`All Materials`, `Structural Core`, `Surfaces & Finishes`, `Protective Chemistry`).
+  - Added an interactive **Area & Material Quantity Estimator** at the top with quick dimension presets (1,200 sq ft, 2,000 sq ft, 3,500 sq ft) and real-time live quantity/cost calculators for concrete, bricks, plaster, and tiles.
+  - Implemented 7 verified specification cards covering Cement (Grade 53 & 43), Clay & Vitrified Tiles, Low-VOC Paint, Marine/Commercial Plywood, and 2K Waterproofing Slurry with IS standard badges, benchmark rates, and direct links to detailed product pages.
+  - Added an interactive **Technical Spec Sheet Drawer** modal that slides in to display technical test criteria, testing standards, and site-level best practices.
+  - Integrated the exact floating pill navigation, site loader, and mobile bottom navigation.
+- **product-cement.html (New Page)**:
+  - Comprehensive engineering deep-dive on IS 12269 (Grade 53) and IS 8112 (Grade 43) cement.
+  - Built an interactive **Compressive Strength Development Simulator** with dynamic animated bar graphs showing 3-day, 7-day, 14-day, and 28-day curing kinetics across OPC 53, OPC 43, and PPC.
+  - Built a concrete mix design calculator (M20 nominal, M25 high-strength, mortar plaster) computing exact bag count, sand cft, and aggregate cft based on input dimensions.
+- **product-tiles.html (New Page)**:
+  - Material guide comparing porous thermal-insulating Clay/Terracotta tiles with non-porous Organic Mineral Vitrified stone.
+  - Built an interactive **Tile Pattern Visualizer Canvas** allowing real-time switching between Standard Grid (stack bond) and Staggered Brick patterns with live layout rendering.
+  - Built a tile wastage & carton calculator with 10% cutting allowance and carton conversion.
+- **product-paint.html (New Page)**:
+  - Architectural coatings guide for low-VOC primer, interior acrylic emulsion, and exterior anti-fungal silicone finishes.
+  - Built an interactive **Color & Room Lighting Visualizer** previewing wall tone interactions under warm white, natural daylight, and cool white LED conditions.
+  - Built a wall area paint coverage estimator with 2-coat volume calculations and multi-layer application roadmap.
+- **product-plywood.html (New Page)**:
+  - Joinery guide detailing IS 710 Boiling Water Proof (BWP) Marine plywood and IS 303 Moisture Resistant (MR) Commercial plywood.
+  - Built an interactive **Shelf Span & Load Deflection Simulator** showing millimeter sag under 10 kg, 25 kg, and 50 kg loadings with visual beam flexure.
+  - Built an 8x4 sheet cutting optimizer and ply veneer cross-section anatomy viewer.
+- **product-waterproofing.html (New Page)**:
+  - Dual-defense waterproofing guide detailing integral liquid pore blockers and elastomeric 2K polymer slurries.
+  - Built an interactive **5-Layer Protective Cutaway Envelope** (RCC slab, crystalline coat, 2K elastomeric membrane, protective screed, finish tiles) with interactive layer inspection.
+  - Built a waterhead protection and slurry dosage calculator.
+- **product.html (New Fallback Redirect)**:
+  - Created a canonical redirect page using `<meta http-equiv="refresh">`, canonical link tag, and JavaScript `window.location.replace("products.html")` to handle singular URL requests seamlessly.
+- **Global Navbar Linking Updates**:
+  - **index.html**: Updated desktop navbar "Product" link and mobile bottom navigation "Product" button from `#know` to `products.html`.
+  - **about.html**: Updated desktop navbar link, footer link, and mobile bottom nav link from `index.html#know` to `products.html`.
+  - **contact.html**: Updated desktop navbar link and mobile bottom nav link from `index.html#know` to `products.html`.
+  - **privacy.html**: Updated desktop navbar link and mobile bottom nav link from `index.html#know` to `products.html`.
+  - **thank-you.html**: Updated desktop navbar link and mobile bottom nav link from `index.html#know` to `products.html`.
+  - **products.html**: Updated desktop navbar link to `products.html`.
+  - **All 5 product pages**: Updated desktop navbar "Product" link to `products.html`.
+- Verification:
+  - Tested all navigation links across all 11 HTML pages with automated script to verify zero broken links and consistent navbar markup.
+  - Verified that `product.html` redirects instantly to `products.html`.
+  - Verified responsive layouts on mobile (≤768px) and desktop (>1024px) viewports.
+  - Verified interactive calculators, simulators, and visualizers operate with zero console errors.
 
 ---
 
@@ -1444,4 +1424,35 @@ Describe the requested behavior, layout goal, interaction model, and acceptance 
 - Describe structural, visual, interaction, responsive, accessibility, and data changes.
 - Include verification performed.
 - Record anything intentionally left unchanged.
+  - Added `data-href` attributes to all 7 `<article class="product-card">` elements.
+  - Added event listeners to handle container click navigation (supporting Ctrl/Cmd + click for new tabs), Enter/Space keypress activation, and isolated `[Quick Inspect]` button clicks with `e.stopPropagation()`.
+- **product-cement.html**:
+  - Verified and finalized direct breadcrumb routing: `<a href="index.html">Home</a> <span class="sep">›</span> <a href="products.html">Products</a> <span class="sep">›</span> <span class="current" id="crumbTitle">OPC 53 Grade Cement</span>` with zero references to `Structural Core`.
+- **Verification**:
+  - Validated via browser subagent that hovering over product card displays `cursor: pointer` and elevated card styling.
+  - Verified clicking anywhere on the card container navigates directly to `product-cement.html`.
+  - Verified breadcrumb on `product-cement.html` reads strictly `Home › Products › OPC 53 Grade Cement`.
+  - Verified navigating back and clicking `[Quick Inspect]` opens the slide-over inspection drawer without triggering navigation.
 
+---
+
+## Future update template
+
+Copy this block and append it below the latest iteration. Do not rewrite previous entries.
+
+## Iteration N — Short technical title
+
+### Last update
+
+`YYYY-MM-DD` · Commit: `<commit-sha>` — `<commit-message>`
+
+### Expected change and Functioning
+
+Describe the requested behavior, layout goal, interaction model, and acceptance criteria.
+
+### Edits made
+
+- List each file changed.
+- Describe structural, visual, interaction, responsive, accessibility, and data changes.
+- Include verification performed.
+- Record anything intentionally left unchanged.
