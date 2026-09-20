@@ -1,25 +1,48 @@
-# Environment variables
-.env
-.env*.local
-.env.production
-.env.development
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Logs and databases
-*.log
-*.sqlite
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# OS generated files
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# archives and backups
+*.zip
+ostaad_html_backup.zip
+
+# misc
 .DS_Store
-Thumbs.db
-desktop.ini
+*.pem
 
-# IDE and Editor directories
-.idea/
-.vscode/
-*.swp
-*.swo
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# Node / Build artifacts (if applicable)
-node_modules/
-dist/
-build/
+# env files
+.env*.local
+.env
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+

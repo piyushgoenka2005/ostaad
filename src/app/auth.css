@@ -1,0 +1,294 @@
+/* ============================================================
+   OSTAAD — AUTHENTICATION & ADMIN PORTAL STYLES
+   Exact 1:1 match with original legacy design
+   ============================================================ */
+
+.auth-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 20px 60px;
+  position: relative;
+  min-height: calc(100vh - 140px);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  background: var(--surface, #FDFBF9);
+  border: 1px solid rgba(234, 228, 222, .95);
+  border-radius: var(--r-lg, 22px);
+  box-shadow: 9px 9px 24px rgba(184, 161, 139, .16), -9px -9px 20px rgba(255, 255, 255, .85), 0 1px 0 rgba(255, 255, 255, .7) inset;
+  padding: 38px 34px;
+  position: relative;
+}
+
+.auth-card.signup-card {
+  max-width: 480px;
+}
+
+.auth-card.admin-card {
+  max-width: 440px;
+  background: #FFFFFF;
+  border: 1px solid rgba(184, 161, 139, .42);
+  padding: 36px 32px;
+}
+
+.auth-eyebrow {
+  font-family: var(--font-mono, 'Geist Mono', monospace);
+  font-size: 10.5px;
+  letter-spacing: .12em;
+  color: var(--terracotta, #A87545);
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.auth-card h1, .auth-title {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -.035em;
+  color: var(--slate, #23384F);
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+
+.auth-card p.auth-sub, .auth-sub {
+  font-size: 14px;
+  color: var(--text, #54524D);
+  line-height: 1.5;
+  margin: 0 0 24px;
+}
+
+/* Google Button */
+.btn-google {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(184, 161, 139, .5);
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-family: var(--font-sans, 'Geist', sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--slate, #23384F);
+  cursor: pointer;
+  transition: all .2s ease;
+  box-shadow: 0 2px 6px rgba(35, 56, 79, .04);
+}
+.btn-google:hover:not(:disabled) {
+  background: #FAF8F5;
+  border-color: var(--slate, #23384F);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(35, 56, 79, .08);
+}
+.btn-google:disabled {
+  opacity: .7;
+  cursor: not-allowed;
+}
+.btn-google svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* Divider */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 24px 0 22px;
+  color: var(--taupe, #B8A18B);
+  font-family: var(--font-mono, 'Geist Mono', monospace);
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line, rgba(184, 161, 139, .42));
+}
+
+/* Form Fields */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.field-group label, .form-group label {
+  font-family: var(--font-mono, 'Geist Mono', monospace);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: var(--taupe, #B8A18B);
+  text-transform: uppercase;
+}
+
+.field-group input, .field-group select, .form-control {
+  width: 100%;
+  background: #FFFFFF;
+  border: 1px solid rgba(184, 161, 139, .5);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-family: var(--font-sans, 'Geist', sans-serif);
+  font-size: 14px;
+  color: var(--slate, #23384F);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.field-group input:focus, .field-group select:focus, .form-control:focus {
+  border-color: var(--terracotta, #A87545);
+  box-shadow: 0 0 0 3px rgba(168, 117, 69, .18);
+}
+
+.forgot-link {
+  font-family: var(--font-mono, 'Geist Mono', monospace);
+  font-size: 10.5px;
+  color: var(--terracotta, #A87545);
+  cursor: pointer;
+  transition: color .2s;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.forgot-link:hover { color: var(--slate, #23384F); text-decoration: underline; }
+
+/* Primary Submit Button */
+.btn-submit {
+  width: 100%;
+  background: var(--slate, #23384F) !important;
+  color: #ffffff !important;
+  border: none;
+  border-radius: 12px;
+  padding: 13px 20px;
+  font-family: var(--font-sans, 'Geist', sans-serif);
+  font-size: 14.5px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  transition: all .2s ease;
+  box-shadow: 0 4px 14px rgba(35, 56, 79, .2);
+}
+.btn-submit span {
+  color: #ffffff !important;
+}
+.btn-submit:hover:not(:disabled) {
+  background: var(--slate-light, #31465F) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(35, 56, 79, .25);
+}
+.btn-submit:disabled {
+  opacity: .65;
+  cursor: not-allowed;
+}
+
+/* Feedback message banner */
+.auth-status {
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-top: 14px;
+  line-height: 1.4;
+}
+.auth-status.error, .alert-danger {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+.auth-status.success, .alert-success {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+}
+
+/* Switch route footer */
+.auth-footer {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--recessed, #EAE4DE);
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--text, #54524D);
+}
+.auth-footer a {
+  color: var(--terracotta, #A87545);
+  font-weight: 500;
+  margin-left: 4px;
+  transition: color .2s;
+}
+.auth-footer a:hover { color: var(--slate, #23384F); text-decoration: underline; }
+
+/* Admin Specific */
+.admin-key-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono, 'Geist Mono', monospace);
+  font-size: 11px;
+  color: var(--terracotta, #A87545);
+  background: rgba(168, 117, 69, 0.1);
+  border: 1px solid rgba(168, 117, 69, 0.25);
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+}
+.nav-badge {
+  font-family: var(--font-mono, 'Geist Mono', monospace);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  background: var(--slate, #23384F);
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+.nav-return {
+  font-size: 12.5px;
+  color: var(--taupe, #B8A18B);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color .2s;
+}
+.nav-return:hover { color: var(--slate, #23384F); }
+.footer-note, footer.auth-site-foot {
+  text-align: center;
+  padding: 24px;
+  font-family: var(--font-mono, 'Geist Mono', monospace);
+  font-size: 11px;
+  color: var(--taupe, #B8A18B);
+}

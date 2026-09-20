@@ -1348,15 +1348,20 @@ Upgrade the desktop (web) navigation on contact.html, privacy.html, and thank-yo
 
 ---
 
-## Iteration 43 — Products catalog, 5 interactive material deep-dives, and unified navbar linking
+## Iteration 43 — Products Catalog, Material Deep-Dives, Auth Avatar Dropdown & Pre-Migration Polish
 
 ### Last update
 
-`2026-09-16` · Pending commit — `Iteration 43 — products catalog, 5 interactive specification deep-dives, and navbar linking`
+`2026-09-17` · Commit: `feat: products catalog, 5 interactive specification deep-dives, auth navbar dropdown, and image parity`
 
 ### Expected change and Functioning
 
-Design and launch a dedicated Products & Materials Catalog page (`products.html`) and five individual deep-dive specification pages for key construction materials (Cement Grade 53 & 43, Organic & Clay Tiles, Low-VOC Architectural Paint, Certified Plywood, and Waterproofing Compound). All pages must adhere to Ostaad's tactile architectural aesthetic (hybrid neumorphism + glassmorphism, `--canvas:#FAF7F4`, `--slate:#23384F`, `--sage:#7C8764`, `--terracotta:#A87545`, `--taupe:#B8A18B`). Provide real-time interactive calculators, simulators, and visualizers on each page to turn abstract specifications into tangible homeowner decisions. Ensure that the "Product" navigation link across the entire site (both desktop floating pill navbar and mobile bottom nav bar) points directly to `products.html`, with an immediate fallback redirect at `product.html`.
+1. Design and launch a dedicated Products & Materials Catalog page (`products.html`) and five individual deep-dive specification pages for key construction materials (Cement Grade 53 & 43, Organic & Clay Tiles, Low-VOC Architectural Paint, Certified Plywood, and Waterproofing Compound) matching Ostaad's tactile architectural aesthetic.
+2. Integrate real-time interactive calculators, simulators, and visualizers on each product page (Area Estimator, Compressive Strength Simulator, Tile Pattern Visualizer, Lighting Previewer, Shelf Deflection Simulator, 5-Layer Cutaway Envelope).
+3. Connect user authentication state across all navigation bars: display user initials in a circular profile avatar when logged in, and show a sign-out dropdown on hover/click with seamless mouse interaction.
+4. Improve product card usability: make the entire product card container clickable with `data-href` while isolating the `Quick Inspect` drawer toggle via `e.stopPropagation()`.
+5. Clean up breadcrumb navigation to strictly reflect `Home › Products › [Product Name]`.
+6. Ensure high-fidelity image parity across the product catalog and individual deep-dive specification pages.
 
 ### Edits made
 
@@ -1365,11 +1370,12 @@ Design and launch a dedicated Products & Materials Catalog page (`products.html`
   - Added an interactive **Area & Material Quantity Estimator** at the top with quick dimension presets (1,200 sq ft, 2,000 sq ft, 3,500 sq ft) and real-time live quantity/cost calculators for concrete, bricks, plaster, and tiles.
   - Implemented 7 verified specification cards covering Cement (Grade 53 & 43), Clay & Vitrified Tiles, Low-VOC Paint, Marine/Commercial Plywood, and 2K Waterproofing Slurry with IS standard badges, benchmark rates, and direct links to detailed product pages.
   - Added an interactive **Technical Spec Sheet Drawer** modal that slides in to display technical test criteria, testing standards, and site-level best practices.
-  - Integrated the exact floating pill navigation, site loader, and mobile bottom navigation.
+  - Made entire product cards clickable with `data-href` and keyboard accessibility (`Enter`/`Space`), while isolating the `Quick Inspect` button.
 - **product-cement.html (New Page)**:
   - Comprehensive engineering deep-dive on IS 12269 (Grade 53) and IS 8112 (Grade 43) cement.
   - Built an interactive **Compressive Strength Development Simulator** with dynamic animated bar graphs showing 3-day, 7-day, 14-day, and 28-day curing kinetics across OPC 53, OPC 43, and PPC.
   - Built a concrete mix design calculator (M20 nominal, M25 high-strength, mortar plaster) computing exact bag count, sand cft, and aggregate cft based on input dimensions.
+  - Aligned hero and showcase imagery with the products catalog.
 - **product-tiles.html (New Page)**:
   - Material guide comparing porous thermal-insulating Clay/Terracotta tiles with non-porous Organic Mineral Vitrified stone.
   - Built an interactive **Tile Pattern Visualizer Canvas** allowing real-time switching between Standard Grid (stack bond) and Staggered Brick patterns with live layout rendering.
@@ -1386,53 +1392,69 @@ Design and launch a dedicated Products & Materials Catalog page (`products.html`
   - Dual-defense waterproofing guide detailing integral liquid pore blockers and elastomeric 2K polymer slurries.
   - Built an interactive **5-Layer Protective Cutaway Envelope** (RCC slab, crystalline coat, 2K elastomeric membrane, protective screed, finish tiles) with interactive layer inspection.
   - Built a waterhead protection and slurry dosage calculator.
-- **product.html (New Fallback Redirect)**:
+- **product.html (Fallback Redirect)**:
   - Created a canonical redirect page using `<meta http-equiv="refresh">`, canonical link tag, and JavaScript `window.location.replace("products.html")` to handle singular URL requests seamlessly.
-- **Global Navbar Linking Updates**:
-  - **index.html**: Updated desktop navbar "Product" link and mobile bottom navigation "Product" button from `#know` to `products.html`.
-  - **about.html**: Updated desktop navbar link, footer link, and mobile bottom nav link from `index.html#know` to `products.html`.
-  - **contact.html**: Updated desktop navbar link and mobile bottom nav link from `index.html#know` to `products.html`.
-  - **privacy.html**: Updated desktop navbar link and mobile bottom nav link from `index.html#know` to `products.html`.
-  - **thank-you.html**: Updated desktop navbar link and mobile bottom nav link from `index.html#know` to `products.html`.
-  - **products.html**: Updated desktop navbar link to `products.html`.
-  - **All 5 product pages**: Updated desktop navbar "Product" link to `products.html`.
-- Verification:
-  - Tested all navigation links across all 11 HTML pages with automated script to verify zero broken links and consistent navbar markup.
-  - Verified that `product.html` redirects instantly to `products.html`.
-  - Verified responsive layouts on mobile (≤768px) and desktop (>1024px) viewports.
-  - Verified interactive calculators, simulators, and visualizers operate with zero console errors.
+- **navbar-auth.js & Global Header Navigation**:
+  - Implemented persistent auth listener with Firebase JS SDK.
+  - Dynamically renders user initials in a circular pill badge upon login.
+  - Integrated an interactive user popover dropdown on hover with an extended mouse-bridge padding and timeout buffer, ensuring smooth navigation to the Sign Out button.
+  - Updated desktop and mobile navigation links across all 11 HTML pages.
 
 ---
 
-## Future update template
-
-Copy this block and append it below the latest iteration. Do not rewrite previous entries.
-
-## Iteration N — Short technical title
+## Iteration 44 — Full Next.js 16 App Router Migration, Real-Time Firestore Sync & Production Root Restructuring
 
 ### Last update
 
-`YYYY-MM-DD` · Commit: `<commit-sha>` — `<commit-message>`
+`2026-09-20` · Commit: `feat: complete Next.js 16 migration, dynamic firestore catalog, and root repository promotion (Iteration 44)`
 
 ### Expected change and Functioning
 
-Describe the requested behavior, layout goal, interaction model, and acceptance criteria.
+1. Migrate the entire Ostaad construction platform from legacy static HTML/JS/CSS to modern Next.js 16 (Turbopack, App Router, React 19, TypeScript).
+2. Maintain 100% design fidelity with Ostaad's tactile architectural aesthetic (`--canvas`, `--slate`, `--sage`, `--terracotta`, `--taupe`, glassmorphism, neumorphism, micro-animations).
+3. Port and modernize all 18+ routes:
+   - Homepage (`/`) with dynamic blueprint canvas, interactive sliders, estimation calculator, and bento grids.
+   - About (`/about`) with sticky stacked engineering cards and milestone breakdown.
+   - Contact (`/contact`), Privacy Policy (`/privacy`), and Thank You (`/thank-you`).
+   - Authentication system (`/login`, `/signup`, `/admin-login`) with Firebase Auth and session handling.
+   - Admin Dashboard (`/admin`) for live material catalog CRUD, image uploads, price adjustments, and specification management.
+   - Dynamic Material Catalog (`/products`) and category deep-dives (`/products/[category]` and sub-routes for `/products/cement`, `/products/tiles`, `/products/paint`, `/products/plywood`, `/products/waterproofing`).
+4. Implement a reactive product catalog state layer using `ProductProvider` and Firestore real-time listeners: updates made in the admin panel immediately reflect on both `/products` and individual product detail pages.
+5. Fix image rendering and Next.js Image component optimization for both local public assets and remote Firebase storage URLs.
+6. Hide the floating public navbar on the admin dashboard and ensure full accessibility of admin action modals.
+7. Maintain category filter state when navigating back and forth between product catalog and detail pages.
+8. Archive the legacy HTML codebase into a compressed ZIP file (`ostaad_html_backup.zip`), add it to `.gitignore`, delete the legacy folder, and promote the Next.js codebase to the root workspace directory for zero-config Vercel deployment.
 
 ### Edits made
 
-- List each file changed.
-- Describe structural, visual, interaction, responsive, accessibility, and data changes.
-- Include verification performed.
-- Record anything intentionally left unchanged.
-  - Added `data-href` attributes to all 7 `<article class="product-card">` elements.
-  - Added event listeners to handle container click navigation (supporting Ctrl/Cmd + click for new tabs), Enter/Space keypress activation, and isolated `[Quick Inspect]` button clicks with `e.stopPropagation()`.
-- **product-cement.html**:
-  - Verified and finalized direct breadcrumb routing: `<a href="index.html">Home</a> <span class="sep">›</span> <a href="products.html">Products</a> <span class="sep">›</span> <span class="current" id="crumbTitle">OPC 53 Grade Cement</span>` with zero references to `Structural Core`.
-- **Verification**:
-  - Validated via browser subagent that hovering over product card displays `cursor: pointer` and elevated card styling.
-  - Verified clicking anywhere on the card container navigates directly to `product-cement.html`.
-  - Verified breadcrumb on `product-cement.html` reads strictly `Home › Products › OPC 53 Grade Cement`.
-  - Verified navigating back and clicking `[Quick Inspect]` opens the slide-over inspection drawer without triggering navigation.
+- **Architecture & Foundation**:
+  - Initialized Next.js 16 with TypeScript, Tailwind CSS, PostCSS, and App Router structure (`src/app`, `src/components`, `src/context`, `src/hooks`, `src/lib`, `src/types`).
+  - Configured Next.js image domains and unoptimized fallbacks in `next.config.ts` for dynamic external media.
+  - Extracted global styles, tokens, and keyframe animations into `src/app/globals.css` and `src/app/homepage.css`.
+- **State Management & Data Layer**:
+  - `src/lib/firebase/client.ts`: Configured Firebase Client SDK initialization with environment variable fallbacks.
+  - `src/lib/constants/defaultCatalog.ts`: Created the comprehensive default product catalog with verified specifications, test standards, and high-res asset references.
+  - `src/context/ProductContext.tsx` & `src/hooks/useProducts.ts`: Built a unified React Context and custom hook that syncs with Firestore in real-time with automatic fallback to the local catalog.
+  - `src/context/AuthContext.tsx` & `src/hooks/useAuth.ts`: Implemented authentication state listener, login, signup, admin verification, and profile initial extraction.
+- **Components & Layout**:
+  - `src/components/layout/Navbar.tsx`: Built the floating glassmorphism navbar with mobile responsive drawer, user profile initial badge, hover dropdown menu, and route-aware visibility (hidden on `/admin`).
+  - `src/components/layout/Footer.tsx`: Universal architectural footer with quick links and company metadata.
+  - `src/components/common/CookieConsent.tsx`: Global cookie consent banner with localStorage persistence.
+  - `src/components/admin/ProductFormModal.tsx` & `src/components/admin/DeleteConfirmModal.tsx`: Admin dialog modals with accessible button styling, contrast fix, and file upload handlers.
+  - `src/components/products/ProductSpecDrawer.tsx`: Slide-over technical spec sheet inspection drawer.
+- **Pages & Routes**:
+  - `src/app/page.tsx`: Fully converted homepage with hero blueprint canvas, interactive sliders, estimation engine, and dynamic testimonials.
+  - `src/app/about/page.tsx`: Sticky card stacking animation and company story.
+  - `src/app/products/page.tsx`: Live filtered product catalog with real-time Firestore sync, category URL query param persistence, area estimator, and spec drawer.
+  - `src/app/products/cement/page.tsx`, `tiles/page.tsx`, `paint/page.tsx`, `plywood/page.tsx`, `waterproofing/page.tsx`: Deep-dive material pages with real-time specs linked to the active product state and interactive simulators.
+  - `src/app/admin/page.tsx`: Comprehensive management dashboard with live metrics, product table, search, category filter, and modal forms.
+  - `src/app/(auth)/login/page.tsx`, `signup/page.tsx`, `admin-login/page.tsx`: Authentication flows.
+  - `src/app/contact/page.tsx`, `privacy/page.tsx`, `thank-you/page.tsx`: Static informative pages.
+- **Repository Reorganization**:
+  - Generated `ostaad_html_backup.zip` containing the complete legacy HTML codebase.
+  - Updated `.gitignore` to ignore `*.zip`, `.env*.local`, `.next`, `node_modules`.
+  - Promoted Next.js codebase to workspace root (`/`).
+  - Successfully validated production build with `npm run build`.
 
 ---
 
