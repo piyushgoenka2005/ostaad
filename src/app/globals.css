@@ -96,8 +96,6 @@ a {
 button {
   font-family: inherit;
   cursor: pointer;
-  background: none;
-  border: none;
 }
 
 ul {
@@ -1606,17 +1604,28 @@ footer.auth-site-foot {
   padding: 8px 10px;
   border-radius: 8px;
   font-size: 12.5px;
-  color: #dc2626;
+  color: #23384F;
   cursor: pointer;
   border: none;
-  background: none;
-  transition: background .15s ease;
+  background: transparent;
+  transition: all .15s ease;
   font-family: var(--font-sans, 'Geist', sans-serif);
   font-weight: 500;
+  text-decoration: none;
 }
 
 .user-dropdown-item:hover {
+  background: #FAF7F4;
+  color: #A87545;
+}
+
+.user-dropdown-item.signout-btn {
+  color: #dc2626;
+}
+
+.user-dropdown-item.signout-btn:hover {
   background: #fef2f2;
+  color: #b91c1c;
 }
 
 /* ============================================================

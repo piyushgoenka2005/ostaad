@@ -3,10 +3,9 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "danger" | "dark" | "light";
+  variant?: "primary" | "terracotta" | "secondary" | "outline" | "danger" | "dark" | "light";
   size?: "sm" | "md" | "lg";
   hasArrow?: boolean;
-  asChild?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -18,27 +17,29 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    "inline-flex items-center justify-center gap-2 font-medium tracking-wide rounded-xl transition-all duration-200 cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed";
+    "inline-flex items-center justify-center gap-2 font-medium tracking-wide rounded-xl transition-all duration-200 cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed text-center";
 
   const sizeStyles = {
-    sm: "px-3.5 py-2 text-xs",
-    md: "px-5 py-3 text-sm",
-    lg: "px-6 py-3.5 text-base",
+    sm: "px-4 py-2 text-xs",
+    md: "px-5 py-2.5 text-sm",
+    lg: "px-7 py-3.5 text-base font-semibold",
   };
 
   const variantStyles = {
     primary:
-      "bg-[#23384F] text-white hover:bg-[#31465F] shadow-[0_10px_24px_rgba(35,56,79,0.22)] active:scale-[0.98]",
+      "bg-[#23384F] text-white hover:bg-[#162433] shadow-[0_4px_16px_rgba(35,56,79,0.28)] active:scale-[0.98] border border-[#31465F]",
+    terracotta:
+      "bg-[#A87545] text-white hover:bg-[#8B5C30] shadow-[0_4px_16px_rgba(168,117,69,0.3)] active:scale-[0.98] border border-[#BA8B5E]",
     secondary:
-      "bg-[rgba(253,251,249,0.7)] text-[#23384F] border border-[#B8A18B] hover:bg-[#FDFBF9] hover:border-[#23384F] active:scale-[0.98]",
+      "bg-white text-[#23384F] border border-[#EAE4DE] hover:border-[#23384F] hover:bg-[#FAF7F4] shadow-sm active:scale-[0.98]",
     outline:
-      "bg-transparent text-[#23384F] border border-[#B8A18B] hover:border-[#23384F] hover:bg-[#FAF7F4]",
+      "bg-transparent text-[#23384F] border-2 border-[#23384F] hover:bg-[#23384F] hover:text-white active:scale-[0.98]",
     danger:
       "bg-red-600 text-white hover:bg-red-700 shadow-[0_4px_14px_rgba(220,38,38,0.25)] active:scale-[0.98]",
     dark:
-      "bg-[#192C40] text-white hover:bg-[#23384F] shadow-[0_6px_20px_rgba(0,0,0,0.15)]",
+      "bg-[#162433] text-white hover:bg-[#23384F] shadow-[0_6px_20px_rgba(0,0,0,0.15)]",
     light:
-      "bg-white text-[#23384F] border border-[rgba(184,161,139,0.42)] hover:border-[#23384F]",
+      "bg-[#FAF7F4] text-[#23384F] border border-[#EAE4DE] hover:bg-white hover:border-[#B8A18B]",
   };
 
   return (
@@ -48,12 +49,13 @@ export const Button: React.FC<ButtonProps> = ({
       )}
       {...props}
     >
-      <span>{children}</span>
+      <span className="inline-flex items-center gap-2">{children}</span>
       {hasArrow && (
-        <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
+        <span className="inline-block transition-transform duration-200 group-hover:translate-x-1 font-bold">
           →
         </span>
       )}
     </button>
   );
 };
+
