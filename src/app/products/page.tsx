@@ -3,12 +3,14 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useProducts } from "@/hooks/useProducts";
 import { IProduct } from "@/types";
 import { BoqModal } from "@/components/store/BoqModal";
 import { sanitizeQueryParam, sanitizeString } from "@/lib/security/sanitize";
 
 export default function ProductsPage() {
+  const router = useRouter();
   const { products } = useProducts();
   const [activeCategory, setActiveCategory] = useState<string>("cement");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -283,15 +285,16 @@ export default function ProductsPage() {
                   className="product-card spotlight"
                   data-category={catClass}
                   data-id={p.id}
+                  onClick={() => router.push(targetUrl)}
                 >
                   <div className="card-top-bar">
                     <span className={`cat-tag ${catClass}`}>{p.category}</span>
                     <span className="spec-code">{p.standard || p.grade}</span>
                   </div>
                   <h3 className="product-title">
-                    <Link href={targetUrl} style={{ color: "inherit" }}>
+                    <span style={{ color: "inherit" }}>
                       {p.title}
-                    </Link>
+                    </span>
                   </h3>
                   <p className="product-subtitle">{p.description || p.grade}</p>
 
@@ -323,13 +326,23 @@ export default function ProductsPage() {
                       <button
                         type="button"
                         className="btn btn-secondary btn-sm inspect-btn"
-                        onClick={() => handleOpenDrawer(p)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenDrawer(p);
+                        }}
                       >
                         Quick Inspect
                       </button>
-                      <Link href={targetUrl} className="btn btn-primary btn-sm">
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(targetUrl);
+                        }}
+                      >
                         Full Spec <span className="arrow">→</span>
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 </article>
