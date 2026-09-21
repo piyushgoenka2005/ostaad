@@ -7,6 +7,7 @@ import { IProduct, BOQRequestPayload } from "@/types";
 import { Modal } from "@/components/common/Modal";
 import { Button } from "@/components/common/Button";
 import { saveUserBOQ } from "@/lib/firebase/firestore";
+import { sanitizeString, sanitizeEmail, sanitizePhone } from "@/lib/security/sanitize";
 
 interface BoqModalProps {
   product: IProduct | null;
@@ -76,11 +77,26 @@ export const BoqModal: React.FC<BoqModalProps> = ({ product, isOpen, onClose }) 
     try {
       const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || "6d71ee60-2f5a-436e-b445-ec657bf48f2a";
 
+      const cleanData: BOQRequestPayload = {
+        name: sanitizeString(formData.name, 100),
+        email: sanitizeEmail(formData.email),
+        phone: sanitizePhone(formData.phone),
+        pincode: sanitizeString(formData.pincode, 12),
+        materialSpec: sanitizeString(formData.materialSpec, 200),
+        quantity: sanitizeString(formData.quantity, 60),
+        projectType: sanitizeString(formData.projectType, 60),
+        notes: sanitizeString(formData.notes, 1500),
+      };
+
+      if (!cleanData.name || !cleanData.email || !cleanData.phone) {
+        throw new Error("Please enter valid name, email, and contact details.");
+      }
+
       const payload = {
         access_key: accessKey,
         subject: `New BOQ Request: ${product ? product.title : "Materials"} - Ostaad`,
         from_name: "Ostaad BOQ Desk",
-        ...formData,
+        ...cleanData,
         timestamp: new Date().toISOString(),
       };
 
@@ -93,7 +109,7 @@ export const BoqModal: React.FC<BoqModalProps> = ({ product, isOpen, onClose }) 
       const data = await res.json();
       if (data.success) {
         // Save to Firestore in background
-        saveUserBOQ(formData).catch((err) => console.warn("BOQ Firestore sync error:", err));
+        saveUserBOQ(cleanData).catch((err) => console.warn("BOQ Firestore sync error:", err));
         setSubmitted(true);
       } else {
         throw new Error(data.message || "Failed to submit BOQ request.");

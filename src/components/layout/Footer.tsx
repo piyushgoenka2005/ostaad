@@ -54,7 +54,6 @@ export const Footer: React.FC = () => {
             <li><Link href="/#see">Verification Process</Link></li>
             <li><Link href="/#faq">Technical Audit FAQ</Link></li>
             <li><Link href="/contact">Engineering Support</Link></li>
-            <li><Link href="/admin-login">Admin Console</Link></li>
           </ul>
         </div>
 

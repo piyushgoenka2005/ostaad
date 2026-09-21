@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import { IProduct, ProductCategory, StockStatus } from "@/types";
 import { X } from "lucide-react";
+import { sanitizeString, sanitizeNumber } from "@/lib/security/sanitize";
 
 interface ProductFormModalProps {
   isOpen: boolean;
@@ -57,24 +58,26 @@ export function ProductFormModal({
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.price) return;
+    const cleanTitle = sanitizeString(formData.title, 150);
+    const cleanPrice = sanitizeNumber(formData.price, 0, 1000000, 0);
+    if (!cleanTitle || cleanPrice <= 0) return;
 
     const productToSave: IProduct = {
       id: initialProduct?.id || "prod_" + Date.now(),
-      title: formData.title || "",
-      category: formData.category || "Cement",
-      grade: formData.grade || "",
-      price: Number(formData.price) || 0,
-      unit: formData.unit || "",
-      standard: formData.standard || "",
-      shipper: formData.shipper || "",
+      title: cleanTitle,
+      category: (formData.category || "Cement") as ProductCategory,
+      grade: sanitizeString(formData.grade, 80),
+      price: cleanPrice,
+      unit: sanitizeString(formData.unit, 60),
+      standard: sanitizeString(formData.standard, 80),
+      shipper: sanitizeString(formData.shipper, 100),
       status: (formData.status as StockStatus) || "in_stock",
-      leadTime: formData.leadTime || "24–48 Hours",
+      leadTime: sanitizeString(formData.leadTime, 60) || "24–48 Hours",
       image:
-        formData.image ||
+        sanitizeString(formData.image, 500) ||
         "https://images.unsplash.com/photo-1590069261209-f8e9b8642343?w=500&q=80",
-      pageUrl: formData.pageUrl || "",
-      description: formData.description || "",
+      pageUrl: sanitizeString(formData.pageUrl, 200),
+      description: sanitizeString(formData.description, 1500),
       lastUpdated: Date.now(),
       isDeleted: false,
     };

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useProducts } from "@/hooks/useProducts";
 import { IProduct } from "@/types";
 import { BoqModal } from "@/components/store/BoqModal";
+import { sanitizeQueryParam, sanitizeString } from "@/lib/security/sanitize";
 
 export default function ProductsPage() {
   const { products } = useProducts();
@@ -21,10 +22,10 @@ export default function ProductsPage() {
     const targetCat = catParam || savedCat;
 
     if (targetCat) {
+      const cleanTarget = sanitizeQueryParam(targetCat).toLowerCase();
       const validCats = ["cement", "tiles", "paint", "plywood", "waterproofing", "all"];
-      const normalized = targetCat.toLowerCase();
-      if (validCats.includes(normalized)) {
-        setActiveCategory(normalized);
+      if (validCats.includes(cleanTarget)) {
+        setActiveCategory(cleanTarget);
         if (catParam) {
           setTimeout(() => {
             const el = document.getElementById("catalogToolbar") || document.getElementById("productsGrid");
@@ -38,11 +39,12 @@ export default function ProductsPage() {
   }, []);
 
   const handleCategoryChange = (cat: string) => {
-    setActiveCategory(cat);
+    const cleanCat = sanitizeQueryParam(cat).toLowerCase();
+    setActiveCategory(cleanCat);
     if (typeof window !== "undefined") {
-      sessionStorage.setItem("ostaad_last_product_cat", cat);
+      sessionStorage.setItem("ostaad_last_product_cat", cleanCat);
       const url = new URL(window.location.href);
-      url.searchParams.set("cat", cat);
+      url.searchParams.set("cat", cleanCat);
       window.history.replaceState({}, "", url.toString());
     }
   };
@@ -59,8 +61,9 @@ export default function ProductsPage() {
   const filteredProducts = useMemo(() => {
     let list = [...products];
 
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
+    const cleanSearch = sanitizeString(searchQuery, 100).trim();
+    if (cleanSearch) {
+      const q = cleanSearch.toLowerCase();
       return list.filter(
         (p) =>
           p.title.toLowerCase().includes(q) ||

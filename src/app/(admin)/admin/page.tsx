@@ -20,6 +20,7 @@ import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { KpiCards } from "@/components/admin/KpiCards";
 import { ProductFormModal } from "@/components/admin/ProductFormModal";
 import { DeleteConfirmModal } from "@/components/admin/DeleteConfirmModal";
+import { sanitizeString } from "@/lib/security/sanitize";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -86,8 +87,9 @@ export default function AdminDashboardPage() {
     let result = [...products];
 
     // Search query
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
+    const cleanSearch = sanitizeString(searchQuery, 100).trim();
+    if (cleanSearch) {
+      const q = cleanSearch.toLowerCase();
       result = result.filter((p) => {
         return (
           p.title?.toLowerCase().includes(q) ||

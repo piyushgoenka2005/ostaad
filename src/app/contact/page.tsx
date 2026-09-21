@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { useAuth } from "@/hooks/useAuth";
+import { sanitizeString, sanitizeEmail, sanitizePhone } from "@/lib/security/sanitize";
 
 const INQUIRY_TYPES = [
   "Material Procurement",
@@ -74,14 +75,24 @@ export default function ContactPage() {
         process.env.WEB3FORMS_ACCESS_KEY ||
         "6d71ee60-2f5a-436e-b445-ec657bf48f2a";
 
+      const cleanName = sanitizeString(formData.name, 100);
+      const cleanEmail = sanitizeEmail(formData.email);
+      const cleanPhone = sanitizePhone(formData.phone);
+      const cleanSubject = sanitizeString(formData.subject, 100);
+      const cleanMessage = sanitizeString(formData.message, 3000);
+
+      if (!cleanName || !cleanEmail || !cleanMessage) {
+        throw new Error("Please enter valid name, email address, and message details.");
+      }
+
       const payload = {
         access_key: accessKey,
         from_name: "Ostaad Direct Desk",
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        message: formData.message,
-        subject: `[Ostaad Contact] ${formData.subject} - ${formData.name}`
+        name: cleanName,
+        email: cleanEmail,
+        phone: cleanPhone,
+        message: cleanMessage,
+        subject: `[Ostaad Contact] ${cleanSubject} - ${cleanName}`
       };
 
       const res = await fetch("https://api.web3forms.com/submit", {

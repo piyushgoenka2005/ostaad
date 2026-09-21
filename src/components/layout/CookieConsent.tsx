@@ -33,10 +33,10 @@ export const CookieConsent: React.FC = () => {
   if (!showConsent) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 left-5 md:left-auto md:max-w-md z-50 bg-[#162433] text-white p-5 rounded-2xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.35)] animate-in fade-in slide-in-from-bottom-5 duration-300">
+    <div className="fixed bottom-[84px] md:bottom-5 right-4 left-4 md:left-auto md:right-5 md:max-w-md z-[200] bg-[#162433] text-white p-5 rounded-2xl border border-white/15 shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-md animate-in fade-in slide-in-from-bottom-5 duration-300">
       <div className="flex items-start gap-3.5 mb-4">
-        <div className="w-8 h-8 rounded-lg bg-[#A87545]/20 text-[#A87545] flex items-center justify-center shrink-0">
-          <ShieldCheck size={18} />
+        <div className="w-9 h-9 rounded-xl bg-[#A87545]/20 text-[#A87545] flex items-center justify-center shrink-0 border border-[#A87545]/30">
+          <ShieldCheck size={20} />
         </div>
         <div>
           <h4 className="text-xs font-mono uppercase tracking-wider font-semibold text-white">
@@ -47,18 +47,18 @@ export const CookieConsent: React.FC = () => {
           </p>
         </div>
       </div>
-      <div className="flex justify-end gap-2 text-xs font-mono">
+      <div className="flex items-center justify-end gap-2.5 text-xs font-mono">
         <button
           type="button"
           onClick={handleDecline}
-          className="px-3 py-1.5 rounded-lg border border-white/20 text-white/70 hover:text-white transition-colors"
+          className="px-3.5 py-2 rounded-xl border border-white/20 text-white/80 hover:text-white hover:bg-white/10 active:scale-[0.98] transition-all cursor-pointer font-medium"
         >
           Essential Only
         </button>
         <button
           type="button"
           onClick={handleAccept}
-          className="px-4 py-1.5 rounded-lg bg-[#A87545] text-white font-medium hover:bg-[#8B5C30] transition-colors"
+          className="px-4 py-2 rounded-xl bg-[#A87545] text-white font-semibold hover:bg-[#BA8B5E] active:scale-[0.98] shadow-md transition-all cursor-pointer"
         >
           Accept All
         </button>
