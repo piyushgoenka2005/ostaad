@@ -261,9 +261,11 @@ export default function ProductsPage() {
          ============================================================ */}
       <section className="section" style={{ paddingTop: "10px" }}>
         <div className="container">
-          <div className="section-head">
-            <h2>Verified Construction Specifications</h2>
-            <p>
+          <div className="section-head" style={{ maxWidth: "100%", marginBottom: "36px" }}>
+            <h2 className="whitespace-normal md:whitespace-nowrap" style={{ fontSize: "clamp(26px, 3.6vw, 44px)" }}>
+              Verified Construction Specifications
+            </h2>
+            <p style={{ maxWidth: "760px" }}>
               Procurement-ready building materials mapped directly to standard bill-of-quantities codes, structural
               codes, and transparent market benchmarks.
             </p>
@@ -572,6 +574,7 @@ export default function ProductsPage() {
         isOpen={isBoqOpen}
         onClose={() => setIsBoqOpen(false)}
         product={selectedProduct}
+        targetSpec={boqTargetSpec}
       />
     </main>
   );

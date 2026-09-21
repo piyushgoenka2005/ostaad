@@ -764,6 +764,11 @@ export default function CementProductPage() {
               >
                 <span className="legend-dot dot-53"></span>
                 <span>OPC Grade 53 (IS 12269) · High Early Strength</span>
+                {activeKineticsGrade === "53" && (
+                  <span className="buying-pill-badge">
+                    ← You are buying this
+                  </span>
+                )}
               </div>
               <div
                 className={`chart-legend-item legend-43 ${
@@ -775,6 +780,11 @@ export default function CementProductPage() {
               >
                 <span className="legend-dot dot-43"></span>
                 <span>OPC Grade 43 (IS 8112) · General Structural</span>
+                {activeKineticsGrade === "43" && (
+                  <span className="buying-pill-badge">
+                    ← You are buying this
+                  </span>
+                )}
               </div>
               <div
                 className={`chart-legend-item legend-ppc ${
@@ -786,6 +796,11 @@ export default function CementProductPage() {
               >
                 <span className="legend-dot dot-ppc"></span>
                 <span>PPC Pozzolana (IS 1489) · Dense Matrix & Durability</span>
+                {activeKineticsGrade === "ppc" && (
+                  <span className="buying-pill-badge">
+                    ← You are buying this
+                  </span>
+                )}
               </div>
             </div>
 
@@ -925,6 +940,106 @@ export default function CementProductPage() {
                   <text x="300" y="142">23.0 MPa</text>
                   <text x="490" y="117">31.0 MPa</text>
                   <text x="680" y="94">38.2 MPa</text>
+                </g>
+
+                {/* Dynamic "You are buying this" Active Line Indicator with Arrow */}
+                <g
+                  className="curing-active-buying-pointer"
+                  style={{
+                    transition: "all 0.35s cubic-bezier(0.16, 1, 0.3, 1)"
+                  }}
+                >
+                  {/* Pulsing ring around the active day-28 point */}
+                  <circle
+                    cx="680"
+                    cy={
+                      activeKineticsGrade === "53"
+                        ? 52.25
+                        : activeKineticsGrade === "43"
+                        ? 83.1
+                        : 104.0
+                    }
+                    r="10.5"
+                    fill="none"
+                    stroke={
+                      activeKineticsGrade === "53"
+                        ? "#1B365D"
+                        : activeKineticsGrade === "43"
+                        ? "#C86D3B"
+                        : "#2E7D5B"
+                    }
+                    strokeWidth="2"
+                    opacity="0.85"
+                  />
+
+                  {/* Callout Bubble with Arrow pointing right to the active curve endpoint */}
+                  <g
+                    transform={`translate(490, ${
+                      activeKineticsGrade === "53"
+                        ? 38.25
+                        : activeKineticsGrade === "43"
+                        ? 69.1
+                        : 90.0
+                    })`}
+                    style={{ transition: "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)" }}
+                  >
+                    {/* Rounded Tag Badge */}
+                    <rect
+                      x="0"
+                      y="0"
+                      width="152"
+                      height="26"
+                      rx="13"
+                      fill={
+                        activeKineticsGrade === "53"
+                          ? "#1B365D"
+                          : activeKineticsGrade === "43"
+                          ? "#C86D3B"
+                          : "#2E7D5B"
+                      }
+                      stroke="#ffffff"
+                      strokeWidth="1.5"
+                      filter="drop-shadow(0 4px 10px rgba(0,0,0,0.22))"
+                    />
+                    {/* Inner glowing dot */}
+                    <circle cx="12" cy="13" r="3.5" fill="#ffffff" />
+                    {/* Label Text */}
+                    <text
+                      x="22"
+                      y="16.5"
+                      fill="#ffffff"
+                      fontFamily="var(--font-mono, monospace)"
+                      fontSize="9.5"
+                      fontWeight="700"
+                      letterSpacing="0.02em"
+                    >
+                      You are buying this
+                    </text>
+                    {/* Pointer Arrow */}
+                    <path
+                      d="M 134 13 L 144 13 M 139 9 L 144 13 L 139 17"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    {/* Guide line to the node */}
+                    <line
+                      x1="152"
+                      y1="13"
+                      x2="175"
+                      y2="13"
+                      stroke={
+                        activeKineticsGrade === "53"
+                          ? "#1B365D"
+                          : activeKineticsGrade === "43"
+                          ? "#C86D3B"
+                          : "#2E7D5B"
+                      }
+                      strokeWidth="2"
+                      strokeDasharray="2 2"
+                    />
+                  </g>
                 </g>
 
                 {/* X-Axis Milestone Labels */}
